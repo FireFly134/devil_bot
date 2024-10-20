@@ -1,3 +1,4 @@
+from aiogram.exceptions import TelegramBadRequest
 
 from src import form_router, Regisration
 
@@ -75,3 +76,38 @@ async def stop(message: Message) -> None:
                 await message.answer("Ок, я все понял!☹️\nЯ пошел...")
                 return
         await message.answer("А что я? Я молчу!☹️")
+
+
+
+async def remind(message: Message, remain_zero_rock: bool) -> None:
+    """Активация/деактивация напоминания об обнуление камней."""
+    if message.chat.type != "private":
+        chat_id: str = str(message.chat.id)
+        clan = await Clans.query.where(
+                Clans.chat_id == chat_id
+        ).gino.first()
+        await clan.update(remain_zero_rock=remain_zero_rock).apply()
+        try:
+            await message.delete()
+        except TelegramBadRequest:
+            await message.answer(
+                "Предупреждение: Дайте мне права админа, иначе ничего не смогу делать..."
+            )
+        if remain_zero_rock:
+            await message.answer(
+                "Ок, я напомню вам за час, о том что будет обнуление камней."
+            )
+        else:
+            await message.answer("Не хотите, как хотите!😝")
+
+
+@form_router.message(Command('start_remind'))
+async def start_remind(message: Message) -> None:
+    """Активация напоминания об обнулении камней."""
+    await remind(message, remain_zero_rock=True)
+
+
+@form_router.message(Command('stop_remind'))
+async def stop_remind(message: Message) -> None:
+    """Деактивация напоминания об обнулении камней."""
+    await remind(message, remain_zero_rock=False)

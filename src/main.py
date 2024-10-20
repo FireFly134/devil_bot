@@ -37,36 +37,6 @@ async def first_sms(message: Message):
     await message.answer(sms, parse_mode=ParseMode.MARKDOWN_V2)
 
 
-# @form_router.message(CommandStart())
-# async def start(message: Message, state: FSMContext) -> None:
-#     if message.chat.type == "private":
-#         if message.from_user is not None:
-#             user_id: int = int(message.from_user.id)
-#             if user := await User.query.where(
-#                 User.user_id == user_id
-#             ).gino.first():
-#                 if hero_user_search := await HeroesOfUsers.query.where(
-#                     HeroesOfUsers.user_id == user.id
-#                 ).gino.first():
-#                     sms = f"Привет, {str(hero_user_search.name)}"
-#                     await new_button(message, sms)
-#                     return
-#                 # user(message, sms)
-#             else:
-#                 user = await User(
-#                     user_id=user_id,
-#                     first_name=message.from_user.first_name,
-#                     last_name=message.from_user.last_name,
-#                     username=message.from_user.username,
-#                     language_code=message.from_user.language_code,
-#                 ).create()
-#                 await message.answer(
-#                     "Я тебя не помню. Давай знакомиться! Какой у тебя ник в игре?"
-#                 )
-#             await state.update_data(user_id=user.id)
-#             await state.set_state(Regisration.name)
-
-
 @form_router.callback_query(Regisration.name, F.data == "yes")
 async def missing_name(call: CallbackQuery, state: FSMContext) -> None:
     data = await state.get_data()
@@ -119,6 +89,20 @@ async def set_default_commands(bot: Bot) -> None:
     await bot.set_my_commands(
         [
             BotCommand(command="start", description="Запустить бота"),
+            BotCommand(command="help", description="Помощь"),
+            # BotCommand(command="edit_name", description=""),
+            # BotCommand(command="clan_tasks", description=""),
+            # BotCommand(command="manul_kv", description=""),
+            # BotCommand(command="manul_ap_kv", description=""),
+            # BotCommand(command="heroes_for_events", description=""),
+            # BotCommand(command="pak_and_counterpak", description=""),
+            # BotCommand(command="useful_links", description=""),
+            BotCommand(command="commands_for_chat", description="Команды для чата"),
+            BotCommand(command="stop",
+                       description="Остановить деятельность бота (для чата)"),
+            BotCommand(command="update_time_change_clan_task", description="Сменить время обнуления камней."),
+            BotCommand(command="start_remind", description="Активация напоминания об обнулении камней."),
+            BotCommand(command="stop_remind", description="Деактивация напоминания об обнулении камней."),
             BotCommand(
                 command="cancel",
                 description="Отменить текущее действие и начать все с начала",
