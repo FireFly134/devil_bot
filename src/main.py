@@ -3,7 +3,7 @@ import logging
 import os
 from typing import Any
 
-from aiogram import Bot, Dispatcher, F, Router, html, types
+from aiogram import Bot, Dispatcher, F, Router, html
 from aiogram.client.default import DefaultBotProperties
 from aiogram.client.session.aiohttp import AiohttpSession
 from aiogram.enums import ParseMode
@@ -12,19 +12,21 @@ from aiogram.filters.command import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.types import (
+    BotCommand,
     CallbackQuery,
     FSInputFile,
     InlineKeyboardButton,
     InlineKeyboardMarkup,
     KeyboardButton,
+    Message,
     ReplyKeyboardMarkup,
 )
 
+from buttons import new_button, setting_hero_button
 from config import settings
+from migrations import run_connection_db
 from tables.heroes_of_users import HeroesOfUsers
 from tables.telegram_users import User
-
-# from buttons import setting_hero_button
 
 form_router = Router()
 
@@ -35,7 +37,7 @@ class Regisration(StatesGroup):
     hero_id = State()
 
 
-async def first_sms(message: types.Message):
+async def first_sms(message: Message):
     sms = """Сейчас время смены кланового задания установлено __18:30__, а первый сбор бесплатной энергии установлен на __12:00__ \(__*по МСК*__\)\.
 
     *Если данное время неверно, то это можно с лёгкостью изменить в настройках\!*
@@ -48,7 +50,7 @@ async def first_sms(message: types.Message):
 
 
 @form_router.message(CommandStart())
-async def start(message: types.Message, state: FSMContext) -> None:
+async def start(message: Message, state: FSMContext) -> None:
     if message.chat.type == "private":
         if message.from_user is not None:
             user_id: int = int(message.from_user.id)
@@ -59,7 +61,7 @@ async def start(message: types.Message, state: FSMContext) -> None:
                     HeroesOfUsers.user_id == user.id
                 ).gino.first():
                     sms = f"Привет, {str(hero_user_search.name)}"
-                    await message.answer(sms)
+                    await new_button(message, sms)
                     return
                 # user(message, sms)
             else:
@@ -92,10 +94,7 @@ async def missing_name(call: CallbackQuery, state: FSMContext) -> None:
         ).create()
     await state.clear()
     await call.message.delete()
-    # setting_hero_button(
-    #     message, "Отлично, будем знакомы)"
-    # )
-    await call.message.answer("Отлично, будем знакомы)")
+    await setting_hero_button(call.message, "Отлично, будем знакомы)")
     try:
         await first_sms(call.message)
     except Exception as err:
@@ -112,7 +111,7 @@ async def missing_name(call: CallbackQuery) -> None:
 
 
 @form_router.message(Regisration.name)
-async def reg_start(message: types.Message, state: FSMContext) -> None:
+async def reg_start(message: Message, state: FSMContext) -> None:
     await state.update_data(name=message.text)
     await message.answer(
         f'Ты герой под ником "{message.text}"?',
@@ -131,22 +130,21 @@ async def reg_start(message: types.Message, state: FSMContext) -> None:
 async def set_default_commands(bot: Bot) -> None:
     await bot.set_my_commands(
         [
-            types.BotCommand(command="start", description="Запустить бота"),
-            types.BotCommand(
+            BotCommand(command="start", description="Запустить бота"),
+            BotCommand(
                 command="cancel",
                 description="Отменить текущее действие и начать все с начала",
             ),
         ]
     )
-    return
 
 
 async def main() -> None:
     # Initialize Bot instance with a default parse mode which will be passed
     # to all API calls
-    # bot = Bot(token=settings.TOKEN, session=AiohttpSession())
     bot = Bot(
         token=settings.TOKEN,
+        session=AiohttpSession(),
         default=DefaultBotProperties(parse_mode=ParseMode.HTML),
     )
     await run_connection_db()
