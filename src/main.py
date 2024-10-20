@@ -52,7 +52,7 @@ async def missing_name(call: CallbackQuery, state: FSMContext) -> None:
         ).create()
     await state.clear()
     await call.message.delete()
-    await setting_hero_button(call.message, "Отлично, будем знакомы)")
+    await setting_hero_button(call.message, data["user_id"], "Отлично, будем знакомы)")
     try:
         await first_sms(call.message)
     except Exception as err:

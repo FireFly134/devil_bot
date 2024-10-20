@@ -5,8 +5,8 @@ from aiogram.types import (
     ReplyKeyboardMarkup,
 )
 
+from migrations import db
 from tables.heroes_of_users import HeroesOfUsers
-from tables.telegram_users import User
 
 
 async def send_message(
@@ -36,11 +36,10 @@ async def setting_button(message: Message, sms: str) -> None:
     await send_message(message, sms, reply_keyboard)
 
 
-async def setting_hero_button(message: Message, sms: str) -> None:
+async def setting_hero_button(message: Message, user_id: int, sms: str) -> None:
     """Манапуляции с героем"""
     reply_keyboard = []
-    user = User.query.where(User.user_id == message.from_user.id).first()
-    num = HeroesOfUsers.func.count(HeroesOfUsers.user_id == user.id)
+    num = await db.func.count(HeroesOfUsers.user_id == user_id).gino.scalar()
     #     pd.read_sql(
     #     f"SELECT COUNT(*) FROM heroes_of_users WHERE user_id = '{update.effective_chat.id}';",
     #     engine,
