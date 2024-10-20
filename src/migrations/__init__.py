@@ -10,8 +10,10 @@ logging.getLogger('gino.engine._SAEngine').setLevel(logging.ERROR)
 
 db = Gino()
 
-async def main():
+METADATA = db
+
+async def run_connection_db():
     await db.set_bind(DB_URI)
 
-asyncio.get_event_loop().run_until_complete(main())
-METADATA = db
+# if not db.is_bound():
+#     asyncio.get_event_loop().run_until_complete(main())

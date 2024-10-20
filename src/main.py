@@ -149,6 +149,7 @@ async def main() -> None:
         token=settings.TOKEN,
         default=DefaultBotProperties(parse_mode=ParseMode.HTML),
     )
+    await run_connection_db()
     await set_default_commands(bot)
     dp = Dispatcher()
     dp.include_router(form_router)

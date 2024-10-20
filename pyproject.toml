@@ -8,12 +8,12 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "3.11.9"
 alembic = "*"
-gino = "1.0.1"
-aiogram = "^3.7.0"
+aiogram = "*"
 pandas = "*"
 SQLAlchemy = "*"
 psycopg2-binary = "*"
 pydantic-settings = "*"
+gino = "^1.0.1"
 
 [tool.poetry.group.dev.dependencies]
 isort = "^5.12.0"
