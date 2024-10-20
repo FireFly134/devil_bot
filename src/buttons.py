@@ -5,6 +5,7 @@ from aiogram.types import (
     ReplyKeyboardMarkup,
 )
 
+from menu.text_menu import main_menu, go_back
 from migrations import db
 from tables.heroes_of_users import HeroesOfUsers
 
@@ -31,7 +32,7 @@ async def setting_button(message: Message, sms: str) -> None:
             KeyboardButton(text="Поменять время..."),
         ],
         [KeyboardButton(text="Проверить данные профиля")],
-        [KeyboardButton(text="🔙Назад🔙")],
+        [KeyboardButton(text=go_back)],
     ]
     await send_message(message, sms, reply_keyboard)
 
@@ -49,20 +50,20 @@ async def setting_hero_button(message: Message, user_id: int, sms: str) -> None:
         reply_keyboard += [
             [KeyboardButton(text="Удалить одного героя")],
             [KeyboardButton(text="Переименовать героя")],
-            [KeyboardButton(text="🔙Назад🔙")],
+            [KeyboardButton(text=go_back)],
         ]
     elif num == 1:
         reply_keyboard += [
             [KeyboardButton(text="Добавить еще одного героя")],
             [KeyboardButton(text="Переименовать героя")],
-            [KeyboardButton(text="🔙Назад🔙")],
+            [KeyboardButton(text=go_back)],
         ]
     else:
         reply_keyboard += [
             [KeyboardButton(text="Добавить еще одного героя")],
             [KeyboardButton(text="Удалить одного героя")],
             [KeyboardButton(text="Переименовать героя")],
-            [KeyboardButton(text="🔙Назад🔙")],
+            [KeyboardButton(text=go_back)],
         ]
     await send_message(message, sms, reply_keyboard)
 
@@ -116,7 +117,7 @@ async def subscription_button(
         reply_keyboard += [
             [KeyboardButton(text="Подписаться на ежедневное описание КЗ")]
         ]
-    reply_keyboard += [[KeyboardButton(text="🔙Назад🔙")]]
+    reply_keyboard += [[KeyboardButton(text=go_back)]]
     await send_message(message, sms, reply_keyboard)
 
 
@@ -125,7 +126,7 @@ async def edit_time_button(message: Message, sms: str) -> None:
     reply_keyboard = [
         [KeyboardButton(text="Поменять время смены КЗ")],
         [KeyboardButton(text="Поменять время первого сбора энергии")],
-        [KeyboardButton(text="🔙Назад🔙")],
+        [KeyboardButton(text=go_back)],
     ]
     await send_message(message, sms, reply_keyboard)
 
@@ -133,13 +134,13 @@ async def edit_time_button(message: Message, sms: str) -> None:
 async def new_button(message: Message, sms: str) -> None:
     """Вывод кнопок"""
     reply_keyboard = [
-        [KeyboardButton(text="🆘 Помощь 🆘")],
+        [KeyboardButton(text=main_menu['1'])],
         [
-            KeyboardButton(text="Сколько у меня камней?"),
-            KeyboardButton(text="Полезная информация"),
+            KeyboardButton(text=main_menu['2']),
+            KeyboardButton(text=main_menu['3']),
         ],
-        [KeyboardButton(text="⚙️Настройка профиля⚙️")],
-        [KeyboardButton(text="💵Пожертвование моему создателю💸")],
+        [KeyboardButton(text=main_menu['4'])],
+        [KeyboardButton(text=main_menu['5'])],
     ]
     # TODO будут ли у нас Админы?
     # info = pd.read_sql(
@@ -163,23 +164,23 @@ async def setting_admin_button(message: Message, sms: str) -> None:
             KeyboardButton(text="Отправить ВСЕМ сообщение ✏️✉️👨‍👩‍👧‍👦"),
             KeyboardButton(text="Убрать игрока из клана☠"),
         ],
-        [KeyboardButton(text="🔙Назад🔙")],
+        [KeyboardButton(text=go_back)],
     ]
     await send_message(message, sms, reply_keyboard)
 
 
-async def helpMy_button(message: Message, sms: str) -> None:
+async def help_my_button(message: Message, sms: str) -> None:
     """Вывод кнопок помощи"""
     reply_keyboard = [
         [KeyboardButton(text="Инструкция по применению")],
         [KeyboardButton(text="Инструкция для подключения меня к чату")],
         [KeyboardButton(text="Основные команды в чате")],
-        [KeyboardButton(text="🔙Назад🔙")],
+        [KeyboardButton(text=go_back)],
     ]
     await send_message(message, sms, reply_keyboard)
 
 
-async def help_button(message: Message, sms: str) -> None:
+async def useful_info_button(message: Message, sms: str) -> None:
     """Вывод кнопок помощи"""
     reply_keyboard = [
         [KeyboardButton(text="Для новичков")],
@@ -196,10 +197,6 @@ async def help_button(message: Message, sms: str) -> None:
         ],
         [KeyboardButton(text="Полезные ссылки")],
         [
-            KeyboardButton(text="Когда КВ?"),
-            KeyboardButton(text="Расписание х2, х3 и даты КВ"),
-        ],
-        [
             KeyboardButton(text="Инструкция по КВ"),
             KeyboardButton(text="Гайд по аптечкам в КВ"),
         ],
@@ -209,7 +206,7 @@ async def help_button(message: Message, sms: str) -> None:
         ],
         [KeyboardButton(text="Схемы всех рейдов")],
         [KeyboardButton(text="Расписание клановых заданий")],
-        [KeyboardButton(text="🔙Назад🔙")],
+        [KeyboardButton(text=go_back)],
     ]
     await send_message(message, sms, reply_keyboard)
 
