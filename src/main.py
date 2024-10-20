@@ -1,40 +1,28 @@
 import asyncio
 import logging
-import os
-from typing import Any
 
-from aiogram import Bot, Dispatcher, F, Router, html
+from aiogram import Bot, Dispatcher, F
 from aiogram.client.default import DefaultBotProperties
 from aiogram.client.session.aiohttp import AiohttpSession
 from aiogram.enums import ParseMode
-from aiogram.filters import CommandStart
-from aiogram.filters.command import Command
+
 from aiogram.fsm.context import FSMContext
-from aiogram.fsm.state import State, StatesGroup
+
 from aiogram.types import (
     BotCommand,
     CallbackQuery,
-    FSInputFile,
     InlineKeyboardButton,
     InlineKeyboardMarkup,
-    KeyboardButton,
-    Message,
-    ReplyKeyboardMarkup,
+    Message
 )
 
-from buttons import new_button, setting_hero_button
+from buttons import setting_hero_button
 from config import settings
 from migrations import run_connection_db
 from tables.heroes_of_users import HeroesOfUsers
-from tables.telegram_users import User
 
-form_router = Router()
-
-
-class Regisration(StatesGroup):
-    name = State()
-    user_id = State()
-    hero_id = State()
+from src import form_router, Regisration
+import commands
 
 
 async def first_sms(message: Message):
@@ -49,34 +37,34 @@ async def first_sms(message: Message):
     await message.answer(sms, parse_mode=ParseMode.MARKDOWN_V2)
 
 
-@form_router.message(CommandStart())
-async def start(message: Message, state: FSMContext) -> None:
-    if message.chat.type == "private":
-        if message.from_user is not None:
-            user_id: int = int(message.from_user.id)
-            if user := await User.query.where(
-                User.user_id == user_id
-            ).gino.first():
-                if hero_user_search := await HeroesOfUsers.query.where(
-                    HeroesOfUsers.user_id == user.id
-                ).gino.first():
-                    sms = f"Привет, {str(hero_user_search.name)}"
-                    await new_button(message, sms)
-                    return
-                # user(message, sms)
-            else:
-                user = await User(
-                    user_id=user_id,
-                    first_name=message.from_user.first_name,
-                    last_name=message.from_user.last_name,
-                    username=message.from_user.username,
-                    language_code=message.from_user.language_code,
-                ).create()
-                await message.answer(
-                    "Я тебя не помню. Давай знакомиться! Какой у тебя ник в игре?"
-                )
-            await state.update_data(user_id=user.id)
-            await state.set_state(Regisration.name)
+# @form_router.message(CommandStart())
+# async def start(message: Message, state: FSMContext) -> None:
+#     if message.chat.type == "private":
+#         if message.from_user is not None:
+#             user_id: int = int(message.from_user.id)
+#             if user := await User.query.where(
+#                 User.user_id == user_id
+#             ).gino.first():
+#                 if hero_user_search := await HeroesOfUsers.query.where(
+#                     HeroesOfUsers.user_id == user.id
+#                 ).gino.first():
+#                     sms = f"Привет, {str(hero_user_search.name)}"
+#                     await new_button(message, sms)
+#                     return
+#                 # user(message, sms)
+#             else:
+#                 user = await User(
+#                     user_id=user_id,
+#                     first_name=message.from_user.first_name,
+#                     last_name=message.from_user.last_name,
+#                     username=message.from_user.username,
+#                     language_code=message.from_user.language_code,
+#                 ).create()
+#                 await message.answer(
+#                     "Я тебя не помню. Давай знакомиться! Какой у тебя ник в игре?"
+#                 )
+#             await state.update_data(user_id=user.id)
+#             await state.set_state(Regisration.name)
 
 
 @form_router.callback_query(Regisration.name, F.data == "yes")

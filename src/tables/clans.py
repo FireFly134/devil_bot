@@ -32,9 +32,9 @@ class Clans(db.Model):
     start = sa.Column(
         "start",
         sa.Boolean(),
-        default=False,
+        default=True,
         nullable=False,
-        server_default=sa.false(),
+        server_default=sa.true(),
     )
     description_of_the_kz = sa.Column(
         "description_of_the_kz",

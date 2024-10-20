@@ -38,7 +38,7 @@ def upgrade_write():
     sa.Column('time_kz', sa.Integer(), server_default=sa.text('18'), nullable=False),
     sa.Column('chat_id', sa.String(), nullable=False),
     sa.Column('news', sa.Boolean(), server_default=sa.text('true'), nullable=False),
-    sa.Column('start', sa.Boolean(), server_default=sa.text('false'), nullable=False),
+    sa.Column('start', sa.Boolean(), server_default=sa.text('true'), nullable=False),
     sa.Column('description_of_the_kz', sa.Boolean(), server_default=sa.text('true'), nullable=False),
     sa.Column('subscription_rock', sa.Boolean(), server_default=sa.text('true'), nullable=False),
     sa.Column('remain_zero_rock', sa.Boolean(), server_default=sa.text('true'), nullable=False),
