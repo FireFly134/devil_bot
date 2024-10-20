@@ -16,13 +16,14 @@ from aiogram.types import (
     Message
 )
 
-from buttons import setting_hero_button
+from buttons import setting_hero_button, new_button
 from config import settings
 from migrations import run_connection_db
 from tables.heroes_of_users import HeroesOfUsers
 
 from src import form_router, Regisration
 import commands
+from menu import main_menu
 
 
 async def first_sms(message: Message):
