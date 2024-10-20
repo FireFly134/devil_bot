@@ -1,0 +1,67 @@
+[tool.poetry]
+name = "devil-bot"
+version = "3.0.1"
+description = ""
+authors = ["Konstantin Tkache <menace34@bk.ru>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "3.11.9"
+alembic = "*"
+aiogram = "*"
+pandas = "*"
+SQLAlchemy = "*"
+psycopg2-binary = "*"
+pydantic-settings = "*"
+gino = "^1.0.1"
+
+[tool.poetry.group.dev.dependencies]
+isort = "^5.12.0"
+black = "^23.11.0"
+mypy = "^1.7.1"
+coverage = "^7.3.2"
+flake8 = "^6.1.0"
+flake8-logging-format = "^0.9.0"
+flake8-alfred = "^1.1.1"
+flake8-builtins = "^2.2.0"
+flake8-coding = "^1.3.2"
+flake8-comprehensions = "^3.14.0"
+flake8-debugger = "^4.1.2"
+flake8-multiline-containers = "^0.0.19"
+flake8-pep3101 = "^2.1.0"
+flake8-print = "^5.0.0"
+flake8-pytest-style = "^1.7.2"
+flake8-return = "^1.2.0"
+flake8-quotes = "^3.3.2"
+flake8-simplify = "^0.21.0"
+flake8-sql = "^0.4.1"
+flake8-cognitive-complexity = "^0.1.0"
+types-requests = "^2.31.0.10"
+flake8-docstrings = "^1.7.0"
+flake8-eradicate = "^1.5.0"
+flake8-annotations = "^3.0.1"
+flake8-isort = "^6.1.1"
+wemake-python-styleguide = "^0.18.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 79
+include = '\.py$'
+exclude = '''
+/(
+    \.git
+  | \.mypy_cache
+  | env
+  | migrations
+)/
+'''
+
+[tool.isort]
+line_length = 79
+py_version = 39
+skip = "migrations"
+sections = "FUTURE,STDLIB,THIRDPARTY,FIRSTPARTY,LOCALFOLDER"
+profile = "black"
