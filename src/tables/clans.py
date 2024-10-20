@@ -2,7 +2,7 @@
 
 import sqlalchemy as sa
 
-from src.migrations import db
+from migrations import db
 
 
 class Clans(db.Model):
