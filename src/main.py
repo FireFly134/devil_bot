@@ -5,25 +5,22 @@ from aiogram import Bot, Dispatcher, F
 from aiogram.client.default import DefaultBotProperties
 from aiogram.client.session.aiohttp import AiohttpSession
 from aiogram.enums import ParseMode
-
 from aiogram.fsm.context import FSMContext
-
 from aiogram.types import (
     BotCommand,
     CallbackQuery,
     InlineKeyboardButton,
     InlineKeyboardMarkup,
-    Message
+    Message,
 )
 
-from buttons import setting_hero_button, new_button
-from config import settings
-from migrations import run_connection_db
-from tables.heroes_of_users import HeroesOfUsers
-
-from src import form_router, Regisration
 import commands
-from menu import main_menu
+from buttons import new_button, setting_hero_button
+from config import settings
+from menu import main_menu, menu_help
+from migrations import run_connection_db
+from src import Regisration, form_router
+from tables.heroes_of_users import HeroesOfUsers
 
 
 async def first_sms(message: Message):
@@ -53,7 +50,9 @@ async def missing_name(call: CallbackQuery, state: FSMContext) -> None:
         ).create()
     await state.clear()
     await call.message.delete()
-    await setting_hero_button(call.message, data["user_id"], "Отлично, будем знакомы)")
+    await setting_hero_button(
+        call.message, data["user_id"], "Отлично, будем знакомы)"
+    )
     try:
         await first_sms(call.message)
     except Exception as err:
@@ -98,12 +97,25 @@ async def set_default_commands(bot: Bot) -> None:
             # BotCommand(command="heroes_for_events", description=""),
             # BotCommand(command="pak_and_counterpak", description=""),
             # BotCommand(command="useful_links", description=""),
-            BotCommand(command="commands_for_chat", description="Команды для чата"),
-            BotCommand(command="stop",
-                       description="Остановить деятельность бота (для чата)"),
-            BotCommand(command="update_time_change_clan_task", description="Сменить время обнуления камней."),
-            BotCommand(command="start_remind", description="Активация напоминания об обнулении камней."),
-            BotCommand(command="stop_remind", description="Деактивация напоминания об обнулении камней."),
+            BotCommand(
+                command="commands_for_chat", description="Команды для чата"
+            ),
+            BotCommand(
+                command="stop",
+                description="Остановить деятельность бота (для чата)",
+            ),
+            BotCommand(
+                command="update_time_change_clan_task",
+                description="Сменить время обнуления камней.",
+            ),
+            BotCommand(
+                command="start_remind",
+                description="Активация напоминания об обнулении камней.",
+            ),
+            BotCommand(
+                command="stop_remind",
+                description="Деактивация напоминания об обнулении камней.",
+            ),
             BotCommand(
                 command="cancel",
                 description="Отменить текущее действие и начать все с начала",
