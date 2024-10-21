@@ -5,7 +5,7 @@ from aiogram.types import (
     ReplyKeyboardMarkup,
 )
 
-from menu.text_menu import main_menu, go_back
+from menu.text_menu import go_back, main_menu, menu_help
 from migrations import db
 from tables.heroes_of_users import HeroesOfUsers
 
@@ -37,7 +37,9 @@ async def setting_button(message: Message, sms: str) -> None:
     await send_message(message, sms, reply_keyboard)
 
 
-async def setting_hero_button(message: Message, user_id: int, sms: str) -> None:
+async def setting_hero_button(
+    message: Message, user_id: int, sms: str
+) -> None:
     """Манапуляции с героем"""
     reply_keyboard = []
     num = await db.func.count(HeroesOfUsers.user_id == user_id).gino.scalar()
@@ -134,13 +136,13 @@ async def edit_time_button(message: Message, sms: str) -> None:
 async def new_button(message: Message, sms: str) -> None:
     """Вывод кнопок"""
     reply_keyboard = [
-        [KeyboardButton(text=main_menu['1'])],
+        [KeyboardButton(text=main_menu["1"])],
         [
-            KeyboardButton(text=main_menu['2']),
-            KeyboardButton(text=main_menu['3']),
+            KeyboardButton(text=main_menu["2"]),
+            KeyboardButton(text=main_menu["3"]),
         ],
-        [KeyboardButton(text=main_menu['4'])],
-        [KeyboardButton(text=main_menu['5'])],
+        [KeyboardButton(text=main_menu["4"])],
+        [KeyboardButton(text=main_menu["5"])],
     ]
     # TODO будут ли у нас Админы?
     # info = pd.read_sql(
@@ -172,9 +174,15 @@ async def setting_admin_button(message: Message, sms: str) -> None:
 async def help_my_button(message: Message, sms: str) -> None:
     """Вывод кнопок помощи"""
     reply_keyboard = [
-        [KeyboardButton(text="Инструкция по применению")],
-        [KeyboardButton(text="Инструкция для подключения меня к чату")],
-        [KeyboardButton(text="Основные команды в чате")],
+        [KeyboardButton(text=menu_help["instructions_for_use"])],
+        [
+            KeyboardButton(
+                text=menu_help[
+                    "instructions_for_implementing_the_bot_in_the_chat"
+                ]
+            )
+        ],
+        [KeyboardButton(text=menu_help["basic_commands_in_the_chat"])],
         [KeyboardButton(text=go_back)],
     ]
     await send_message(message, sms, reply_keyboard)
