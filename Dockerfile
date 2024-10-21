@@ -7,7 +7,8 @@ ENV PIP_NO_CACHE_DIR=1 \
     POETRY_NO_INTERACTION=1 \
     POETRY_VIRTUALENVS_CREATE=false \
     POETRY_CACHE_DIR='/var/cache/pypoetry' \
-    POETRY_HOME='/usr/local'
+    POETRY_HOME='/usr/local' \
+    PYTHONPATH="$PYTHONPATH:/app/src/"
 
 RUN apt-get update && apt-get upgrade -y \
     && apt-get install --no-install-recommends -y \
