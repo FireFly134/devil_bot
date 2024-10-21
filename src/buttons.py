@@ -5,7 +5,12 @@ from aiogram.types import (
     ReplyKeyboardMarkup,
 )
 
-from menu.text_menu import go_back, main_menu, menu_help
+from menu.text_menu import (
+    go_back,
+    main_menu,
+    menu_help,
+    menu_useful_information,
+)
 from migrations import db
 from tables.heroes_of_users import HeroesOfUsers
 
@@ -136,10 +141,10 @@ async def edit_time_button(message: Message, sms: str) -> None:
 async def new_button(message: Message, sms: str) -> None:
     """Вывод кнопок"""
     reply_keyboard = [
-        [KeyboardButton(text=main_menu["1"])],
+        [KeyboardButton(text=main_menu["help"])],
         [
             KeyboardButton(text=main_menu["2"]),
-            KeyboardButton(text=main_menu["3"]),
+            KeyboardButton(text=main_menu["useful_information"]),
         ],
         [KeyboardButton(text=main_menu["4"])],
         [KeyboardButton(text=main_menu["5"])],
@@ -189,31 +194,45 @@ async def help_my_button(message: Message, sms: str) -> None:
 
 
 async def useful_info_button(message: Message, sms: str) -> None:
-    """Вывод кнопок помощи"""
+    """Вывод кнопок помощи для новых игроков."""
     reply_keyboard = [
-        [KeyboardButton(text="Для новичков")],
+        [KeyboardButton(text=menu_useful_information["for_new_gamers"])],
         [
             KeyboardButton(
-                text="Как зайти в игру, если по каким-то причинам не получается зайти"
+                text=menu_useful_information["how_to_log_in_to_the_game"]
             )
         ],
         [
-            KeyboardButton(text="Кого качать в начале"),
             KeyboardButton(
-                text="Кого качать для получения героев из событий?"
+                text=menu_useful_information[
+                    "who_to_download_at_the_beginning"
+                ]
+            ),
+            KeyboardButton(
+                text=menu_useful_information["necessary_heroes_for_events"]
             ),
         ],
-        [KeyboardButton(text="Полезные ссылки")],
+        [KeyboardButton(text=menu_useful_information["useful_links"])],
         [
-            KeyboardButton(text="Инструкция по КВ"),
-            KeyboardButton(text="Гайд по аптечкам в КВ"),
+            KeyboardButton(
+                text=menu_useful_information["instructions_for_kv"]
+            ),
+            KeyboardButton(
+                text=menu_useful_information["instructions_aptechkam_kv"]
+            ),
         ],
         [
-            KeyboardButton(text="Паки и контрпаки"),
-            KeyboardButton(text="Испытания на 3*"),
+            KeyboardButton(
+                text=menu_useful_information["packs_and_counterattacks"]
+            ),
+            KeyboardButton(text=menu_useful_information["three_star_trials"]),
         ],
-        [KeyboardButton(text="Схемы всех рейдов")],
-        [KeyboardButton(text="Расписание клановых заданий")],
+        [KeyboardButton(text=menu_useful_information["schemes_of_all_raids"])],
+        [
+            KeyboardButton(
+                text=menu_useful_information["schedule_of_clan_tasks"]
+            )
+        ],
         [KeyboardButton(text=go_back)],
     ]
     await send_message(message, sms, reply_keyboard)

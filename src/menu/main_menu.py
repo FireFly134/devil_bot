@@ -37,7 +37,7 @@ async def print_rock(message: Message, info):  ###вывод камней
     await message.answer(sms)
 
 
-@form_router.message(F.text == main_menu["1"])
+@form_router.message(F.text == main_menu["help"])
 async def helper(message: Message) -> None:
     await help_my_button(message, "Вот, листай список, выбирай!")
 
@@ -69,7 +69,7 @@ async def start_print_rock(message: Message) -> None:
         )
 
 
-@form_router.message(F.text == main_menu["3"])
+@form_router.message(F.text == main_menu["useful_information"])
 async def useful_information(message: Message) -> None:
     await useful_info_button(message, "Вот, листай список, выбирай!")
 

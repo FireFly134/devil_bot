@@ -17,7 +17,7 @@ from aiogram.types import (
 import commands
 from buttons import new_button, setting_hero_button
 from config import settings
-from menu import main_menu, menu_help
+from menu import main_menu, menu_help, menu_useful_information
 from migrations import run_connection_db
 from src import Regisration, form_router
 from tables.heroes_of_users import HeroesOfUsers
