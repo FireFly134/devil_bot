@@ -8,3 +8,8 @@ class Regisration(StatesGroup):
     name = State()
     user_id = State()
     hero_id = State()
+
+
+class UpdateTimeChangeClanTask(StatesGroup):
+    hour = State()
+    chat_id = State()

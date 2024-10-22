@@ -10,11 +10,8 @@ from src.menu.text_menu import menu_useful_information
 @form_router.message(F.text == menu_useful_information["for_new_gamers"])
 async def for_new_gamers(message: Message) -> None:
     """Для новых игроков."""
-    # with open(working_folder + "help/manual_for_new_gamers.pdf",
-    #           "rb") as pdf:
-    #     await message.answer_document(
-    #         document=pdf
-    #     )
+    with open(working_folder + "help/manual_for_new_gamers.pdf", "rb") as pdf:
+        await message.answer_document(document=pdf)
     text = await get_text("For_new_gamers")
     await message.answer(text, parse_mode=ParseMode.MARKDOWN_V2)
 
@@ -58,14 +55,10 @@ async def necessary_heroes_for_events(message: Message) -> None:
     }
     for name in file_name:
         await message.answer("Функции пока что нет.")
-        # with open(
-        #         working_folder + f"help/necessary_heroes_for_events/{name}",
-        #         "rb"
-        # ) as img:
-        #     await message.answer_photo(
-        #         photo=img,
-        #         caption=file_name[name]
-        #     )
+        with open(
+            working_folder + f"help/necessary_heroes_for_events/{name}", "rb"
+        ) as img:
+            await message.answer_photo(photo=img, caption=file_name[name])
 
 
 @form_router.message(F.text == menu_useful_information["useful_links"])
@@ -81,9 +74,9 @@ async def instructions_for_kv(message: Message) -> None:
     text1 = await get_text("kv1")
     text2 = await get_text("kv2")
     await message.answer(text1)
-    # await message.answer_photo(
-    #     photo=open(working_folder + "help/kv.jpg", "rb"),
-    # )
+    await message.answer_photo(
+        photo=open(working_folder + "help/kv.jpg", "rb"),
+    )
     await message.answer(text2)
 
 
@@ -93,9 +86,7 @@ async def instructions_for_kv(message: Message) -> None:
 async def instructions_aptechkam_kv(message: Message) -> None:
     """Гайд по аптечкам в КВ."""
     with open(working_folder + "help/Manual_KV.doc", "rb") as file:
-        context.bot.send_document(
-            chat_id=update.effective_chat.id, document=file
-        )
+        await message.answer_document(document=file)
 
 
 @form_router.message(
@@ -111,16 +102,14 @@ async def packs_and_counterattacks(message: Message) -> None:
         "pak_and_counterpak5",
     ]:
         with open(working_folder + f"help/{name}.jpg", "rb") as img:
-            context.bot.send_photo(chat_id=update.effective_chat.id, photo=img)
+            await message.answer_photo(photo=img)
 
 
 @form_router.message(F.text == menu_useful_information["three_star_trials"])
 async def three_star_trials(message: Message) -> None:
     """Испытания на 3*."""
     with open(working_folder + "help/recent_trials.doc", "rb") as doc:
-        context.bot.send_document(
-            chat_id=update.effective_chat.id, document=doc
-        )
+        await message.answer_document(document=doc)
 
 
 @form_router.message(F.text == menu_useful_information["schemes_of_all_raids"])

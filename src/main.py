@@ -14,6 +14,7 @@ from aiogram.types import (
     Message,
 )
 
+import chat_commands
 import commands
 from buttons import new_button, setting_hero_button
 from config import settings
@@ -82,6 +83,35 @@ async def reg_start(message: Message, state: FSMContext) -> None:
             ],
             resize_keyboard=True,
         ),
+    )
+
+
+async def add_rock(message: Message, upg_rock: int, id_hero: int) -> None:
+    """Добавление камней"""
+    info = await HeroesOfUsers.query.where(
+        HeroesOfUsers.id == id_hero
+    ).gino.first()
+    if info.rock == 0 or info.rock < upg_rock:
+        await info.update(rock=upg_rock).apply()
+        await message.answer(
+            f"Ок, я внес изменения. Тебе осталось добить {600 - upg_rock}"
+        )
+        return
+    await message.answer(
+        f"Ты меня не обманешь! В прошлый раз ты писал {info.rock}"
+    )
+
+
+async def delete_person(message: Message, id_hero: int) -> None:
+    """Удаляем персонажа, смотрим сколько всего персов и смещаем их к тому который удаляем"""
+    if info := await HeroesOfUsers.query.where(
+        HeroesOfUsers.id == id_hero
+    ).gino.first():
+        await new_button(message, f'Герой с ником "{info.name}" удален!')
+        await info.delete().apply()
+        return
+    await new_button(
+        message, "Я не помню такого героя. Значит и проблем нет :)"
     )
 
 
