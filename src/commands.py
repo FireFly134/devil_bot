@@ -1,10 +1,9 @@
-from aiogram.exceptions import TelegramBadRequest
 from aiogram.filters import CommandStart
 from aiogram.filters.command import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 
-from buttons import new_button
+from menu.buttons import new_button
 from chat_commands import chat_start
 from src import Regisration, form_router
 from tables.heroes_of_users import HeroesOfUsers

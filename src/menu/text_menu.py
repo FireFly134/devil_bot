@@ -25,6 +25,25 @@ menu_useful_information = {
     "schemes_of_all_raids": "Схемы всех рейдов",
     "schedule_of_clan_tasks": "Расписание клановых заданий",
 }
+
+setting_profile = {
+    "setting_hero": "Манипуляции с героем",
+    "subscribe": "Подписки...",
+    "update_time": "Поменять время...",
+    "check_data_profile": "Проверить данные профиля",
+    "add_hero": "Добавить еще одного героя",
+    "delete_hero": "Удалить одного героя",
+    "rename_hero": "Переименовать героя",
+    "unsubscribe_replace_kz": "Отписаться от напоминалки о смене КЗ за час",
+    "subscribe_replace_kz": "Подписаться на напоминалку о смене КЗ за час",
+    "unsubscribe_energy": "Отписаться от напоминалки по сбору энергии",
+    "subscribe_energy": "Подписаться на напоминалку по сбору энергии",
+    "unsubscribe_description_kz": "Отписаться от ежедневного описания КЗ",
+    "subscribe_description_kz": "Подписаться на ежедневное описание КЗ",
+    "update_time_replace_kz": "Поменять время смены КЗ",
+    "update_time_energy": "Поменять время первого сбора энергии",
+}
+
 {
     "": "",
 }

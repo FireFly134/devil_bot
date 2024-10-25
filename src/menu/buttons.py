@@ -9,7 +9,7 @@ from menu.text_menu import (
     go_back,
     main_menu,
     menu_help,
-    menu_useful_information,
+    menu_useful_information, setting_profile,
 )
 from migrations import db
 from tables.heroes_of_users import HeroesOfUsers
@@ -31,7 +31,7 @@ async def send_message(
 async def setting_button(message: Message, sms: str) -> None:
     """Вывод кнопок Настроек"""
     reply_keyboard = [
-        [KeyboardButton(text="Манипуляции с героем")],
+        [KeyboardButton(text=setting_profile["setting_hero"])],
         [
             KeyboardButton(text="Подписки..."),
             KeyboardButton(text="Поменять время..."),
@@ -82,7 +82,7 @@ async def subscription_button(
 
     subscription = HeroesOfUsers.query.where(
         HeroesOfUsers.id == id_hero
-    ).first()
+    ).gino.first()
     # subscription = pd.read_sql(
     #     f"SELECT subscription_rock, subscription_energy, description_of_the_kz FROM heroes_of_users WHERE user_id = '{update.effective_chat.id}' AND id = '{id_hero}';",
     #     engine,

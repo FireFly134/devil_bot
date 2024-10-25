@@ -16,9 +16,9 @@ from aiogram.types import (
 
 import chat_commands
 import commands
-from buttons import new_button, setting_hero_button
+from menu.buttons import setting_hero_button
 from config import settings
-from menu import main_menu, menu_help, menu_useful_information
+from menu import menu_help, menu_useful_information, menu_setting_progile, main_menu
 from migrations import run_connection_db
 from src import Regisration, form_router
 from tables.heroes_of_users import HeroesOfUsers
@@ -99,19 +99,6 @@ async def add_rock(message: Message, upg_rock: int, id_hero: int) -> None:
         return
     await message.answer(
         f"Ты меня не обманешь! В прошлый раз ты писал {info.rock}"
-    )
-
-
-async def delete_person(message: Message, id_hero: int) -> None:
-    """Удаляем персонажа, смотрим сколько всего персов и смещаем их к тому который удаляем"""
-    if info := await HeroesOfUsers.query.where(
-        HeroesOfUsers.id == id_hero
-    ).gino.first():
-        await new_button(message, f'Герой с ником "{info.name}" удален!')
-        await info.delete().apply()
-        return
-    await new_button(
-        message, "Я не помню такого героя. Значит и проблем нет :)"
     )
 
 
