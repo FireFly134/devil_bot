@@ -17,8 +17,9 @@ from tables.heroes_of_users import HeroesOfUsers
 from tables.telegram_users import User
 
 
-async def print_rock(message: Message, info):  ###вывод камней
-    hours = info["time_change_kz"]
+async def print_rock(message: Message, hero: HeroesOfUsers) -> None:
+    """Вывод камней"""
+    hours = hero.time_change_kz
     now = datetime.now()
     time1 = timedelta(
         days=now.day, hours=now.hour, minutes=now.minute, seconds=now.second
@@ -28,13 +29,12 @@ async def print_rock(message: Message, info):  ###вывод камней
     if time3.days == -1:
         time2 = timedelta(days=now.day + 1, hours=hours, minutes=30, seconds=0)
         time3 = time2 - time1
-    if int(info.rock) == 0:
+    if hero.rock == 0:
         sms = "Ты еще не вводил количество своих камней. Введи количество цифрами!"
     else:
-        sms = (
-            f"У твоего героя под ником \"{info['name']}\" - \"{info['rock']}\" камней! Осталось добить {600 - int(info['rock'])}. До обновления К.З. осталось "
-            + str(time3)
-        )
+        sms = (f'У твоего героя под ником "{hero.name}" - "{hero.rock}" камней! '
+               f'Осталось добить {600 - hero.rock}. '
+               f'До обновления К.З. осталось {time3}')
     await message.answer(sms)
 
 
@@ -45,22 +45,23 @@ async def helper(message: Message) -> None:
 
 @form_router.message(F.text == main_menu["2"])
 async def start_print_rock(message: Message) -> None:
-    info = (
-        await HeroesOfUsers.join(User)
+    heros = (
+        await HeroesOfUsers.join(User, HeroesOfUsers.user_id == User.id)
         .select()
         .where(User.user_id == message.from_user.id)
+        .with_only_columns(HeroesOfUsers)
         .gino.all()
     )
     keyboard = []
-    if len(info) == 1:
-        await print_rock(message, info[0])
+    if len(heros) == 1:
+        await print_rock(message, heros[0])
     else:
-        for i in range(len(info)):
+        for hero in heros:
             keyboard.append(
                 [
                     InlineKeyboardButton(
-                        text=str(info.loc[i, "name"]),
-                        callback_data=f'print-{info.loc[i, "id"]}',
+                        text=str(hero.name),
+                        callback_data=f'print-{hero.id}',
                     )
                 ]
             )
@@ -190,5 +191,5 @@ async def go_back(message: Message) -> None:
     # else:
     await new_button(
         message,
-        "Погнали, назад, в главное меню.",
+        "Погнали назад - в главное меню.",
     )
