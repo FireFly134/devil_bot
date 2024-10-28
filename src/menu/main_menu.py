@@ -27,14 +27,16 @@ async def print_rock(message: Message, hero: HeroesOfUsers) -> None:
     time2 = timedelta(days=now.day, hours=hours, minutes=30, seconds=0)
     time3 = time2 - time1
     if time3.days == -1:
-        time2 = timedelta(days=now.day + 1, hours=hours, minutes=30, seconds=0)
+        time2 = time2 + timedelta(days=1)
         time3 = time2 - time1
     if hero.rock == 0:
         sms = "Ты еще не вводил количество своих камней. Введи количество цифрами!"
     else:
-        sms = (f'У твоего героя под ником "{hero.name}" - "{hero.rock}" камней! '
-               f'Осталось добить {600 - hero.rock}. '
-               f'До обновления К.З. осталось {time3}')
+        sms = (
+            f'У твоего героя под ником "{hero.name}" - "{hero.rock}" камней! '
+            f"Осталось добить {600 - hero.rock}. "
+            f"До обновления К.З. осталось {time3}"
+        )
     await message.answer(sms)
 
 
@@ -61,7 +63,7 @@ async def start_print_rock(message: Message) -> None:
                 [
                     InlineKeyboardButton(
                         text=str(hero.name),
-                        callback_data=f'print-{hero.id}',
+                        callback_data=f"print-{hero.id}",
                     )
                 ]
             )
