@@ -6,10 +6,12 @@ from aiogram.types import (
 )
 
 from menu.text_menu import (
+    cancel,
     go_back,
     main_menu,
     menu_help,
-    menu_useful_information, setting_profile,
+    menu_useful_information,
+    setting_profile,
 )
 from migrations import db
 from tables.heroes_of_users import HeroesOfUsers
@@ -33,10 +35,10 @@ async def setting_button(message: Message, sms: str) -> None:
     reply_keyboard = [
         [KeyboardButton(text=setting_profile["setting_hero"])],
         [
-            KeyboardButton(text="Подписки..."),
-            KeyboardButton(text="Поменять время..."),
+            KeyboardButton(text=setting_profile["subscribe"]),
+            KeyboardButton(text=setting_profile["update_time"]),
         ],
-        [KeyboardButton(text="Проверить данные профиля")],
+        [KeyboardButton(text=setting_profile["check_data_profile"])],
         [KeyboardButton(text=go_back)],
     ]
     await send_message(message, sms, reply_keyboard)
@@ -55,21 +57,21 @@ async def setting_hero_button(
     # num = int(info.loc[0, "count"])
     if num == 5:
         reply_keyboard += [
-            [KeyboardButton(text="Удалить одного героя")],
-            [KeyboardButton(text="Переименовать героя")],
+            [KeyboardButton(text=setting_profile["delete_hero"])],
+            [KeyboardButton(text=setting_profile["rename_hero"])],
             [KeyboardButton(text=go_back)],
         ]
     elif num == 1:
         reply_keyboard += [
-            [KeyboardButton(text="Добавить еще одного героя")],
-            [KeyboardButton(text="Переименовать героя")],
+            [KeyboardButton(text=setting_profile["add_hero"])],
+            [KeyboardButton(text=setting_profile["rename_hero"])],
             [KeyboardButton(text=go_back)],
         ]
     else:
         reply_keyboard += [
-            [KeyboardButton(text="Добавить еще одного героя")],
-            [KeyboardButton(text="Удалить одного героя")],
-            [KeyboardButton(text="Переименовать героя")],
+            [KeyboardButton(text=setting_profile["add_hero"])],
+            [KeyboardButton(text=setting_profile["delete_hero"])],
+            [KeyboardButton(text=setting_profile["rename_hero"])],
             [KeyboardButton(text=go_back)],
         ]
     await send_message(message, sms, reply_keyboard)
@@ -90,19 +92,11 @@ async def subscription_button(
     reply_keyboard = []
     if hero.subscription_rock:
         reply_keyboard += [
-            [
-                KeyboardButton(
-                    text=setting_profile["unsubscribe_replace_kz"]
-                )
-            ]
+            [KeyboardButton(text=setting_profile["unsubscribe_replace_kz"])]
         ]
     else:
         reply_keyboard += [
-            [
-                KeyboardButton(
-                    text=setting_profile["subscribe_replace_kz"]
-                )
-            ]
+            [KeyboardButton(text=setting_profile["subscribe_replace_kz"])]
         ]
     if hero.subscription_energy:
         reply_keyboard += [
@@ -110,15 +104,15 @@ async def subscription_button(
         ]
     else:
         reply_keyboard += [
-            [
-                KeyboardButton(
-                    text=setting_profile["subscribe_energy"]
-                )
-            ]
+            [KeyboardButton(text=setting_profile["subscribe_energy"])]
         ]
     if hero.description_of_the_kz:
         reply_keyboard += [
-            [KeyboardButton(text=setting_profile["unsubscribe_description_kz"])]
+            [
+                KeyboardButton(
+                    text=setting_profile["unsubscribe_description_kz"]
+                )
+            ]
         ]
     else:
         reply_keyboard += [
@@ -240,4 +234,4 @@ async def useful_info_button(message: Message, sms: str) -> None:
 
 async def cancel_button(message: Message, sms: str) -> None:
     """Кнопка отмены"""
-    await send_message(message, sms, [[KeyboardButton(text="Отмена")]])
+    await send_message(message, sms, [[KeyboardButton(text=cancel)]])

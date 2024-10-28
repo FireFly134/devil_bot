@@ -11,7 +11,7 @@ from menu.buttons import (
     setting_button,
     useful_info_button,
 )
-from src import form_router, SettingProfile
+from src import SettingProfile, form_router
 from src.menu.text_menu import go_back, main_menu
 from tables.heroes_of_users import HeroesOfUsers
 from tables.telegram_users import User
@@ -77,12 +77,12 @@ async def useful_information(message: Message) -> None:
 
 @form_router.message(F.text == main_menu["4"])
 async def setting_up_a_profile(message: Message, state: FSMContext) -> None:
-    user = await User.query.where(User.user_id == message.from_user.id).gino.first()
-    info = (
-        await HeroesOfUsers.query
-        .where(HeroesOfUsers.user_id == user.id)
-        .gino.all()
-    )
+    user = await User.query.where(
+        User.user_id == message.from_user.id
+    ).gino.first()
+    info = await HeroesOfUsers.query.where(
+        HeroesOfUsers.user_id == user.id
+    ).gino.all()
     if len(info) == 1:
         await state.update_data(hero_id=info[0].id)
         await state.update_data(user_id=info[0].user_id)
@@ -97,7 +97,7 @@ async def setting_up_a_profile(message: Message, state: FSMContext) -> None:
                 [
                     InlineKeyboardButton(
                         text=str(info.name),
-                        callback_data=f'setting_profile-{info.id}',
+                        callback_data=f"setting_profile-{info.id}",
                     )
                 ]
             ]

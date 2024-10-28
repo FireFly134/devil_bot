@@ -3,8 +3,8 @@ from aiogram.filters.command import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 
-from menu.buttons import new_button
 from chat_commands import chat_start
+from menu.buttons import new_button
 from src import Regisration, form_router
 from tables.heroes_of_users import HeroesOfUsers
 from tables.telegram_users import User

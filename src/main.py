@@ -16,9 +16,14 @@ from aiogram.types import (
 
 import chat_commands
 import commands
-from menu.buttons import setting_hero_button
 from config import settings
-from menu import menu_help, menu_useful_information, menu_setting_progile, main_menu
+from menu import (
+    main_menu,
+    menu_help,
+    menu_setting_progile,
+    menu_useful_information,
+)
+from menu.buttons import setting_hero_button
 from migrations import run_connection_db
 from src import Regisration, form_router
 from tables.heroes_of_users import HeroesOfUsers
@@ -42,8 +47,8 @@ async def missing_name(call: CallbackQuery, state: FSMContext) -> None:
     if "hero_id" in data:
         hero = await HeroesOfUsers.query.where(
             HeroesOfUsers.id == data["hero_id"]
-        )
-        hero.update(name=data["name"]).apply()
+        ).gino.first()
+        await hero.update(name=data["name"]).apply()
     else:
         await HeroesOfUsers(
             user_id=data["user_id"],
