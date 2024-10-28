@@ -1,5 +1,16 @@
 version: '3.3'
 services:
+  postgres:
+    image: postgres
+    container_name: postgres
+    env_file:
+      - .env
+    environment:
+      POSTGRES_PASSWORD: test
+      POSTGRES_DB: test_bot
+    ports:
+      - "15432:5432"
+
   devil-bot:
     build:
       context: .

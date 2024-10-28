@@ -89,7 +89,7 @@ async def subscribe(message: Message, state: FSMContext) -> None:
 
 ### LEVEL 1
 async def engine_subscription(message: Message, who_edit: str, text: str, state: FSMContext) -> None:
-    await db.execute(
+    await db.status(
         f"UPDATE heroes_of_users SET {who_edit}"
         f"WHERE user_id = '{(await state.get_data())['user_id']}'"
         f"    and id = '{(await state.get_data())['hero_id']}';"
@@ -153,12 +153,14 @@ async def update_time(message: Message, state: FSMContext) -> None:
 @form_router.message(SettingProfile.time_zone)
 async def time_zone(message: Message, state: FSMContext) -> None:
     """Узнаем часовой во сколько происходит смена КЗ"""
+    msg = message.text
     if msg in settings.stop_word:
         sms = "Отмена"
         await setting_hero_button(message, (await state.get_data())["user_id"], sms)
         return
     if msg.isnumeric():
-        if 1 <= int(msg) <= 24:
+        msg = int(msg)
+        if 1 <= msg <= 24:
             hero = await HeroesOfUsers.get(int((await state.get_data())["hero_id"]))
             if (await state.get_data())["is_tz"]:
                 await hero.update(time_change_kz=msg).apply()
@@ -199,14 +201,15 @@ async def update_update_time_energytime(message: Message, state: FSMContext) -> 
 ### LEVEL 0
 @form_router.message(SettingProfile.is_active, F.text == setting_profile["check_data_profile"])
 async def check_data_profile(message: Message, state: FSMContext) -> None:
-    info = HeroesOfUsers.join(Clans).select().where(
+    data = await state.get_data()
+    info = await HeroesOfUsers.join(Clans, HeroesOfUsers.clan_id == Clans.id).select().where(
         and_(
-            HeroesOfUsers.user_id == (await state.get_data())["user_id"],
-            HeroesOfUsers.id == (await state.get_data())["hero_id"]
+            HeroesOfUsers.user_id == data["user_id"],
+            HeroesOfUsers.id == data["hero_id"]
         )
-    )
+    ).with_only_columns((HeroesOfUsers, Clans.name_clan)).gino.first()
     if str(info.name_clan) != "Без клана":
-        clan = f"Ты в клане \"{info.name_clan}\""
+        clan = f"Вы в клане \"{info.name_clan}\""
     else:
         clan = ""
     smena_KZ = str(
@@ -238,8 +241,8 @@ async def check_data_profile(message: Message, state: FSMContext) -> None:
         description_of_the_kz_text = (
             "Вы не подписаны на ежедневное описание КЗ."
         )
-    await message.ansver(
-        f"Твой ник в игре: {info.loc[0, 'name']}\n"
+    await message.answer(
+        f"Ваш ник в игре: {info.name}\n"
         f"{subscription_Rock_text}\n"
         f"{subscription_Energi_text}\n"
         f"{description_of_the_kz_text}\n"

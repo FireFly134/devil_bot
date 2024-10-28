@@ -80,7 +80,7 @@ async def subscription_button(
 ) -> None:
     """Подписки..."""
 
-    subscription = HeroesOfUsers.query.where(
+    hero = await HeroesOfUsers.query.where(
         HeroesOfUsers.id == id_hero
     ).gino.first()
     # subscription = pd.read_sql(
@@ -88,11 +88,11 @@ async def subscription_button(
     #     engine,
     # )
     reply_keyboard = []
-    if subscription.subscription_rock:
+    if hero.subscription_rock:
         reply_keyboard += [
             [
                 KeyboardButton(
-                    text="Отписаться от напоминалки о смене КЗ за час"
+                    text=setting_profile["unsubscribe_replace_kz"]
                 )
             ]
         ]
@@ -100,29 +100,29 @@ async def subscription_button(
         reply_keyboard += [
             [
                 KeyboardButton(
-                    text="Подписаться на напоминалку о смене КЗ за час"
+                    text=setting_profile["subscribe_replace_kz"]
                 )
             ]
         ]
-    if subscription.subscription_energy:
+    if hero.subscription_energy:
         reply_keyboard += [
-            [KeyboardButton(text="Отписаться от напоминалки по сбору энергии")]
+            [KeyboardButton(text=setting_profile["unsubscribe_energy"])]
         ]
     else:
         reply_keyboard += [
             [
                 KeyboardButton(
-                    text="Подписаться на напоминалку по сбору энергии"
+                    text=setting_profile["subscribe_energy"]
                 )
             ]
         ]
-    if subscription.description_of_the_kz:
+    if hero.description_of_the_kz:
         reply_keyboard += [
-            [KeyboardButton(text="Отписаться от ежедневного описания КЗ")]
+            [KeyboardButton(text=setting_profile["unsubscribe_description_kz"])]
         ]
     else:
         reply_keyboard += [
-            [KeyboardButton(text="Подписаться на ежедневное описание КЗ")]
+            [KeyboardButton(text=setting_profile["subscribe_description_kz"])]
         ]
     reply_keyboard += [[KeyboardButton(text=go_back)]]
     await send_message(message, sms, reply_keyboard)
@@ -131,8 +131,8 @@ async def subscription_button(
 async def edit_time_button(message: Message, sms: str) -> None:
     """Поменять время..."""
     reply_keyboard = [
-        [KeyboardButton(text="Поменять время смены КЗ")],
-        [KeyboardButton(text="Поменять время первого сбора энергии")],
+        [KeyboardButton(text=setting_profile["update_time_replace_kz"])],
+        [KeyboardButton(text=setting_profile["update_time_energy"])],
         [KeyboardButton(text=go_back)],
     ]
     await send_message(message, sms, reply_keyboard)
