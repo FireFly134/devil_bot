@@ -30,4 +30,4 @@ RUN poetry install --no-interaction --no-ansi
 
 COPY . .
 
-CMD ["python3", "src/main.py"]
+CMD ["/bin/bash", "start.sh"]
