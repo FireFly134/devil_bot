@@ -27,6 +27,7 @@ from menu.buttons import setting_hero_button
 from migrations import run_connection_db
 from src import Regisration, form_router
 from tables.heroes_of_users import HeroesOfUsers
+from tables.telegram_users import User
 
 
 async def first_sms(message: Message):
@@ -91,19 +92,29 @@ async def reg_start(message: Message, state: FSMContext) -> None:
     )
 
 
-async def add_rock(message: Message, upg_rock: int, id_hero: int) -> None:
-    """Добавление камней"""
-    info = await HeroesOfUsers.query.where(
-        HeroesOfUsers.id == id_hero
+@form_router.callback_query("add_rock" in F.data)
+async def choice_hero(call: CallbackQuery) -> None:
+    hero: HeroesOfUsers = await HeroesOfUsers.query.where(
+        HeroesOfUsers.id == call.data.split("-")[2]
     ).gino.first()
-    if info.rock == 0 or info.rock < upg_rock:
-        await info.update(rock=upg_rock).apply()
+    await add_rock(call.message, int(call.data.split("-")[1]), hero)
+
+
+async def add_rock(
+    message: Message, upg_rock: int, hero: HeroesOfUsers
+) -> None:
+    """Добавление камней"""
+    if hero.rock < upg_rock:
+        await hero.update(rock=upg_rock).apply()
         await message.answer(
             f"Ок, я внес изменения. Тебе осталось добить {600 - upg_rock}"
         )
         return
+    elif hero.rock == 600:
+        await message.answer(f"Да-да, я помню... Поздравляю!")
+        return
     await message.answer(
-        f"Ты меня не обманешь! В прошлый раз ты писал {info.rock}"
+        f"Ты меня не обманешь! В прошлый раз ты писал {hero.rock}"
     )
 
 
@@ -144,6 +155,44 @@ async def set_default_commands(bot: Bot) -> None:
             ),
         ]
     )
+
+
+@form_router.message()
+async def handle_text(message: Message) -> None:
+    if message.chat.type == "private" and message.text.isnumeric():
+        if 0 <= int(message.text) <= 600:
+            heros: list[HeroesOfUsers] = (
+                await HeroesOfUsers.join(
+                    User, HeroesOfUsers.user_id == User.id
+                )
+                .select()
+                .where(User.user_id == message.from_user.id)
+                .with_only_columns(HeroesOfUsers)
+                .gino.all()
+            )
+            keyboard = []
+            if len(heros) == 1:
+                await add_rock(message, int(message.text), heros[0])
+            else:
+                for hero in heros:
+                    keyboard.append(
+                        [
+                            InlineKeyboardButton(
+                                text=hero.name,
+                                callback_data=f"add_rock-{message.text}-{hero.id}",
+                            )
+                        ]
+                    )
+                await message.reply(
+                    text="Кому добавим камни?",
+                    reply_markup=InlineKeyboardMarkup(
+                        inline_keyboard=keyboard
+                    ),
+                )
+        else:
+            await message.reply(
+                "Ты что, хочешь меня обмануть? Проверь сколько у тебя камней!",
+            )
 
 
 async def main() -> None:
