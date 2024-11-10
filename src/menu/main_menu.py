@@ -47,7 +47,8 @@ async def helper(message: Message) -> None:
 
 @form_router.message(F.text == main_menu["2"])
 async def start_print_rock(message: Message) -> None:
-    heros = (
+    # TODO heroes = await get_heroes_from_user_id(message.from_user.id)
+    heroes = (
         await HeroesOfUsers.join(User, HeroesOfUsers.user_id == User.id)
         .select()
         .where(User.user_id == message.from_user.id)
@@ -55,10 +56,10 @@ async def start_print_rock(message: Message) -> None:
         .gino.all()
     )
     keyboard = []
-    if len(heros) == 1:
-        await print_rock(message, heros[0])
+    if len(heroes) == 1:
+        await print_rock(message, heroes[0])
     else:
-        for hero in heros:
+        for hero in heroes:
             keyboard.append(
                 [
                     InlineKeyboardButton(
@@ -69,7 +70,7 @@ async def start_print_rock(message: Message) -> None:
             )
         await message.answer(
             "Кто тебя интересует?",
-            reply_markup=InlineKeyboardMarkup(keyboard),
+            reply_markup=InlineKeyboardMarkup(inline_keyboard=keyboard),
         )
 
 

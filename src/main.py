@@ -24,6 +24,7 @@ from menu import (
     menu_useful_information,
 )
 from menu.buttons import setting_hero_button
+from menu.main_menu import print_rock
 from migrations import run_connection_db
 from src import Regisration, form_router
 from tables.heroes_of_users import HeroesOfUsers
@@ -92,12 +93,36 @@ async def reg_start(message: Message, state: FSMContext) -> None:
     )
 
 
-@form_router.callback_query("add_rock" in F.data)
-async def choice_hero(call: CallbackQuery) -> None:
-    hero: HeroesOfUsers = await HeroesOfUsers.query.where(
-        HeroesOfUsers.id == call.data.split("-")[2]
+async def get_heroes_from_user_id(user_id: int) -> list[HeroesOfUsers]:
+    return (
+        await HeroesOfUsers.join(User, HeroesOfUsers.user_id == User.id)
+        .select()
+        .where(User.user_id == user_id)
+        .with_only_columns(HeroesOfUsers)
+        .gino.all()
+    )
+
+
+async def get_hero_from_hero_id(hero_id: int) -> HeroesOfUsers:
+    return await HeroesOfUsers.query.where(
+        HeroesOfUsers.id == hero_id
     ).gino.first()
-    await add_rock(call.message, int(call.data.split("-")[1]), hero)
+
+
+# TODO @form_router.callback_query("print" in F.data)
+async def choice_hero_print_rock(call: CallbackQuery) -> None:
+    await print_rock(
+        call.message, await get_hero_from_hero_id(int(call.data.split("-")[1]))
+    )
+
+
+# TODO @form_router.callback_query("add_rock" in F.data)
+async def choice_hero_add_rock(call: CallbackQuery) -> None:
+    await add_rock(
+        call.message,
+        int(call.data.split("-")[1]),
+        await get_hero_from_hero_id(int(call.data.split("-")[2])),
+    )
 
 
 async def add_rock(
@@ -161,20 +186,12 @@ async def set_default_commands(bot: Bot) -> None:
 async def handle_text(message: Message) -> None:
     if message.chat.type == "private" and message.text.isnumeric():
         if 0 <= int(message.text) <= 600:
-            heros: list[HeroesOfUsers] = (
-                await HeroesOfUsers.join(
-                    User, HeroesOfUsers.user_id == User.id
-                )
-                .select()
-                .where(User.user_id == message.from_user.id)
-                .with_only_columns(HeroesOfUsers)
-                .gino.all()
-            )
+            heroes = await get_heroes_from_user_id(message.from_user.id)
             keyboard = []
-            if len(heros) == 1:
-                await add_rock(message, int(message.text), heros[0])
+            if len(heroes) == 1:
+                await add_rock(message, int(message.text), heroes[0])
             else:
-                for hero in heros:
+                for hero in heroes:
                     keyboard.append(
                         [
                             InlineKeyboardButton(
