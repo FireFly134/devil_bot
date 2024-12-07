@@ -19,6 +19,11 @@ class Settings(BaseSettings):
 
     TOKEN: str = ""
     stop_word: Tuple[str, str, str] = ("stop", "стоп", "отмена")
+    MY_TG_ID: str = ""
+    #для VK.com
+    ACCESS_TOKEN: str = ""
+    DOMAIN: str = ""
+
 
 
 settings = Settings(_env_file="../.env")
