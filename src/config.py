@@ -12,18 +12,17 @@ logger.addHandler(handler)
 
 class Settings(BaseSettings):
     DB_USER: str = "postgres"
-    DB_PASSWD: str = "postgres"
-    DB_HOST: str = "localhost"
+    DB_PASSWD: str = "test"
+    DB_HOST: str = "postgres"
     DB_PORT: int = 5432
-    DB_NAME: str = "postgres"
+    DB_NAME: str = "test_bot"
 
     TOKEN: str = ""
     stop_word: Tuple[str, str, str] = ("stop", "стоп", "отмена")
     MY_TG_ID: str = ""
-    #для VK.com
+    # для VK.com
     ACCESS_TOKEN: str = ""
     DOMAIN: str = ""
-
 
 
 settings = Settings(_env_file="../.env")
