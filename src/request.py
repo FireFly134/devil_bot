@@ -17,9 +17,9 @@ from aiogram.types import InputMediaPhoto
 from sqlalchemy import and_
 
 from config import settings
+from migrations import run_connection_db
 from tables.clans import Clans
 from tables.post_news import PostNews
-from migrations import run_connection_db
 
 
 class GameNews:
@@ -112,36 +112,36 @@ class GameNews:
                 logging.error(err)
                 logging.error(f"Не смог произвести запись в БД. {posts}")
 
-
-    def send_news(
-            self, posts_list: list[dict], chat_id: str = settings.MY_TG_ID
+    async def send_news(
+        self, posts_list: list[dict], chat_id: str = settings.MY_TG_ID
     ) -> None:
-        #TODO Метод отправки постов не готов! :с
+        # TODO Метод отправки постов не готов! :с
         """Отправка новостей в чат."""
         try:
-            media_group = []
-            for i in range(len(posts_list[num]["photo"])):
-                if media_group == []:
-                    media_group.append(
-                        InputMediaPhoto(
-                            posts_list[num]["photo"][i],
-                            posts_list[num]["text"]
+            for post in posts_list:
+                media_group = []
+                for photo in post["photos"]:
+                    if not media_group:
+                        media_group.append(
+                            InputMediaPhoto(
+                                photo,
+                                post["text"],
+                            )
                         )
+                    else:
+                        media_group.append(InputMediaPhoto(photo))
+                try:
+                    await self.bot.send_media_group(
+                        chat_id=chat_id, media=media_group
                     )
-                else:
-                    media_group.append(
-                        InputMediaPhoto(
-                            posts_list[num]["photo"][i])
+                except error.BadRequest:
+                    media_group[0] = InputMediaPhoto(post["photo"][0])
+                    await self.bot.send_media_group(
+                        chat_id=chat_id, media=media_group
                     )
-            try:
-                await self.bot.send_media_group(chat_id=chat_id, media=media_group)
-            except error.BadRequest:
-                media_group[0] = InputMediaPhoto(
-                    posts_list[num]["photo"][0]
-                )
-                await self.bot.send_media_group(chat_id=chat_id, media=media_group)
-                await self.bot.send_message(chat_id=chat_id,
-                                 text=posts_list[num]["text"])
+                    await self.bot.send_message(
+                        chat_id=chat_id, text=post["text"]
+                    )
         except Exception as err:
             logging.info(
                 f"Ошибка при попытке отправить пост в группу {chat_id}: {err}"
@@ -151,7 +151,8 @@ class GameNews:
         """Проверка новостей."""
         if posts_list := await self._get_content_news():
             await self._save_post_info_in_db(posts_list)
-            await self.send_news(posts_list)
+            for clan in await self._get_clans():
+                await self.send_news(posts_list, chat_id=clan.chat_id)
 
 
 async def main() -> None:
