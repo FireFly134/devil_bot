@@ -32,6 +32,7 @@ class PostNews(db.Model):
         sa.DateTime,
         nullable=True,
     )
+    send=sa.Column("send", sa.Boolean, server_default=sa.false())
     created_at = sa.Column(
         "created_at",
         sa.DateTime,

@@ -30,8 +30,8 @@ def upgrade_write():
                     sa.Column('text', sa.String(), nullable=True),
                     sa.Column('photos', sa.ARRAY(sa.String()),
                               nullable=True),
-                    sa.Column('date_pub', sa.TIMESTAMP(),
-                              server_default=sa.text('now()'), nullable=True),
+                    sa.Column('date_pub', sa.String(), nullable=True),
+                    sa.Column('send', sa.Boolean(), server_default=sa.false()),
                     sa.Column('created_at', sa.TIMESTAMP(),
                               server_default=sa.text('now()'), nullable=True),
                     sa.PrimaryKeyConstraint('id')
