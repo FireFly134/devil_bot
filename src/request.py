@@ -172,7 +172,7 @@ async def send_news(game_news: GameNews) -> None:
         .order_by(PostNews.id.asc())
         .gino.first()
     )
-    await game_news.send_news(post)
+    await game_news.build_and_send_news_message(post)
 
 
 async def main() -> None:
