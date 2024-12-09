@@ -12,6 +12,7 @@ from aiogram import Bot
 from aiogram.client.default import DefaultBotProperties
 from aiogram.client.session.aiohttp import AiohttpSession
 from aiogram.enums import ParseMode
+from aiogram.exceptions import TelegramBadRequest, TelegramEntityTooLarge
 from aiogram.handlers import error
 from aiogram.types import InputMediaPhoto
 from sqlalchemy import and_
@@ -89,7 +90,7 @@ class GameNews:
 
     async def _get_clans(self):
         """Получение кланов, у которых включено получение новостей."""
-        return Clans.query.where(
+        return await Clans.query.where(
             and_(
                 Clans.news,
                 Clans.start,
@@ -112,49 +113,64 @@ class GameNews:
                 logging.error(err)
                 logging.error(f"Не смог произвести запись в БД. {posts}")
 
-    async def send_news(
-        self, posts_list: list[dict], chat_id: str = settings.MY_TG_ID
+    async def build_and_send_news_message(
+        self, post: PostNews
     ) -> None:
-        # TODO Метод отправки постов не готов! :с
-        """Отправка новостей в чат."""
-        try:
-            for post in posts_list:
-                media_group = []
-                for photo in post["photos"]:
-                    if not media_group:
-                        media_group.append(
-                            InputMediaPhoto(
-                                photo,
-                                post["text"],
-                            )
-                        )
-                    else:
-                        media_group.append(InputMediaPhoto(photo))
-                try:
-                    await self.bot.send_media_group(
-                        chat_id=chat_id, media=media_group
+        """Сборка сообщений с новостью для отправки в чат."""
+        clans = await self._get_clans()
+        tasks = []
+        media_group = []
+        for photo in post.photos:
+            if not media_group:
+                media_group.append(
+                    InputMediaPhoto(
+                        media=photo,
+                        caption=post.text,
                     )
-                except error.BadRequest:
-                    media_group[0] = InputMediaPhoto(post["photo"][0])
-                    await self.bot.send_media_group(
-                        chat_id=chat_id, media=media_group
-                    )
-                    await self.bot.send_message(
-                        chat_id=chat_id, text=post["text"]
-                    )
-        except Exception as err:
-            logging.info(
-                f"Ошибка при попытке отправить пост в группу {chat_id}: {err}"
+                )
+            else:
+                media_group.append(InputMediaPhoto(media=photo))
+        for clan in clans:
+            tasks.append(
+                asyncio.create_task(
+                    self._send_message_news(clan, media_group, post)
+                )
             )
 
+        await post.update(is_send=True).apply()
+        await asyncio.wait(tasks)
+
+    async def _send_message_news(self, clan, media_group, post) -> None:
+        """Отправка новостей в чат."""
+        try:
+            await self.bot.send_media_group(
+                chat_id=clan.chat_id, media=media_group
+            )
+        except TelegramBadRequest as err:
+            if "message caption is too long" in str(err):
+                media_group[0] = InputMediaPhoto(media=post.photos[0])
+                await self.bot.send_media_group(
+                    chat_id=clan.chat_id, media=media_group
+                )
+                await self.bot.send_message(
+                    chat_id=clan.chat_id, text=post.text
+                )
+            elif "chat not found" in str(err):
+                logging.info(
+                    f"Ошибка при попытке отправить пост в группу {clan.chat_id}: {err}"
+                )
+            else:
+                logging.info(str(err))
     async def check_news(self) -> None:
         """Проверка новостей."""
         if posts_list := await self._get_content_news():
             await self._save_post_info_in_db(posts_list)
-            for clan in await self._get_clans():
-                await self.send_news(posts_list, chat_id=clan.chat_id)
 
-
+async def send_news(game_news: GameNews) -> None:
+    post = await PostNews.query.where(~PostNews.is_send).order_by(
+        PostNews.id.asc()
+    ).gino.first()
+    await game_news.send_news(post)
 async def main() -> None:
     game_news = GameNews(
         Bot(
@@ -167,6 +183,7 @@ async def main() -> None:
     # while True:
     try:
         await game_news.check_news()
+        await send_news(game_news)
     except Exception as err:
         logging.info(f"Ошибка при попытке парсинга: {err}")
         # time.sleep(300)
