@@ -113,9 +113,7 @@ class GameNews:
                 logging.error(err)
                 logging.error(f"Не смог произвести запись в БД. {posts}")
 
-    async def build_and_send_news_message(
-        self, post: PostNews
-    ) -> None:
+    async def build_and_send_news_message(self, post: PostNews) -> None:
         """Сборка сообщений с новостью для отправки в чат."""
         clans = await self._get_clans()
         tasks = []
@@ -161,16 +159,22 @@ class GameNews:
                 )
             else:
                 logging.info(str(err))
+
     async def check_news(self) -> None:
         """Проверка новостей."""
         if posts_list := await self._get_content_news():
             await self._save_post_info_in_db(posts_list)
 
+
 async def send_news(game_news: GameNews) -> None:
-    post = await PostNews.query.where(~PostNews.is_send).order_by(
-        PostNews.id.asc()
-    ).gino.first()
+    post = (
+        await PostNews.query.where(~PostNews.is_send)
+        .order_by(PostNews.id.asc())
+        .gino.first()
+    )
     await game_news.send_news(post)
+
+
 async def main() -> None:
     game_news = GameNews(
         Bot(
