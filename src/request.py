@@ -1,10 +1,6 @@
 import asyncio
-import json
 import logging
-import os.path
-import time
 from datetime import datetime
-from threading import Thread
 from typing import Any
 
 import requests
@@ -12,8 +8,7 @@ from aiogram import Bot
 from aiogram.client.default import DefaultBotProperties
 from aiogram.client.session.aiohttp import AiohttpSession
 from aiogram.enums import ParseMode
-from aiogram.exceptions import TelegramBadRequest, TelegramEntityTooLarge
-from aiogram.handlers import error
+from aiogram.exceptions import TelegramBadRequest
 from aiogram.types import InputMediaPhoto
 from sqlalchemy import and_
 

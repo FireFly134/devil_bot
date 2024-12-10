@@ -14,6 +14,10 @@ SQLAlchemy = "*"
 psycopg2-binary = "*"
 pydantic-settings = "*"
 gino = "^1.0.1"
+pytest-asyncio = "^0.24.0"
+pytest-env = "^1.1.5"
+pytest-xdist = "^3.6.1"
+pytest-cov = "^6.0.0"
 
 [tool.poetry.group.dev.dependencies]
 isort = "^5.12.0"
@@ -42,6 +46,7 @@ flake8-eradicate = "^1.5.0"
 flake8-annotations = "^3.0.1"
 flake8-isort = "^6.1.1"
 wemake-python-styleguide = "^0.18.0"
+pytest = "^8.3.3"
 
 [build-system]
 requires = ["poetry-core"]
