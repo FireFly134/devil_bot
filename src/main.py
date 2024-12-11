@@ -40,7 +40,7 @@ async def first_sms(message: Message):
     *Так же можно __бесплатно__ подписаться на напоминалки\!*
     Чтобы это сделать проходим *Настройка профиля* \-\-\-\> *Подписки\.\.\.*
     """
-    await message.answer(sms, parse_mode=ParseMode.MARKDOWN_V2)
+    await message.answer(text=sms, parse_mode=ParseMode.MARKDOWN_V2)
 
 
 @form_router.callback_query(Regisration.name, F.data == "yes")
