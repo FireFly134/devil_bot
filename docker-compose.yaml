@@ -3,19 +3,32 @@ services:
   postgres:
     image: postgres:16.6-alpine
     container_name: postgres
-    env_file:
-      - .env
     environment:
       POSTGRES_PASSWORD: test
       POSTGRES_DB: test_bot
     ports:
       - "15432:5432"
+    networks:
+      - networkbot
 
   devil-bot:
     build:
       context: .
       dockerfile: Dockerfile
     volumes:
-      - .:/app
+      - ./:/srv/app
+      - ./alembic.ini:/etc/app/alembic.ini
+    depends_on:
+      - postgres
+    links:
+      - postgres
     env_file:
       - .env
+    networks:
+      - networkbot
+
+
+networks:
+  networkbot:
+    external:
+      name: networkbot-net

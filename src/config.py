@@ -27,4 +27,4 @@ class Settings(BaseSettings):
 
 settings = Settings(_env_file="../.env")
 
-DB_URI: str = f"postgresql://{settings.DB_USER}:{settings.DB_PASSWD}@{settings.DB_HOST}:{settings.DB_PORT}/{settings.DB_NAME}"
+DB_URL: str = f"postgresql://{settings.DB_USER}:{settings.DB_PASSWD}@{settings.DB_HOST}:{settings.DB_PORT}/{settings.DB_NAME}"

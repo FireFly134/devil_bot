@@ -10,7 +10,7 @@ from sqlalchemy import engine_from_config, pool
 from sqlalchemy.engine import Engine
 
 from src import migrations
-from src.config import DB_URI
+from src.config import DB_URL
 from src.tables import pg_tables  # pyling: disable=unused-import
 
 # todo исправить тип
@@ -40,7 +40,7 @@ def run_migrations_offline():
     # for the --sql use case, run migrations for each URL into
     # individual files.
     engines = {
-        "write": {"url": DB_URI},
+        "write": {"url": DB_URL},
     }
 
     for name, rec in engines.items():
@@ -74,7 +74,7 @@ def run_migrations_online():
         "write": {
             "engine": engine_from_config(
                 {
-                    "sqlalchemy.url": DB_URI,
+                    "sqlalchemy.url": DB_URL,
                 },
                 prefix="sqlalchemy.",
                 poolclass=pool.NullPool,

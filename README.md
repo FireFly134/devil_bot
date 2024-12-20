@@ -2,3 +2,14 @@
 
 # project-Lucik_bot_v3
 Okay, let's go!
+
+
+## Запуск проекта в докере
+Создайте .env из .env.example
+Если возникают ошибки в переменных, заполняем недостающие пустые строки любыми данными в файле .env
+```
+docker network create networkbot-net
+```
+```
+docker compose up
+```

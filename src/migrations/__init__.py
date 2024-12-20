@@ -2,7 +2,7 @@
 import asyncio
 from gino import Gino
 
-from config import DB_URI
+from config import DB_URL
 import logging
 
 logging.basicConfig()
@@ -13,7 +13,7 @@ db = Gino()
 METADATA = db
 
 async def run_connection_db():
-    await db.set_bind(DB_URI)
+    await db.set_bind(DB_URL)
 
 # if not db.is_bound():
 #     asyncio.get_event_loop().run_until_complete(main())
