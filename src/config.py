@@ -1,9 +1,10 @@
 import logging
+import os
 import sys
 from typing import Tuple, Any
 from urllib.parse import urlparse
 
-from pydantic import BaseSettings, PostgresDsn, validator
+from pydantic.v1 import validator, BaseSettings, PostgresDsn
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -12,11 +13,14 @@ logger.addHandler(handler)
 
 
 class Settings(BaseSettings):
+    BASE_DIR: str = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    TESTING: bool = False
+
     DB_USER: str = "postgres"
     DB_PASSWD: str = "test"
     DB_HOST: str = "postgres"
     DB_PORT: int = 5432
-    DB_NAME: str = "test_bot"
+    DB_NAME: str = "devil_bot"
     DB_URI: PostgresDsn = None
 
     @validator("DB_NAME", pre=True, allow_reuse=True)
@@ -24,10 +28,8 @@ class Settings(BaseSettings):
             cls, v: str | None, values: dict[str, Any]
     ) -> str:
         """Получение названия базы, для тестов генерит отдельное название."""
-        test_postfix = f"_test_{values.get('PYTEST_XDIST_WORKER')}"
-
-        if values.get("TESTING") and not v.endswith(test_postfix):
-            v += test_postfix
+        if values.get("TESTING") and not v.endswith("_test_"):
+            v += "_test_"
         return v
 
     @validator("DB_URI", pre=True, allow_reuse=True)
