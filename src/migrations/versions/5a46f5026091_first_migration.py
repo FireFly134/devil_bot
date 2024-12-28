@@ -69,7 +69,7 @@ def upgrade_write():
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
     sa.Column('rock', sa.Integer(), server_default=sa.text('0'), nullable=False),
-    sa.Column('clan_id', sa.Integer(), server_default=sa.text('1'), nullable=False),
+    sa.Column('clan_id', sa.Integer(), nullable=True),
     sa.Column('time_change_kz', sa.Integer(), server_default=sa.text('18'), nullable=False),
     sa.Column('time_collection_energy', sa.Integer(), server_default=sa.text('12'), nullable=False),
     sa.Column('subscription_rock', sa.Boolean(), server_default=sa.text('false'), nullable=False),

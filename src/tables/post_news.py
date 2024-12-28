@@ -9,6 +9,7 @@ class PostNews(db.Model):
     """Модель новостей."""
 
     __tablename__ = "news"
+    __table_args__ = {"extend_existing": True}
 
     id = sa.Column(
         "id",

@@ -1,10 +1,10 @@
 import logging
 import os
 import sys
-from typing import Tuple, Any
+from typing import Any, Tuple
 from urllib.parse import urlparse
 
-from pydantic.v1 import validator, BaseSettings, PostgresDsn
+from pydantic.v1 import BaseSettings, PostgresDsn, validator
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -24,9 +24,7 @@ class Settings(BaseSettings):
     DB_URI: PostgresDsn = None
 
     @validator("DB_NAME", pre=True, allow_reuse=True)
-    def get_actual_db_name(
-            cls, v: str | None, values: dict[str, Any]
-    ) -> str:
+    def get_actual_db_name(cls, v: str | None, values: dict[str, Any]) -> str:
         """Получение названия базы, для тестов генерит отдельное название."""
         if values.get("TESTING") and not v.endswith("_test"):
             v += "_test"
@@ -34,7 +32,7 @@ class Settings(BaseSettings):
 
     @validator("DB_URI", pre=True, allow_reuse=True)
     def assemble_db_connection(
-            cls, v: str | None, values: dict[str, Any]
+        cls, v: str | None, values: dict[str, Any]
     ) -> str:
         """
         Собираем коннект для подключения к БД.

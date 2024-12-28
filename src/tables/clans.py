@@ -9,6 +9,7 @@ class Clans(db.Model):
     """Модель клана."""
 
     __tablename__ = "clans"
+    __table_args__ = {"extend_existing": True}
 
     id = sa.Column(
         "id", sa.Integer, primary_key=True, index=True, autoincrement=True

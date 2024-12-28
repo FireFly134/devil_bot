@@ -9,6 +9,7 @@ class HeroesOfUsers(db.Model):
     """Модель героев пользователей."""
 
     __tablename__ = "heroes_of_users"
+    __table_args__ = {"extend_existing": True}
 
     id = sa.Column(
         "id", sa.Integer, primary_key=True, index=True, autoincrement=True
@@ -28,9 +29,7 @@ class HeroesOfUsers(db.Model):
         "clan_id",
         sa.Integer,
         sa.ForeignKey("clans.id"),
-        default=1,
-        server_default=sa.text("1"),
-        nullable=False,
+        nullable=True,
     )
     time_change_kz = sa.Column(
         "time_change_kz",

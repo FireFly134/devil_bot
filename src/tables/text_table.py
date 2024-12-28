@@ -9,6 +9,7 @@ class TextTable(db.Model):
     """Модель таблицы текстов."""
 
     __tablename__ = "text_table"
+    __table_args__ = {"extend_existing": True}
 
     name_text = sa.Column(
         "name_text", sa.String, nullable=False, unique=True, primary_key=True
