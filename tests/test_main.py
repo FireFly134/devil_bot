@@ -5,7 +5,9 @@ from aiogram.enums import ParseMode
 from aiogram.types import Message
 from factories import HeroFactory, UserFactory
 
-from main import first_sms, get_hero_from_hero_id, get_heroes_from_user_id
+from main import first_sms, get_hero_from_hero_id, get_heroes_from_user_id, \
+    add_rock
+from tables.heroes_of_users import HeroesOfUsers
 
 
 @pytest.mark.asyncio
@@ -21,11 +23,8 @@ async def test_get_hero() -> None:
 
 
 @pytest.mark.asyncio
-async def test_first_sms():
+async def test_first_sms(mock_message: AsyncMock):
     """Тестирование функции first_sms."""
-    mock_message = AsyncMock(spec=Message)
-    mock_message.answer = AsyncMock()
-
     # Вызываем тестируемую функцию
     await first_sms(mock_message)
 
@@ -39,3 +38,21 @@ async def test_first_sms():
         mock_message.answer.await_args[1]["parse_mode"]
         == ParseMode.MARKDOWN_V2
     )
+
+@pytest.mark.parametrize("rock, upg_rock", [
+    (0, 100),
+    (200, 200),
+    (300, 603),
+    (4, 400),
+    (600, 5)
+])
+@pytest.mark.asyncio
+async def test_add_rock(rock: int, upg_rock: int, mock_message: AsyncMock) -> None:
+    user = await UserFactory()
+    hero = await HeroFactory(user_id=user.id, rock=rock)
+    await add_rock(mock_message, upg_rock, hero)
+    update_hero = await HeroesOfUsers.get(hero.id)
+    if rock < upg_rock <= 600:
+        assert update_hero.rock == upg_rock
+    else:
+        assert update_hero.rock == rock

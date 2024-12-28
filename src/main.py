@@ -129,7 +129,10 @@ async def add_rock(
     message: Message, upg_rock: int, hero: HeroesOfUsers
 ) -> None:
     """Добавление камней"""
-    if hero.rock < upg_rock:
+    if upg_rock > 600:
+        await message.answer(f"Ты меня не обманешь! У тебя не может быть больше 600 камней.")
+        return
+    elif hero.rock < upg_rock:
         await hero.update(rock=upg_rock).apply()
         await message.answer(
             f"Ок, я внес изменения. Тебе осталось добить {600 - upg_rock}"
