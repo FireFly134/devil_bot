@@ -17,12 +17,15 @@ def get_tmp_database(**kwargs: dict) -> str:
         db_url = URL(settings.DB_URI).path.replace("_test_", "_template_")
 
     tmp_db_url = str(URL(settings.DB_URI).with_path(db_url))
-
     if database_exists(tmp_db_url):
         drop_database(tmp_db_url)
     create_database(tmp_db_url, **kwargs)
+    with open("tmp_db_url.txt", "a+") as f:
+        f.writelines(f" create_database - 24")
     try:
         yield tmp_db_url
     finally:
         if database_exists(tmp_db_url):
             drop_database(tmp_db_url)
+            with open("tmp_db_url.txt", "a+") as f:
+                f.writelines(f" drop_database - 31")

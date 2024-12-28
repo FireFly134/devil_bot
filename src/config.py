@@ -28,8 +28,8 @@ class Settings(BaseSettings):
             cls, v: str | None, values: dict[str, Any]
     ) -> str:
         """Получение названия базы, для тестов генерит отдельное название."""
-        if values.get("TESTING") and not v.endswith("_test_"):
-            v += "_test_"
+        if values.get("TESTING") and not v.endswith("_test"):
+            v += "_test"
         return v
 
     @validator("DB_URI", pre=True, allow_reuse=True)

@@ -1,14 +1,14 @@
 import pytest
 
+from migrations import run_connection_db
 from tables.telegram_users import User
 
 from tests.factories import UserFactory
 
 @pytest.mark.asyncio
 async def test_create_user():
-    print('test_create_user')
     user = await UserFactory()
-    # assert user.send_msg
+    assert user.send_msg
 
 
 @pytest.mark.asyncio

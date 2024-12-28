@@ -34,6 +34,7 @@ class UserFactory(BaseFactory):
 
         model = User
 
+    user_id = factory.Sequence(lambda n: n)
     first_name = factory.Sequence(lambda n: f"Test{n}")
     last_name = factory.Sequence(lambda n: f"tseT{n}")
     username = factory.Sequence(lambda n: f"TseT{n}")
