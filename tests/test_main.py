@@ -2,7 +2,6 @@ from unittest.mock import AsyncMock
 
 import pytest
 from aiogram.enums import ParseMode
-from aiogram.types import Message
 from factories import HeroFactory, UserFactory
 
 from main import first_sms, get_hero_from_hero_id, get_heroes_from_user_id, \

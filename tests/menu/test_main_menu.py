@@ -28,11 +28,8 @@ def get_answer(rock: int) -> str:
 
 @pytest.mark.parametrize(("rock", "answer"), get_check_data_for_print_rock())
 @pytest.mark.asyncio
-async def test_print_rock(rock: int, answer: str) -> None:
+async def test_print_rock(rock: int, answer: str, mock_message: AsyncMock) -> None:
     """Тестирование функции отображение количества камней (print_rock)."""
-
-    mock_message = AsyncMock(spec=Message)
-    mock_message.answer = AsyncMock()
     mock_hero = AsyncMock(spec=HeroesOfUsers)
     mock_hero.time_change_kz = 18
     mock_hero.rock = rock
