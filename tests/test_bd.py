@@ -1,6 +1,5 @@
 import pytest
 
-from migrations import run_connection_db
 from tables.telegram_users import User
 
 from tests.factories import UserFactory

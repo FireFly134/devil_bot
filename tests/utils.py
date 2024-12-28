@@ -20,12 +20,8 @@ def get_tmp_database(**kwargs: dict) -> str:
     if database_exists(tmp_db_url):
         drop_database(tmp_db_url)
     create_database(tmp_db_url, **kwargs)
-    with open("tmp_db_url.txt", "a+") as f:
-        f.writelines(f" create_database - 24")
     try:
         yield tmp_db_url
     finally:
         if database_exists(tmp_db_url):
             drop_database(tmp_db_url)
-            with open("tmp_db_url.txt", "a+") as f:
-                f.writelines(f" drop_database - 31")

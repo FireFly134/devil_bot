@@ -17,8 +17,6 @@ from tests.utils import get_tmp_database
 @pytest.fixture(autouse=True)
 def loop() -> BaseEventLoop:
     """Получить цикл событий."""
-    with open("tmp_db_url.txt", "a+") as f:
-        f.writelines(" start_fixture_loop")
     loop = asyncio.get_event_loop()
     yield loop
     loop.close()
@@ -27,12 +25,8 @@ def loop() -> BaseEventLoop:
 @pytest.fixture()
 def monkeypatch_session() -> MonkeyPatch:
     """Инициализация monkeypatch."""
-    with open("tmp_db_url.txt", "a+") as f:
-        f.writelines(" start_fixture_monkeypatch_session")
     patch = MonkeyPatch()
     yield patch
-    with open("tmp_db_url.txt", "a+") as f:
-        f.writelines("stop_fixture_monkeypatch_session")
     patch.undo()
 
 
