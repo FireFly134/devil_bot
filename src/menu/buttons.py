@@ -38,7 +38,7 @@ async def setting_button(message: Message, sms: str) -> None:
             KeyboardButton(text=setting_profile["subscribe"]),
             KeyboardButton(text=setting_profile["update_time"]),
         ],
-        [KeyboardButton(text=setting_profile["check_data_profile"])],
+        [KeyboardButton(text=setting_profile["show_data_profile"])],
         [KeyboardButton(text=go_back)],
     ]
     await send_message(message, sms, reply_keyboard)

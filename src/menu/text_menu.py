@@ -30,7 +30,7 @@ setting_profile = {
     "setting_hero": "Манипуляции с героем",
     "subscribe": "Подписки...",
     "update_time": "Поменять время...",
-    "check_data_profile": "Проверить данные профиля",
+    "show_data_profile": "Проверить данные профиля",
     "add_hero": "Добавить еще одного героя",
     "delete_hero": "Удалить одного героя",
     "rename_hero": "Переименовать героя",

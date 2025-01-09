@@ -6,7 +6,8 @@ import factory
 from gino.declarative import ModelType
 
 from src.tables.telegram_users import User
-from tables.heroes_of_users import HeroesOfUsers
+from src.tables.heroes_of_users import HeroesOfUsers
+from src.tables.clans import Clans
 
 
 class BaseFactory(factory.Factory):
@@ -44,7 +45,7 @@ class UserFactory(BaseFactory):
 
 
 class HeroFactory(BaseFactory):
-    """Фабрика пользователя."""
+    """Фабрика героя пользователя."""
 
     class Meta:
         """Метакласс с настройками."""
@@ -54,3 +55,15 @@ class HeroFactory(BaseFactory):
     user_id = factory.Sequence(lambda n: n)
     name = factory.Sequence(lambda n: f"Test{n}")
     rock = 0
+
+
+class ClanFactory(BaseFactory):
+    """Фабрика клана."""
+
+    class Meta:
+        """Метакласс с настройками."""
+
+        model = Clans
+
+    name_clan = factory.Sequence(lambda n: f"TestClan{n}")
+    chat_id = factory.Sequence(lambda n: f"-{n}")

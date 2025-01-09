@@ -242,12 +242,12 @@ async def update_update_time_energytime(
 
 ### LEVEL 0
 @form_router.message(
-    SettingProfile.is_active, F.text == setting_profile["check_data_profile"]
+    SettingProfile.is_active, F.text == setting_profile["show_data_profile"]
 )
-async def check_data_profile(message: Message, state: FSMContext) -> None:
+async def show_data_profile(message: Message, state: FSMContext) -> None:
     data = await state.get_data()
     hero = (
-        await HeroesOfUsers.join(Clans, HeroesOfUsers.clan_id == Clans.id)
+        await HeroesOfUsers.outerjoin(Clans, HeroesOfUsers.clan_id == Clans.id)
         .select()
         .where(
             and_(
@@ -258,10 +258,7 @@ async def check_data_profile(message: Message, state: FSMContext) -> None:
         .with_only_columns((HeroesOfUsers, Clans.name_clan))
         .gino.first()
     )
-    if str(hero.name_clan) != "Без клана":
-        clan = f'Вы в клане "{hero.name_clan}"'
-    else:
-        clan = ""
+    clan = f'Вы в клане "{hero.name_clan}"' if hero.name_clan else ""
     smena_KZ = str(hero.time_change_kz)  # считываем смену кз
     sbor_energi = str(hero.time_collection_energy)  # считываем сбор энергии
 

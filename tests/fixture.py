@@ -14,6 +14,7 @@ from alembic.config import Config
 
 from config import settings
 from migrations import run_connection_db
+from tests.factories import ClanFactory, HeroFactory, UserFactory
 from tests.utils import get_tmp_database
 
 
@@ -56,3 +57,15 @@ def mock_message() -> AsyncMock:
     mock_message = AsyncMock(spec=Message)
     mock_message.answer = AsyncMock()
     return mock_message
+
+
+@pytest_asyncio.fixture(scope="session")
+async def make_one_user_and_hero() -> tuple[UserFactory, HeroFactory]:
+    """Добавляем в базу данных пользователя, его героя и клан"""
+    #TODO Пока что создадим 1 пользователя и героя и 1 клан. Дальше, возможно, будем создавать циклом несколько.
+    user = await UserFactory()
+    return user, await HeroFactory(user_id=user.id)
+
+@pytest_asyncio.fixture(scope="session")
+async def make_clan() -> ClanFactory:
+    return await ClanFactory()
