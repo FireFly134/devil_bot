@@ -14,10 +14,10 @@ from aiogram.types import (
     Message,
 )
 
-import chat_commands
-import commands
+import chat_commands  # noqa: F401
+import commands  # noqa: F401
 from config import settings
-from menu import (
+from menu import (  # noqa: F401
     main_menu,
     menu_help,
     menu_setting_progile,
@@ -130,7 +130,9 @@ async def add_rock(
 ) -> None:
     """Добавление камней"""
     if upg_rock > 600:
-        await message.answer(f"Ты меня не обманешь! У тебя не может быть больше 600 камней.")
+        await message.answer(
+            f"Ты меня не обманешь! У тебя не может быть больше 600 камней."
+        )
         return
     elif hero.rock < upg_rock:
         await hero.update(rock=upg_rock).apply()

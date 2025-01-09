@@ -5,9 +5,9 @@ from typing import Coroutine
 import factory
 from gino.declarative import ModelType
 
-from src.tables.telegram_users import User
-from src.tables.heroes_of_users import HeroesOfUsers
 from src.tables.clans import Clans
+from src.tables.heroes_of_users import HeroesOfUsers
+from src.tables.telegram_users import User
 
 
 class BaseFactory(factory.Factory):

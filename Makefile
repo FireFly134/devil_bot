@@ -1,17 +1,18 @@
-format: format_python
+format:
+	poetry run isort src/
+	poetry run isort tests/
+	poetry run black src/
+	poetry run black tests/
 
 tests: tests_python
 
-check: check_python
-
-format_python:
-	poetry run isort .
-	poetry run black .
-
-check_python:
-	poetry run isort . --check
-	poetry run flake8 .
-	poetry run black . --check
+check:
+	poetry run isort src --check
+	poetry run isort tests --check
+	poetry run flake8 src
+	poetry run flake8 tests
+	poetry run black src --check
+	poetry run black tests --check
 
 tests_python:
 	echo "no tests"

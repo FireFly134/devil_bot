@@ -4,8 +4,12 @@ import pytest
 from aiogram.enums import ParseMode
 from factories import HeroFactory, UserFactory
 
-from main import first_sms, get_hero_from_hero_id, get_heroes_from_user_id, \
-    add_rock
+from main import (
+    add_rock,
+    first_sms,
+    get_hero_from_hero_id,
+    get_heroes_from_user_id,
+)
 from tables.heroes_of_users import HeroesOfUsers
 
 
@@ -38,15 +42,14 @@ async def test_first_sms(mock_message: AsyncMock):
         == ParseMode.MARKDOWN_V2
     )
 
-@pytest.mark.parametrize("rock, upg_rock", [
-    (0, 100),
-    (200, 200),
-    (300, 603),
-    (4, 400),
-    (600, 5)
-])
+
+@pytest.mark.parametrize(
+    "rock, upg_rock", [(0, 100), (200, 200), (300, 603), (4, 400), (600, 5)]
+)
 @pytest.mark.asyncio
-async def test_add_rock(rock: int, upg_rock: int, mock_message: AsyncMock) -> None:
+async def test_add_rock(
+    rock: int, upg_rock: int, mock_message: AsyncMock
+) -> None:
     user = await UserFactory()
     hero = await HeroFactory(user_id=user.id, rock=rock)
     await add_rock(mock_message, upg_rock, hero)
