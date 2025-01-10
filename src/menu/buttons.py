@@ -1,5 +1,4 @@
 from aiogram.types import (
-    FSInputFile,
     KeyboardButton,
     Message,
     ReplyKeyboardMarkup,

@@ -1,9 +1,6 @@
-from datetime import datetime, timedelta
-from random import randint
-
 from aiogram import F
 from aiogram.fsm.context import FSMContext
-from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
+from aiogram.types import Message
 from sqlalchemy import and_
 
 from menu.buttons import (

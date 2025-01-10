@@ -131,7 +131,7 @@ async def add_rock(
     """Добавление камней"""
     if upg_rock > 600:
         await message.answer(
-            f"Ты меня не обманешь! У тебя не может быть больше 600 камней."
+            "Ты меня не обманешь! У тебя не может быть больше 600 камней."
         )
         return
     elif hero.rock < upg_rock:
@@ -141,7 +141,7 @@ async def add_rock(
         )
         return
     elif hero.rock == 600:
-        await message.answer(f"Да-да, я помню... Поздравляю!")
+        await message.answer("Да-да, я помню... Поздравляю!")
         return
     await message.answer(
         f"Ты меня не обманешь! В прошлый раз ты писал {hero.rock}"

@@ -1,15 +1,9 @@
-from typing import Any
 from unittest.mock import AsyncMock
 
 import pytest
-from _pytest.monkeypatch import MonkeyPatch
-from aiogram.enums import ParseMode
-from aiogram.types import Message
 
 from menu.main_menu import print_rock
 from tables.heroes_of_users import HeroesOfUsers
-
-# from factories import UserFactory
 
 
 def get_check_data_for_print_rock():
