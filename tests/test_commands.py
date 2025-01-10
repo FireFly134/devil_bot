@@ -9,7 +9,7 @@ from commands import helper, regisration, start
 from tests.factories import HeroFactory, UserFactory
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 @pytest.mark.parametrize(
     "chat_type, is_registered",
     [

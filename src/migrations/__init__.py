@@ -1,5 +1,5 @@
 """SQL Alchemy metadata. Used for all models and migrations"""
-from gino.ext.starlette import Gino
+from gino import Gino
 
 from config import settings
 import logging
@@ -7,7 +7,7 @@ import logging
 logging.basicConfig()
 logging.getLogger('gino.engine._SAEngine').setLevel(logging.ERROR)
 
-db = Gino(dsn=settings.DB_URI, use_connection_for_request=True)
+db = Gino()
 METADATA = db
 
 async def run_connection_db():

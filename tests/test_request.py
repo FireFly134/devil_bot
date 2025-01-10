@@ -1,3 +1,4 @@
+"""Тест парсинга новостей из ВК"""
 from typing import Any
 from unittest.mock import AsyncMock
 
@@ -543,8 +544,9 @@ response = [
         (160091, []),
     ],
 )
-@pytest.mark.asyncio
-async def test_request(last_post_id: int, content_news: list[dict[str, Any]]):
+@pytest.mark.asyncio()
+async def test_request(last_post_id: int, content_news: list[dict[str, Any]]) -> None:
+    """Тест парсинга новостей с подменной информации"""
     GameNews._get_request_news = AsyncMock(return_value=response)
     GameNews._get_last_post_id = AsyncMock(return_value=last_post_id)
     game_news = GameNews(AsyncMock())

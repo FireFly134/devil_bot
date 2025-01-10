@@ -6,7 +6,7 @@ exclude =
 	**/migrations,
 	./src/tables/pg_tables.py
 
-ignore = E501,W503,W605,F811,E266
+ignore = W503,C812,SIM106,CCR001,R503,E501,N805,ANN101,ANN102,SIM119,Q441,ANN401,Q449,W605,F811,E266,WPS226,WPS342,DAR101,DAR301,WPS437,DAR201
 select = B,C,E,F,W,T4,B901,A,T,R,Q0,SIM,Q,N8,I0,D,PT
 enable-extensions = G,B1
 

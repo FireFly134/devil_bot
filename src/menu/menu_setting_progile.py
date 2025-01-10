@@ -98,11 +98,11 @@ async def subscribe(message: Message, state: FSMContext) -> None:
 async def engine_subscription(
     message: Message, who_edit: str, text: str, state: FSMContext
 ) -> None:
-    await db.status(
+    await db.status(db.text(
         f"UPDATE heroes_of_users SET {who_edit}"
         f"WHERE user_id = '{(await state.get_data())['user_id']}'"
         f"    and id = '{(await state.get_data())['hero_id']}';"
-    )
+    ))
     await subscription_button(
         message,
         text,
