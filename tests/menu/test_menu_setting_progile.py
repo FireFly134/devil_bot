@@ -20,7 +20,7 @@ def get_profile_data(name: str) -> str:
 @pytest.mark.asyncio
 @pytest.mark.parametrize("is_clan", [True, False])
 async def test_show_data_profile(
-        is_clan: bool, mock_message: AsyncMock, mock_state: AsyncMock
+    is_clan: bool, mock_message: AsyncMock, mock_state: AsyncMock
 ) -> None:
     """Тестирование функции отображение данных о профиле."""
     user = await UserFactory()

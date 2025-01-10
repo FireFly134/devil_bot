@@ -51,7 +51,7 @@ def db(monkeypatch_session: MonkeyPatch) -> str:
         yield tmp_url
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture()
 def mock_message() -> AsyncMock:
     mock_message = AsyncMock(spec=Message)
     mock_message.answer = AsyncMock()
@@ -63,7 +63,7 @@ def mock_message() -> AsyncMock:
     return mock_message
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture()
 def mock_state() -> AsyncMock:
     return AsyncMock(spec=FSMContext)
 

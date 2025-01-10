@@ -2,20 +2,30 @@ from unittest.mock import AsyncMock
 
 import pytest
 from _pytest.monkeypatch import MonkeyPatch
-import commands
+
 import chat_commands
-from commands import start, helper, regisration
-from tests.factories import UserFactory, HeroFactory
+import commands
+from commands import helper, regisration, start
+from tests.factories import HeroFactory, UserFactory
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("chat_type, is_registered", [
-    # ("private", True),
-    ("private", False),
-    ("group", True),
-    ("group", False),
-])
-async def test_start(chat_type: str, is_registered: bool, monkeypatch: MonkeyPatch, mock_message: AsyncMock, mock_state: AsyncMock) -> None:
+@pytest.mark.parametrize(
+    "chat_type, is_registered",
+    [
+        # ("private", True),
+        ("private", False),
+        ("group", True),
+        ("group", False),
+    ],
+)
+async def test_start(
+    chat_type: str,
+    is_registered: bool,
+    monkeypatch: MonkeyPatch,
+    mock_message: AsyncMock,
+    mock_state: AsyncMock,
+) -> None:
     """Test start command."""
     if chat_type != "private":
         mock_message.chat.type = chat_type
@@ -36,11 +46,12 @@ async def test_start(chat_type: str, is_registered: bool, monkeypatch: MonkeyPat
     else:
         assert mock_message.answer.call_count == 0
 
+
 async def test_helper(mock_message: AsyncMock) -> None:
     """Test start command."""
     ...
 
+
 async def test_regisration(mock_message: AsyncMock) -> None:
     """Test start command."""
     ...
-

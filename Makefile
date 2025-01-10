@@ -15,4 +15,4 @@ check:
 	poetry run black tests --check
 
 tests_python:
-	echo "no tests"
+	poetry run pytest --cov-report xml --cov src tests

@@ -1,8 +1,4 @@
-from aiogram.types import (
-    KeyboardButton,
-    Message,
-    ReplyKeyboardMarkup,
-)
+from aiogram.types import KeyboardButton, Message, ReplyKeyboardMarkup
 
 from menu.text_menu import (
     cancel,
