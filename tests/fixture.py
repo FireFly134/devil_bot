@@ -7,6 +7,7 @@ from unittest.mock import AsyncMock
 import pytest
 import pytest_asyncio
 from _pytest.monkeypatch import MonkeyPatch
+from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 from alembic.command import upgrade
 from alembic.config import Config
@@ -54,7 +55,17 @@ def db(monkeypatch_session: MonkeyPatch) -> str:
 def mock_message() -> AsyncMock:
     mock_message = AsyncMock(spec=Message)
     mock_message.answer = AsyncMock()
+    mock_message.chat = AsyncMock()
+    mock_message.chat.type = "private"
+    mock_message.chat.title = "TestTitle"
+    mock_message.from_user = AsyncMock()
+    mock_message.from_user.id = 123456789
     return mock_message
+
+
+@pytest.fixture(scope="session")
+def mock_state() -> AsyncMock:
+    return AsyncMock(spec=FSMContext)
 
 
 @pytest_asyncio.fixture(scope="session")

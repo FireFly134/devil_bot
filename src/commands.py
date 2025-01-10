@@ -38,7 +38,7 @@ async def start(message: Message, state: FSMContext) -> None:
                 if hero_user_search := await HeroesOfUsers.query.where(
                     HeroesOfUsers.user_id == user.id
                 ).gino.first():
-                    sms = f"Привет, {str(hero_user_search.name)}"
+                    sms = f"Привет, {hero_user_search.name}"
                     await new_button(message, sms)
                     return
                 # user(message, sms)
