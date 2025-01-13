@@ -545,7 +545,9 @@ response = [
     ],
 )
 @pytest.mark.asyncio()
-async def test_request(last_post_id: int, content_news: list[dict[str, Any]]) -> None:
+async def test_request(
+    last_post_id: int, content_news: list[dict[str, Any]]
+) -> None:
     """Тест парсинга новостей с подменной информации"""
     GameNews._get_request_news = AsyncMock(return_value=response)
     GameNews._get_last_post_id = AsyncMock(return_value=last_post_id)

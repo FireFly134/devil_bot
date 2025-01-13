@@ -98,11 +98,17 @@ async def subscribe(message: Message, state: FSMContext) -> None:
 async def engine_subscription(
     message: Message, who_edit: str, text: str, state: FSMContext
 ) -> None:
-    await db.status(db.text(
-        f"UPDATE heroes_of_users SET {who_edit}"
-        f"WHERE user_id = '{(await state.get_data())['user_id']}'"
-        f"    and id = '{(await state.get_data())['hero_id']}';"
-    ))
+    await db.status(
+        db.text(
+            "UPDATE heroes_of_users SET :who_edit"
+            "WHERE user_id = :user_id and id = :hero_id;"
+        ),
+        params={
+            "who_edit": who_edit,
+            "user_id": (await state.get_data())["user_id"],
+            "hero_id": (await state.get_data())["hero_id"],
+        },
+    )
     await subscription_button(
         message,
         text,
@@ -115,7 +121,10 @@ async def engine_subscription(
 )
 async def subscribe_replace_kz(message: Message, state: FSMContext) -> None:
     who_edit = "subscription_rock = 'true'"
-    text = "Если у вас будет меньше 600 камней, я вам напомню об этом за час до смены КЗ."
+    text = (
+        "Если у вас будет меньше %i камней, я вам напомню об этом за час до смены КЗ."
+        % (settings.MAX_COUNT_ROCKS)
+    )
     await engine_subscription(message, who_edit, text, state)
 
 

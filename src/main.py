@@ -1,3 +1,4 @@
+"""Файл для запуска приложения"""
 import asyncio
 import logging
 
@@ -25,41 +26,40 @@ from menu import (  # noqa: F401
 )
 from menu.buttons import setting_hero_button
 from menu.main_menu import print_rock
-from migrations import run_connection_db
+from migrations import db, run_connection_db
 from src import Regisration, form_router
 from tables.heroes_of_users import HeroesOfUsers
 from tables.telegram_users import User
 
 
-async def first_sms(message: Message):
-    sms = """Сейчас время смены кланового задания установлено __18:30__, а первый сбор бесплатной энергии установлен на __12:00__ \(__*по МСК*__\)\.
+async def first_sms(message: Message) -> None:
+    """Отправка первого сообщения после регистрации."""
+    sms = """Сейчас время смены кланового задания установлено __18:30__, а первый сбор бесплатной энергии установлен на __12:00__ \\(__*по МСК*__\\)\\.
 
-    *Если данное время неверно, то это можно с лёгкостью изменить в настройках\!*
-    Для этого нажми *Настройка профиля* \-\-\-\> *Поменять время\.\.\.*
+    *Если данное время неверно, то это можно с лёгкостью изменить в настройках\\!*
+    Для этого нажми *Настройка профиля* \\-\\-\\-\\> *Поменять время\\.\\.\\.*
 
-    *Так же можно __бесплатно__ подписаться на напоминалки\!*
-    Чтобы это сделать проходим *Настройка профиля* \-\-\-\> *Подписки\.\.\.*
-    """
+    *Так же можно __бесплатно__ подписаться на напоминалки\\!*
+    Чтобы это сделать проходим *Настройка профиля* \\-\\-\\-\\> *Подписки\\.\\.\\.*"""
     await message.answer(text=sms, parse_mode=ParseMode.MARKDOWN_V2)
 
 
 @form_router.callback_query(Regisration.name, F.data == "yes")
 async def missing_name(call: CallbackQuery, state: FSMContext) -> None:
-    data = await state.get_data()
-    if "hero_id" in data:
-        hero = await HeroesOfUsers.query.where(
-            HeroesOfUsers.id == data["hero_id"]
-        ).gino.first()
-        await hero.update(name=data["name"]).apply()
+    """Подтверждение и сохранение никнейма героя."""
+    state_data = await state.get_data()
+    if "hero_id" in state_data:
+        hero = await HeroesOfUsers.get(id=state_data["hero_id"])
+        await hero.update(name=state_data["name"]).apply()
     else:
         await HeroesOfUsers(
-            user_id=data["user_id"],
-            name=data["name"],
+            user_id=state_data["user_id"],
+            name=state_data["name"],
         ).create()
     await state.clear()
     await call.message.delete()
     await setting_hero_button(
-        call.message, data["user_id"], "Отлично, будем знакомы)"
+        call.message, state_data["user_id"], "Отлично, будем знакомы)"
     )
     try:
         await first_sms(call.message)
@@ -72,7 +72,7 @@ async def missing_name(call: CallbackQuery, state: FSMContext) -> None:
 async def missing_name(call: CallbackQuery) -> None:
     await call.message.delete()
     await call.message.answer(
-        "Ок, давай попробуем снова. Какой у тебя ник в игре?"
+        f"Ок, давай попробуем снова. Какой у тебя ник в игре?"
     )
 
 
@@ -129,18 +129,19 @@ async def add_rock(
     message: Message, upg_rock: int, hero: HeroesOfUsers
 ) -> None:
     """Добавление камней"""
-    if upg_rock > 600:
+    if hero.rock < upg_rock:
+        await db.status(
+            db.text(
+                """UPDATE heroes_of_users SET rock = :upg_rock
+                WHERE id = :hero_id"""
+            ),
+            {"upg_rock": upg_rock, "hero_id": hero.id},
+        )
         await message.answer(
-            "Ты меня не обманешь! У тебя не может быть больше 600 камней."
+            f"Ок, я внес изменения. Тебе осталось добить {settings.MAX_COUNT_ROCKS - upg_rock}"
         )
         return
-    elif hero.rock < upg_rock:
-        await hero.update(rock=upg_rock).apply()
-        await message.answer(
-            f"Ок, я внес изменения. Тебе осталось добить {600 - upg_rock}"
-        )
-        return
-    elif hero.rock == 600:
+    elif hero.rock == settings.MAX_COUNT_ROCKS:
         await message.answer("Да-да, я помню... Поздравляю!")
         return
     await message.answer(
@@ -190,7 +191,7 @@ async def set_default_commands(bot: Bot) -> None:
 @form_router.message()
 async def handle_text(message: Message) -> None:
     if message.chat.type == "private" and message.text.isnumeric():
-        if 0 <= int(message.text) <= 600:
+        if 0 <= int(message.text) <= settings.MAX_COUNT_ROCKS:
             heroes = await get_heroes_from_user_id(message.from_user.id)
             keyboard = []
             if len(heroes) == 1:
@@ -212,8 +213,9 @@ async def handle_text(message: Message) -> None:
                     ),
                 )
         else:
-            await message.reply(
-                "Ты что, хочешь меня обмануть? Проверь сколько у тебя камней!",
+            await message.answer(
+                "Ты меня не обманешь! У тебя не может быть больше %i камней."
+                % (settings.MAX_COUNT_ROCKS)
             )
 
 

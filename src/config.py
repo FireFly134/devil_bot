@@ -68,5 +68,7 @@ class Settings(BaseSettings):
     ACCESS_TOKEN: str = ""
     DOMAIN: str = ""
 
+    MAX_COUNT_ROCKS: int = 600
+
 
 settings = Settings(_env_file="../.env")

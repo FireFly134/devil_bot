@@ -1,3 +1,5 @@
+"""Парсер новостей из официальной группы игры, в VK."""
+
 import asyncio
 import logging
 from datetime import datetime
@@ -21,7 +23,7 @@ from tables.post_news import PostNews
 class GameNews:
     """Игровые новости"""
 
-    def __init__(self, bot: Bot):
+    def __init__(self, bot: Bot) -> None:
         self.bot = bot
         self.url = "https://api.vk.com/method/wall.get"
         self.request_params = {
@@ -36,13 +38,13 @@ class GameNews:
 
     async def _get_request_news(self) -> list[dict[str, Any]]:
         """Получение новостей из официальной группы игры, по VK API."""
-        r = requests.get(
+        response = requests.get(
             self.url,
             headers=self.headers,
             params=self.request_params,
         )
 
-        return r.json()["response"]["items"]
+        return response.json()["response"]["items"]
 
     async def _get_content_news(self) -> list[dict[str, str | int | datetime]]:
         """Получение контента из новостей."""
@@ -179,13 +181,11 @@ async def main() -> None:
         )
     )
     await run_connection_db()
-    # while True:
     try:
         await game_news.check_news()
         await send_news(game_news)
     except Exception as err:
         logging.info(f"Ошибка при попытке парсинга: {err}")
-        # time.sleep(300)
 
 
 if __name__ == "__main__":

@@ -5,6 +5,7 @@ from aiogram import F
 from aiogram.fsm.context import FSMContext
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 
+from config import settings
 from menu.buttons import (
     help_my_button,
     new_button,
@@ -34,7 +35,7 @@ async def print_rock(message: Message, hero: HeroesOfUsers) -> None:
     else:
         sms = (
             f'У твоего героя под ником "{hero.name}" - "{hero.rock}" камней! '
-            f"Осталось добить {600 - hero.rock}. "
+            f"Осталось добить {settings.MAX_COUNT_ROCKS - hero.rock}. "
             f"До обновления К.З. осталось {time3}"
         )
     await message.answer(sms)
@@ -176,8 +177,8 @@ async def donation_to_my_creator(message: Message) -> None:
         )
     # keyboard = [[InlineKeyboardButton("Ссылка на пожертвование через сайт Тинькофф", url='https://www.tinkoff.ru/rm/tkachev.konstantin69/3j6lJ87953')]]
     # with open(working_folder + "QR-code.jpg", "rb") as img:
-    # context.bot.send_photo(chat_id=update.effective_chat.id, photo=img, caption="QR\-код на пожертвование через сайт Тинькофф", parse_mode='MarkdownV2', reply_markup=InlineKeyboardMarkup(keyboard))
-    # "[Создатель бота](https://t.me/Menace134) \- Константин Т\.", parse_mode='MarkdownV2'
+    # context.bot.send_photo(chat_id=update.effective_chat.id, photo=img, caption="QR\\-код на пожертвование через сайт Тинькофф", parse_mode='MarkdownV2', reply_markup=InlineKeyboardMarkup(keyboard))
+    # "[Создатель бота](https://t.me/Menace134) \\- Константин Т\\.", parse_mode='MarkdownV2'
     # context.bot.send_message(chat_id=update.effective_chat.id, text='Отсканируйте QR-код или просто нажмите на ссылку, чтобы отблагодарить автора.')
     await message.answer(
         "СБП по номеру только(Сбер, Газпром, ВТБ, МТС), это временно... @menace134",

@@ -32,7 +32,7 @@ async def how_to_log_in_to_the_game(message: Message) -> None:
 async def who_to_download_at_the_beginning(message: Message) -> None:
     """Кого качать в начале."""
     await message.answer(
-        "По данному вопросу zOrg написал [статью](https://telegra.ph/Nachalnyj-pak-11-17)\, вот держи\!\)",
+        "По данному вопросу zOrg написал [статью](https://telegra.ph/Nachalnyj-pak-11-17)\\, вот держи\\!\\)",
         ParseMode.MARKDOWN_V2,
     )
 
@@ -116,7 +116,7 @@ async def three_star_trials(message: Message) -> None:
 async def schemes_of_all_raids(message: Message) -> None:
     """Схемы всех рейдов."""
     await message.answer(
-        "[Схемы всех рейдов](https://drive.google.com/folderview?id=1-9P7YK6He09vgheEQd4rK5zf-H5QXDFi)\n\n[Схемы всех рейдов от 🔥 Li \[Феникс\]](https://telegra.ph/Shemy-rejdov-05-19)",
+        "[Схемы всех рейдов](https://drive.google.com/folderview?id=1-9P7YK6He09vgheEQd4rK5zf-H5QXDFi)\n\n[Схемы всех рейдов от 🔥 Li \\[Феникс\\]](https://telegra.ph/Shemy-rejdov-05-19)",
         ParseMode.MARKDOWN_V2,
     )
 

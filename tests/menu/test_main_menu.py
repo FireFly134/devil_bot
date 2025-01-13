@@ -2,12 +2,16 @@ from unittest.mock import AsyncMock
 
 import pytest
 
+from config import settings
 from menu.main_menu import print_rock
 from tables.heroes_of_users import HeroesOfUsers
 
 
 def get_check_data_for_print_rock():
-    return [(rock, get_answer(rock)) for rock in (0, 200, 400, 600)]
+    return [
+        (rock, get_answer(rock))
+        for rock in (0, 200, 400, settings.MAX_COUNT_ROCKS)
+    ]
 
 
 def get_answer(rock: int) -> str:
@@ -15,7 +19,7 @@ def get_answer(rock: int) -> str:
         return "Ты еще не вводил количество своих камней. Введи количество цифрами!"
     return (
         f'У твоего героя под ником "Test Hero" - "{rock}" камней! '
-        f"Осталось добить {600 - rock}. "
+        f"Осталось добить {settings.MAX_COUNT_ROCKS - rock}. "
         f"До обновления К.З. осталось"
     )
 
