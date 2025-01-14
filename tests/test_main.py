@@ -21,7 +21,7 @@ async def test_get_hero() -> None:
     for check_hero in await get_heroes_from_user_id(user.user_id):
         assert hero.id == check_hero.id
         assert hero.name == check_hero.name
-    check_hero = await get_hero_from_hero_id(hero.id)
+    check_hero = await HeroesOfUsers.get(id=hero.id)
     assert hero.id == check_hero.id
     assert hero.name == check_hero.name
 

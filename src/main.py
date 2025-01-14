@@ -1,4 +1,5 @@
-"""Файл для запуска приложения"""
+"""Файл для запуска приложения."""
+
 import asyncio
 import logging
 
@@ -16,7 +17,7 @@ from aiogram.types import (
 )
 
 import chat_commands  # noqa: F401
-import commands  # noqa: F401
+import commands
 from config import settings
 from menu import (  # noqa: F401
     main_menu,
@@ -25,7 +26,6 @@ from menu import (  # noqa: F401
     menu_useful_information,
 )
 from menu.buttons import setting_hero_button
-from menu.main_menu import print_rock
 from migrations import db, run_connection_db
 from src import Regisration, form_router
 from tables.heroes_of_users import HeroesOfUsers
@@ -49,7 +49,7 @@ async def missing_name(call: CallbackQuery, state: FSMContext) -> None:
     """Подтверждение и сохранение никнейма героя."""
     state_data = await state.get_data()
     if "hero_id" in state_data:
-        hero = await HeroesOfUsers.get(id=state_data["hero_id"])
+        hero = await HeroesOfUsers.get(id=int(state_data["hero_id"]))  # noqa: WPS529
         await hero.update(name=state_data["name"]).apply()
     else:
         await HeroesOfUsers(
@@ -69,15 +69,17 @@ async def missing_name(call: CallbackQuery, state: FSMContext) -> None:
 
 
 @form_router.callback_query(Regisration.name, F.data == "no")
-async def missing_name(call: CallbackQuery) -> None:
+async def missing_name(call: CallbackQuery) -> None:  # noqa: F811 WPS440
+    """Отказ от регистрации героя/не корректно введён никнейм."""
     await call.message.delete()
     await call.message.answer(
-        f"Ок, давай попробуем снова. Какой у тебя ник в игре?"
+        "Ок, давай попробуем снова. Какой у тебя ник в игре?"
     )
 
 
 @form_router.message(Regisration.name)
 async def reg_start(message: Message, state: FSMContext) -> None:
+    """Начало регистрации героя пользователя."""
     await state.update_data(name=message.text)
     await message.answer(
         f'Ты герой под ником "{message.text}"?',
@@ -94,8 +96,9 @@ async def reg_start(message: Message, state: FSMContext) -> None:
 
 
 async def get_heroes_from_user_id(user_id: int) -> list[HeroesOfUsers]:
+    """Получаем героев по id пользователя."""
     return (
-        await HeroesOfUsers.join(User, HeroesOfUsers.user_id == User.id)
+        await HeroesOfUsers.join(User, HeroesOfUsers.user_id == User.id)  # noqa: WPS221
         .select()
         .where(User.user_id == user_id)
         .with_only_columns(HeroesOfUsers)
@@ -103,37 +106,35 @@ async def get_heroes_from_user_id(user_id: int) -> list[HeroesOfUsers]:
     )
 
 
-async def get_hero_from_hero_id(hero_id: int) -> HeroesOfUsers:
-    return await HeroesOfUsers.query.where(
-        HeroesOfUsers.id == hero_id
-    ).gino.first()
-
-
 # TODO @form_router.callback_query("print" in F.data)
 async def choice_hero_print_rock(call: CallbackQuery) -> None:
-    await print_rock(
-        call.message, await get_hero_from_hero_id(int(call.data.split("-")[1]))
+    """Выбираем героя и выводим количество его камней."""
+    await main_menu.print_rock(
+        call.message, await HeroesOfUsers.get(id=int(call.data.split("-")[1]))
     )
 
 
 # TODO @form_router.callback_query("add_rock" in F.data)
 async def choice_hero_add_rock(call: CallbackQuery) -> None:
+    """Подтверждаем выбор героя и добавляем ему камни."""
     await add_rock(
         call.message,
         int(call.data.split("-")[1]),
-        await get_hero_from_hero_id(int(call.data.split("-")[2])),
+        await HeroesOfUsers.get(id=int(call.data.split("-")[2])),
     )
 
 
 async def add_rock(
     message: Message, upg_rock: int, hero: HeroesOfUsers
 ) -> None:
-    """Добавление камней"""
+    """Добавление камней."""
+    if hero.rock == settings.MAX_COUNT_ROCKS:
+        await message.answer("Да-да, я помню... Поздравляю!")
+        return
     if hero.rock < upg_rock:
         await db.status(
             db.text(
-                """UPDATE heroes_of_users SET rock = :upg_rock
-                WHERE id = :hero_id"""
+                "UPDATE heroes_of_users SET rock = :upg_rock WHERE id = :hero_id;"
             ),
             {"upg_rock": upg_rock, "hero_id": hero.id},
         )
@@ -141,26 +142,24 @@ async def add_rock(
             f"Ок, я внес изменения. Тебе осталось добить {settings.MAX_COUNT_ROCKS - upg_rock}"
         )
         return
-    elif hero.rock == settings.MAX_COUNT_ROCKS:
-        await message.answer("Да-да, я помню... Поздравляю!")
-        return
     await message.answer(
         f"Ты меня не обманешь! В прошлый раз ты писал {hero.rock}"
     )
 
 
 async def set_default_commands(bot: Bot) -> None:
+    """Установка команд по умолчанию."""
     await bot.set_my_commands(
         [
             BotCommand(command="start", description="Запустить бота"),
             BotCommand(command="help", description="Помощь"),
-            # BotCommand(command="edit_name", description=""),
-            # BotCommand(command="clan_tasks", description=""),
-            # BotCommand(command="manul_kv", description=""),
-            # BotCommand(command="manul_ap_kv", description=""),
-            # BotCommand(command="heroes_for_events", description=""),
-            # BotCommand(command="pak_and_counterpak", description=""),
-            # BotCommand(command="useful_links", description=""),
+            # BotCommand(command="edit_name", description=""), # noqa: E800
+            # BotCommand(command="clan_tasks", description=""), # noqa: E800
+            # BotCommand(command="manul_kv", description=""), # noqa: E800
+            # BotCommand(command="manul_ap_kv", description=""), # noqa: E800
+            # BotCommand(command="heroes_for_events", description=""), # noqa: E800
+            # BotCommand(command="pak_and_counterpak", description=""), # noqa: E800
+            # BotCommand(command="useful_links", description=""), # noqa: E800
             BotCommand(
                 command="commands_for_chat", description="Команды для чата"
             ),
@@ -188,40 +187,46 @@ async def set_default_commands(bot: Bot) -> None:
     )
 
 
+async def start_add_rock(message: Message, state: FSMContext) -> None:
+    """Перед началом добавления камней, проверяем на количество героев и действуем по схеме."""
+    heroes = await get_heroes_from_user_id(message.from_user.id)
+    keyboard = []
+    if heroes:
+        await commands.regisration(message, message.from_user.id, state)
+    elif len(heroes) == 1:
+        await add_rock(message, int(message.text), heroes[0])
+    else:
+        for hero in heroes:
+            keyboard.append(
+                [
+                    InlineKeyboardButton(
+                        text=hero.name,
+                        callback_data=f"add_rock-{message.text}-{hero.id}",
+                    )
+                ]
+            )
+        await message.reply(
+            text="Кому добавим камни?",
+            reply_markup=InlineKeyboardMarkup(
+                inline_keyboard=keyboard
+            ),
+        )
+
+
 @form_router.message()
-async def handle_text(message: Message) -> None:
+async def handle_text(message: Message, state: FSMContext) -> None:
+    """Обработка текста, сюда приходит все что не отсеялось ранее."""
     if message.chat.type == "private" and message.text.isnumeric():
         if 0 <= int(message.text) <= settings.MAX_COUNT_ROCKS:
-            heroes = await get_heroes_from_user_id(message.from_user.id)
-            keyboard = []
-            if len(heroes) == 1:
-                await add_rock(message, int(message.text), heroes[0])
-            else:
-                for hero in heroes:
-                    keyboard.append(
-                        [
-                            InlineKeyboardButton(
-                                text=hero.name,
-                                callback_data=f"add_rock-{message.text}-{hero.id}",
-                            )
-                        ]
-                    )
-                await message.reply(
-                    text="Кому добавим камни?",
-                    reply_markup=InlineKeyboardMarkup(
-                        inline_keyboard=keyboard
-                    ),
-                )
+            await start_add_rock(message, state)
         else:
             await message.answer(
-                "Ты меня не обманешь! У тебя не может быть больше %i камней."
-                % (settings.MAX_COUNT_ROCKS)
+                f"Ты меня не обманешь! У тебя не может быть больше {settings.MAX_COUNT_ROCKS} камней."
             )
 
 
 async def main() -> None:
-    # Initialize Bot instance with a default parse mode which will be passed
-    # to all API calls
+    """Initialize Bot instance with a default parse mode which will be passed to all API calls."""
     bot = Bot(
         token=settings.TOKEN,
         session=AiohttpSession(),
