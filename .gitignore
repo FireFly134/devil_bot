@@ -54,7 +54,7 @@ Temporary Items
 .idea/**/libraries
 
 # Local configuration related files
-.idea/goldstream.iml
+.idea/src.iml
 .idea/misc.xml
 
 # Gradle and Maven with auto-import

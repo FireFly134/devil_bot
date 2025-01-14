@@ -100,15 +100,14 @@ async def engine_subscription(
 ) -> None:
     await db.status(
         db.text(
-            "UPDATE heroes_of_users SET :who_edit"
-            "WHERE user_id = :user_id and id = :hero_id;"
-        ),
-        params={
-            "who_edit": who_edit,
-            "user_id": (await state.get_data())["user_id"],
-            "hero_id": (await state.get_data())["hero_id"],
-        },
+            "UPDATE heroes_of_users SET {who_edit} WHERE user_id = {user_id} AND id = {hero_id};".format(
+                who_edit=who_edit,
+                user_id=(await state.get_data())["user_id"],
+                hero_id=(await state.get_data())["hero_id"],
+            )
+        )
     )
+
     await subscription_button(
         message,
         text,
