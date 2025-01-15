@@ -65,10 +65,11 @@ class Settings(BaseSettings):
     stop_word: Tuple[str, str, str] = ("stop", "стоп", "отмена")
     MY_TG_ID: str = ""
     # для VK.com
-    ACCESS_TOKEN: str = ""
+    VK_ACCESS_TOKEN: str = ""
     DOMAIN: str = ""
 
     MAX_COUNT_ROCKS: int = 600
-
+    YANDEX_TOKEN: str = ""
+    YANDEX_ROOT_DIR: str = "/files_for_bot"
 
 settings = Settings(_env_file="../.env")

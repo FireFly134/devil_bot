@@ -18,6 +18,8 @@ gino = "^1.0.1"
 sqlalchemy-utils = "^0.41.2"
 gino-starlette = "^0.1.6"
 apscheduler = "^3.11.0"
+yadisk = "^3.1.0"
+httpx = "^0.28.1"
 
 [tool.poetry.group.dev.dependencies]
 isort = "^5.12.0"

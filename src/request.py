@@ -27,7 +27,7 @@ class GameNews:
         self.bot = bot
         self.url = "https://api.vk.com/method/wall.get"
         self.request_params = {
-            "access_token": settings.ACCESS_TOKEN,
+            "access_token": settings.VK_ACCESS_TOKEN,
             "v": 5.131,
             "domain": settings.DOMAIN,
             "count": 5,
