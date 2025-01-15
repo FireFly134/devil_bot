@@ -173,6 +173,8 @@ async def send_news(game_news: GameNews) -> None:
 
 
 async def main() -> None:
+    """Запуск парсинга новостей."""
+
     game_news = GameNews(
         Bot(
             token=settings.TOKEN,

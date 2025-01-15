@@ -22,3 +22,17 @@ services:
       - postgres
     env_file:
       - .env
+
+  scheduler:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    command: python3 src/scheduler.py
+    env_file:
+      - .env
+    volumes:
+      - ./:/app
+    links:
+      - postgres
+    depends_on:
+      - postgres
