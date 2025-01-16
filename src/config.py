@@ -70,6 +70,7 @@ class Settings(BaseSettings):
 
     MAX_COUNT_ROCKS: int = 600
     YANDEX_TOKEN: str = ""
-    YANDEX_ROOT_DIR: str = "/files_for_bot"
+    YANDEX_ROOT_DIR: str = "disk:/files_for_bot"
+
 
 settings = Settings(_env_file="../.env")

@@ -1,17 +1,23 @@
 from aiogram import F
 from aiogram.enums import ParseMode
-from aiogram.types import Message
+from aiogram.types import Message, URLInputFile
 
 from menu.menu_help import get_text
+from services.ya_disk import YaDisk
 from src import form_router
 from src.menu.text_menu import menu_useful_information
+
+ya_disk = YaDisk()
 
 
 @form_router.message(F.text == menu_useful_information["for_new_gamers"])
 async def for_new_gamers(message: Message) -> None:
     """Для новых игроков."""
-    with open(working_folder + "help/manual_for_new_gamers.pdf", "rb") as pdf:
-        await message.answer_document(document=pdf)
+    await message.answer_document(
+        document=await ya_disk.get_link_on_files(
+            "/help/manual_for_new_gamers.pdf"
+        )
+    )
     text = await get_text("For_new_gamers")
     await message.answer(text, parse_mode=ParseMode.MARKDOWN_V2)
 
@@ -43,22 +49,23 @@ async def who_to_download_at_the_beginning(message: Message) -> None:
 async def necessary_heroes_for_events(message: Message) -> None:
     """Необходимые герои для ивентов."""
     file_name = {
-        "All_Event_Overviews_5_LQ.png": "Все герои из событий.",
+        "ivent.jpg": "Все герои из событий.",
         "Sandariel-Event.png": "Сандариэль.",
         "Magnus-Event_Pass.png": "Магнус.",
         "Balthazar-Event.png": "Бальтазар.",
         "Gobliana-Event.png": "Гоблушка.",
         "zigfrid.jpg": "Зигфрид.",
         "Daghan.jpg": "Да'Гана.",
-        "ivent_AOM.jpg": "структурированный гайд от Pulcho.",
-        "Infographic_Events-1.png": "гайд по событиям.",
+        "ivent_AOM.jpg": "Структурированный гайд от Pulcho.",
+        "Infographic_Events-1.png": "Гайд по событиям.",
     }
     for name in file_name:
-        await message.answer("Функции пока что нет.")
-        with open(
-            working_folder + f"help/necessary_heroes_for_events/{name}", "rb"
-        ) as img:
-            await message.answer_photo(photo=img, caption=file_name[name])
+        await message.answer_photo(
+            photo=await ya_disk.get_link_on_files(
+                f"/help/necessary_heroes_for_events/{name}"
+            ),
+            caption=file_name[name],
+        )
 
 
 @form_router.message(F.text == menu_useful_information["useful_links"])
@@ -75,7 +82,7 @@ async def instructions_for_kv(message: Message) -> None:
     text2 = await get_text("kv2")
     await message.answer(text1)
     await message.answer_photo(
-        photo=open(working_folder + "help/kv.jpg", "rb"),
+        photo=await ya_disk.get_link_on_files("/help/kv.jpg"),
     )
     await message.answer(text2)
 
@@ -85,8 +92,12 @@ async def instructions_for_kv(message: Message) -> None:
 )
 async def instructions_aptechkam_kv(message: Message) -> None:
     """Гайд по аптечкам в КВ."""
-    with open(working_folder + "help/Manual_KV.doc", "rb") as file:
-        await message.answer_document(document=file)
+    await message.answer_document(
+        URLInputFile(
+            await ya_disk.get_link_on_files("/help/Manual_KV.pdf"),
+            filename="Manual_KV.pdf",
+        )
+    )
 
 
 @form_router.message(
@@ -101,15 +112,20 @@ async def packs_and_counterattacks(message: Message) -> None:
         "pak_and_counterpak4",
         "pak_and_counterpak5",
     ]:
-        with open(working_folder + f"help/{name}.jpg", "rb") as img:
-            await message.answer_photo(photo=img)
+        await message.answer_photo(
+            photo=await ya_disk.get_link_on_files(f"/help/{name}.jpg")
+        )
 
 
 @form_router.message(F.text == menu_useful_information["three_star_trials"])
 async def three_star_trials(message: Message) -> None:
     """Испытания на 3*."""
-    with open(working_folder + "help/recent_trials.doc", "rb") as doc:
-        await message.answer_document(document=doc)
+    await message.answer_document(
+        URLInputFile(
+            await ya_disk.get_link_on_files("/help/recent_trials.pdf"),
+            filename="recent_trials.pdf",
+        )
+    )
 
 
 @form_router.message(F.text == menu_useful_information["schemes_of_all_raids"])

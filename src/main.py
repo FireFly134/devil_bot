@@ -49,7 +49,9 @@ async def missing_name(call: CallbackQuery, state: FSMContext) -> None:
     """Подтверждение и сохранение никнейма героя."""
     state_data = await state.get_data()
     if "hero_id" in state_data:
-        hero = await HeroesOfUsers.get(id=int(state_data["hero_id"]))  # noqa: WPS529
+        hero = await HeroesOfUsers.get(
+            id=int(state_data["hero_id"])
+        )  # noqa: WPS529
         await hero.update(name=state_data["name"]).apply()
     else:
         await HeroesOfUsers(
@@ -98,7 +100,9 @@ async def reg_start(message: Message, state: FSMContext) -> None:
 async def get_heroes_from_user_id(user_id: int) -> list[HeroesOfUsers]:
     """Получаем героев по id пользователя."""
     return (
-        await HeroesOfUsers.join(User, HeroesOfUsers.user_id == User.id)  # noqa: WPS221
+        await HeroesOfUsers.join(
+            User, HeroesOfUsers.user_id == User.id
+        )  # noqa: WPS221
         .select()
         .where(User.user_id == user_id)
         .with_only_columns(HeroesOfUsers)
@@ -207,9 +211,7 @@ async def start_add_rock(message: Message, state: FSMContext) -> None:
             )
         await message.reply(
             text="Кому добавим камни?",
-            reply_markup=InlineKeyboardMarkup(
-                inline_keyboard=keyboard
-            ),
+            reply_markup=InlineKeyboardMarkup(inline_keyboard=keyboard),
         )
 
 

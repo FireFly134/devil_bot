@@ -1,11 +1,12 @@
 """Файл для запуска планировщика."""
-from asyncio import run, Future
+import logging
+from asyncio import Future, run
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-import logging
 from pytz import timezone
 
 from src.request import main as get_news
+
 # from src.reminder import main as reminder
 # from src.reminder_events import main as reminder_events
 
