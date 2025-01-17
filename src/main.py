@@ -49,7 +49,9 @@ async def missing_name(call: CallbackQuery, state: FSMContext) -> None:
     """Подтверждение и сохранение никнейма героя."""
     state_data = await state.get_data()
     if "hero_id" in state_data:
-        hero = await HeroesOfUsers.get(id=int(state_data["hero_id"]))  # noqa: WPS529
+        hero = await HeroesOfUsers.get(
+            id=int(state_data["hero_id"])
+        )  # noqa: WPS529
         await hero.update(name=state_data["name"]).apply()
     else:
         await HeroesOfUsers(
@@ -110,9 +112,7 @@ async def get_heroes_from_user_id(user_id: int) -> list[HeroesOfUsers]:
 async def choice_hero_print_rock(call: CallbackQuery) -> None:
     """Выбираем героя и выводим количество его камней."""
     await main_menu.print_rock(
-        call.message, await HeroesOfUsers.get(
-            id=int(call.data.split("-")[1])
-        )
+        call.message, await HeroesOfUsers.get(id=int(call.data.split("-")[1]))
     )
 
 

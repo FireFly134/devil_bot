@@ -85,7 +85,7 @@ class GameNews:
                     )
         return posts_list
 
-    async def _get_clans(self):
+    async def _get_clans(self) -> list[Clans]:
         """Получение кланов, у которых включено получение новостей."""
         return await Clans.query.where(
             and_(
@@ -112,7 +112,7 @@ class GameNews:
 
     async def build_and_send_news_message(self, post: PostNews) -> None:
         """Сборка сообщений с новостью для отправки в чат."""
-        clans = await self._get_clans()
+        clans: list[Clans] = await self._get_clans()
         tasks = []
         media_group = []
         for photo in post.photos:
@@ -135,7 +135,9 @@ class GameNews:
         await post.update(is_send=True).apply()
         await asyncio.wait(tasks)
 
-    async def _send_message_news(self, clan, media_group, post) -> None:
+    async def _send_message_news(
+        self, clan: Clans, media_group: list[InputMediaPhoto], post: PostNews
+    ) -> None:
         """Отправка новостей в чат."""
         try:
             await self.bot.send_media_group(
@@ -159,11 +161,12 @@ class GameNews:
 
     async def check_news(self) -> None:
         """Проверка новостей."""
-        if posts_list := await self._get_content_news():
+        if posts_list := await self._get_content_news():  # noqa: WPS332
             await self._save_post_info_in_db(posts_list)
 
 
 async def send_news(game_news: GameNews) -> None:
+    """Отправка новостей."""
     post = (
         await PostNews.query.where(~PostNews.is_send)
         .order_by(PostNews.id.asc())
@@ -174,7 +177,6 @@ async def send_news(game_news: GameNews) -> None:
 
 async def main() -> None:
     """Запуск парсинга новостей."""
-
     game_news = GameNews(
         Bot(
             token=settings.TOKEN,

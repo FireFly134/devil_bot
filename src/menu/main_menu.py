@@ -25,7 +25,9 @@ async def print_rock(message: Message, hero: HeroesOfUsers) -> None:
     time1 = timedelta(
         days=now.day, hours=now.hour, minutes=now.minute, seconds=now.second
     )
-    time2 = timedelta(days=now.day, hours=hours, minutes=30, seconds=0)  # noqa: WPS432
+    time2 = timedelta(
+        days=now.day, hours=hours, minutes=30, seconds=0
+    )  # noqa: WPS432
     time3 = time2 - time1
     if time3.days == -1:
         time2 = time2 + timedelta(days=1)

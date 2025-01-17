@@ -35,9 +35,7 @@ async def stop(message: Message) -> None:
     """Остановка активности в чате."""
     if message.chat.type != "private":
         chat_id: str = str(message.chat.id)
-        clan = await Clans.query.where(
-            Clans.chat_id == chat_id
-        ).gino.first()
+        clan = await Clans.query.where(Clans.chat_id == chat_id).gino.first()
         if clan and clan.start:
             await clan.update(start=False).apply()
             await message.answer("Ок, я все понял!☹️\nЯ пошел...")

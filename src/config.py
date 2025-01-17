@@ -16,11 +16,7 @@ logger.addHandler(log_handler)
 class Settings(BaseSettings):
     """Основные константные значения проекта."""
 
-    BASE_DIR: str = os.path.dirname(
-        os.path.dirname(
-            os.path.abspath(__file__)
-        )
-    )
+    BASE_DIR: str = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     TESTING: bool = False
 
     DB_USER: str = "postgres"
@@ -31,25 +27,25 @@ class Settings(BaseSettings):
     DB_URI: PostgresDsn = None
 
     @validator("DB_NAME", pre=True, allow_reuse=True)
-    def get_actual_db_name(cls, db_name: str | None, env_values: dict[str, Any]) -> str:
+    def get_actual_db_name(cls, v: str | None, values: dict[str, Any]) -> str:
         """Получение названия базы, для тестов генерит отдельное название."""
-        if env_values.get("TESTING") and not db_name.endswith("_test"):
-            return f"{db_name}_test"
-        return db_name
+        if values.get("TESTING") and not v.endswith("_test"):
+            return f"{v}_test"
+        return v
 
     @validator("DB_URI", pre=True, allow_reuse=True)
     def assemble_db_connection(
-        cls, db_name: str | None, env_values: dict[str, Any]
+        cls, v: str | None, values: dict[str, Any]
     ) -> str:
         """
         Собираем коннект для подключения к БД.
 
-        :param db_name: value
-        :param env_values: Dict values
+        :param v: value
+        :param values: Dict values
         :return: PostgresDsn
         """
-        if isinstance(db_name, str):
-            conn = urlparse(db_name)
+        if isinstance(v, str):
+            conn = urlparse(v)
             return PostgresDsn.build(
                 scheme=conn.scheme,
                 user=conn.username,
@@ -61,11 +57,11 @@ class Settings(BaseSettings):
 
         return PostgresDsn.build(
             scheme="postgresql",
-            user=env_values["DB_USER"],
-            password=env_values["DB_PASSWD"],
-            host=env_values["DB_HOST"],
-            port=str(env_values["DB_PORT"]),
-            path=f"/{env_values['DB_NAME']}",
+            user=values["DB_USER"],
+            password=values["DB_PASSWD"],
+            host=values["DB_HOST"],
+            port=str(values["DB_PORT"]),
+            path=f"/{values['DB_NAME']}",
         )
 
     TOKEN: str = ""
