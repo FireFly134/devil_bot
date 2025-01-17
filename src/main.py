@@ -196,7 +196,7 @@ async def start_add_rock(message: Message, state: FSMContext) -> None:
     heroes = await get_heroes_from_user_id(message.from_user.id)
     keyboard = []
     if not heroes:
-        await commands.regisration(message, message.from_user.id, state)
+        await commands.regisration(message, state)
     elif len(heroes) == 1:
         await add_rock(message, int(message.text), heroes[0])
     else:
