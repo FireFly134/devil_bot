@@ -136,7 +136,7 @@ async def new_button(message: Message, sms: str) -> None:
             KeyboardButton(text=main_menu["useful_information"]),
         ],
         [KeyboardButton(text=main_menu["4"])],
-        [KeyboardButton(text=main_menu["5"])],
+        # [KeyboardButton(text=main_menu["5"])], # noqa: E800
     ]
     # TODO будут ли у нас Админы?
     # info = pd.read_sql(
