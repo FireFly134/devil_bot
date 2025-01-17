@@ -11,7 +11,7 @@ class PostNews(db.Model):
     __tablename__ = "news"
     __table_args__ = {"extend_existing": True}
 
-    id = sa.Column(
+    id = sa.Column(  # noqa: A003
         "id",
         sa.Integer,
         primary_key=True,

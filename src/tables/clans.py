@@ -11,14 +11,14 @@ class Clans(db.Model):
     __tablename__ = "clans"
     __table_args__ = {"extend_existing": True}
 
-    id = sa.Column(
+    id = sa.Column(  # noqa: A003
         "id", sa.Integer, primary_key=True, index=True, autoincrement=True
     )
     name_clan = sa.Column("name_clan", sa.String, nullable=False)
     time_kz = sa.Column(
         "time_kz",
         sa.Integer,
-        default=18,
+        default=18,  # noqa: WPS432
         server_default=sa.text("18"),
         nullable=False,
     )

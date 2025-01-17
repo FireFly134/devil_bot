@@ -7,6 +7,7 @@ form_router = Router()
 
 class Regisration(StatesGroup):
     """Состояние регистрации."""
+
     name = State()
     user_id = State()
     hero_id = State()
@@ -14,12 +15,14 @@ class Regisration(StatesGroup):
 
 class UpdateTimeChangeClanTask(StatesGroup):
     """Состояние обновления времени для клана."""
+
     hour = State()
     chat_id = State()
 
 
 class SettingProfile(StatesGroup):
     """Состояние для настроек профиля."""
+
     is_active = State()
     edit_name = State()
     time_zone = State()

@@ -11,7 +11,7 @@ class User(db.Model):
     __tablename__ = "user"
     __table_args__ = {"extend_existing": True}
 
-    id = sa.Column(
+    id = sa.Column(  # noqa: A003
         "id", sa.Integer, primary_key=True, index=True, autoincrement=True
     )
     user_id = sa.Column(
@@ -20,9 +20,9 @@ class User(db.Model):
         unique=True,
         nullable=False,
     )
-    first_name = sa.Column("first_name", sa.String(64))
-    last_name = sa.Column("last_name", sa.String(64))
-    username = sa.Column("username", sa.String(64))
+    first_name = sa.Column("first_name", sa.String(64))  # noqa: WPS432
+    last_name = sa.Column("last_name", sa.String(64))  # noqa: WPS432
+    username = sa.Column("username", sa.String(64))  # noqa: WPS432
     language_code = sa.Column("language_code", sa.String(4))
     send_msg = sa.Column(
         "send_msg",

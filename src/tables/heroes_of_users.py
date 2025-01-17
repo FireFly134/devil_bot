@@ -11,7 +11,7 @@ class HeroesOfUsers(db.Model):
     __tablename__ = "heroes_of_users"
     __table_args__ = {"extend_existing": True}
 
-    id = sa.Column(
+    id = sa.Column(  # noqa: A003
         "id", sa.Integer, primary_key=True, index=True, autoincrement=True
     )
     user_id = sa.Column(
@@ -34,14 +34,14 @@ class HeroesOfUsers(db.Model):
     time_change_kz = sa.Column(
         "time_change_kz",
         sa.Integer,
-        default=18,
+        default=18,  # noqa: WPS432
         server_default=sa.text("18"),
         nullable=False,
     )
     time_collection_energy = sa.Column(
         "time_collection_energy",
         sa.Integer,
-        default=12,
+        default=12,  # noqa: WPS432
         server_default=sa.text("12"),
         nullable=False,
     )

@@ -7,16 +7,15 @@ from pytz import timezone
 
 from src.request import main as get_news
 
-# from src.reminder import main as reminder
-# from src.reminder_events import main as reminder_events
+# from src.reminder import main as reminder  # noqa: E800
+# from src.reminder_events import main as reminder_events  # noqa: E800
 
 
 async def scheduler() -> None:
     """Запуск планировщика."""
-
     logging.info("Scheduler starting...")
-    scheduler = AsyncIOScheduler()
-    scheduler.add_job(
+    io_scheduler = AsyncIOScheduler()
+    io_scheduler.add_job(
         get_news,
         "cron",
         id="get_news",
@@ -24,31 +23,31 @@ async def scheduler() -> None:
         timezone=timezone("Europe/Moscow"),
         replace_existing=True,
     )
-    # scheduler.add_job(
-    #     reminder,
-    #     "cron",
-    #     id="reminder",
-    #     minute=[0,30],
-    #     timezone=timezone("Europe/Moscow"),
-    #     replace_existing=True,
-    # )
-    # scheduler.add_job(
-    #     reminder_events,
-    #     "cron",
-    #     id="reminder_events",
-    #     hour="12",
-    #     minute="0",
-    #     timezone=timezone("Europe/Moscow"),
-    #     replace_existing=True,
-    # )
+    # io_scheduler.add_job(  # noqa: E800
+    #     reminder,  # noqa: E800
+    #     "cron",  # noqa: E800
+    #     id="reminder",  # noqa: E800
+    #     minute=[0,30],  # noqa: E800
+    #     timezone=timezone("Europe/Moscow"),  # noqa: E800
+    #     replace_existing=True,  # noqa: E800
+    # )  # noqa: E800
+    # io_scheduler.add_job(  # noqa: E800
+    #     reminder_events,  # noqa: E800
+    #     "cron",  # noqa: E800
+    #     id="reminder_events",  # noqa: E800
+    #     hour="12",  # noqa: E800
+    #     minute="0",  # noqa: E800
+    #     timezone=timezone("Europe/Moscow"),  # noqa: E800
+    #     replace_existing=True,  # noqa: E800
+    # )  # noqa: E800
     logging.info("added tasks to cron scheduler")
-    scheduler.start()
+    io_scheduler.start()
     try:
         await Future()  # Держим планировщик запущенным
     except (KeyboardInterrupt, SystemExit):
-        pass  # Нормальное завершение
+        logging.info("Scheduler stopping...")
     finally:
-        scheduler.shutdown()
+        io_scheduler.shutdown()
         logging.info("Scheduler stopped.")
 
 

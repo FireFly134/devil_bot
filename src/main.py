@@ -49,9 +49,7 @@ async def missing_name(call: CallbackQuery, state: FSMContext) -> None:
     """Подтверждение и сохранение никнейма героя."""
     state_data = await state.get_data()
     if "hero_id" in state_data:
-        hero = await HeroesOfUsers.get(
-            id=int(state_data["hero_id"])
-        )  # noqa: WPS529
+        hero = await HeroesOfUsers.get(id=int(state_data["hero_id"]))  # noqa: WPS529
         await hero.update(name=state_data["name"]).apply()
     else:
         await HeroesOfUsers(
@@ -100,9 +98,7 @@ async def reg_start(message: Message, state: FSMContext) -> None:
 async def get_heroes_from_user_id(user_id: int) -> list[HeroesOfUsers]:
     """Получаем героев по id пользователя."""
     return (
-        await HeroesOfUsers.join(
-            User, HeroesOfUsers.user_id == User.id
-        )  # noqa: WPS221
+        await HeroesOfUsers.join(User)
         .select()
         .where(User.user_id == user_id)
         .with_only_columns(HeroesOfUsers)
@@ -114,7 +110,9 @@ async def get_heroes_from_user_id(user_id: int) -> list[HeroesOfUsers]:
 async def choice_hero_print_rock(call: CallbackQuery) -> None:
     """Выбираем героя и выводим количество его камней."""
     await main_menu.print_rock(
-        call.message, await HeroesOfUsers.get(id=int(call.data.split("-")[1]))
+        call.message, await HeroesOfUsers.get(
+            id=int(call.data.split("-")[1])
+        )
     )
 
 
@@ -195,24 +193,25 @@ async def start_add_rock(message: Message, state: FSMContext) -> None:
     """Перед началом добавления камней, проверяем на количество героев и действуем по схеме."""
     heroes = await get_heroes_from_user_id(message.from_user.id)
     keyboard = []
-    if not heroes:
-        await commands.regisration(message, state)
-    elif len(heroes) == 1:
-        await add_rock(message, int(message.text), heroes[0])
-    else:
-        for hero in heroes:
-            keyboard.append(
-                [
-                    InlineKeyboardButton(
-                        text=hero.name,
-                        callback_data=f"add_rock-{message.text}-{hero.id}",
-                    )
-                ]
+    if heroes:
+        if len(heroes) == 1:
+            await add_rock(message, int(message.text), heroes[0])
+        else:
+            for hero in heroes:
+                keyboard.append(
+                    [
+                        InlineKeyboardButton(
+                            text=hero.name,
+                            callback_data=f"add_rock-{message.text}-{hero.id}",
+                        )
+                    ]
+                )
+            await message.reply(
+                text="Кому добавим камни?",
+                reply_markup=InlineKeyboardMarkup(inline_keyboard=keyboard),
             )
-        await message.reply(
-            text="Кому добавим камни?",
-            reply_markup=InlineKeyboardMarkup(inline_keyboard=keyboard),
-        )
+    else:
+        await commands.regisration(message, state)
 
 
 @form_router.message()
