@@ -71,7 +71,7 @@ async def necessary_heroes_for_events(message: Message) -> None:
 @form_router.message(F.text == menu_useful_information["useful_links"])
 async def useful_links(message: Message) -> None:
     """Полезные ссылки."""
-    text = await get_text("Useful_links")
+    text = await get_text("useful_links")
     await message.answer(text, ParseMode.MARKDOWN_V2)
 
 

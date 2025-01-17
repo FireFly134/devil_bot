@@ -113,7 +113,7 @@ p.s.: Можешь написать слова благодарности❤️ 
 \\- [Таблица по сбору Сандариэль](https://i.ibb.co/CBW3Yy3/image.jpg)
 \\- [AoM Wiki](http://ageofmagicgame.wikia.com/wiki/Age_of_Magic_Wiki)
 
-            Устаревшее:
+Устаревшее:
 \\- [AoM Spellbook](https://aom-spellbook.firebaseapp.com/#/) \\(справочник по меткам\\)
 \\- [Age Of Magic Craft DB by ZarfaZ](https://docs.google.com/spreadsheets/d/10lc8A4qCtyYHgXEku_sM0yasAyTcwAaF3RSDLrkNtXg)
 \\- [Файл с данными по фарму снаряжения](https://docs.google.com/spreadsheets/d/1Pj85lRxvsw7UQFthPGbtFUIuUCUM16LI8ikxTjitN2M/edit#gid=2110571601)
@@ -126,7 +126,7 @@ p.s.: Можешь написать слова благодарности❤️ 
 \\- [Таблицы героев из событий](https://drive.google.com/folderview?id=1--B2a1hn73V8yCDPdHpZrnOb7OnAHLKD)
 
 
-            Каналы и чаты:
+Каналы и чаты:
 \\- [Новостной канал АоМ](http://t.me/age_of_magic_news)
 \\- [АоМ фан группа](https://t.me/aom_fan_ru)
 \\- [АоМ Social](http://t.me/aomSocial)
