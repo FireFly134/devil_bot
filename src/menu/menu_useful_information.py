@@ -1,3 +1,5 @@
+"""Полезная информация."""
+
 from aiogram import F
 from aiogram.enums import ParseMode
 from aiogram.types import Message, URLInputFile
@@ -59,7 +61,7 @@ async def necessary_heroes_for_events(message: Message) -> None:
         "ivent_AOM.jpg": "Структурированный гайд от Pulcho.",
         "Infographic_Events-1.png": "Гайд по событиям.",
     }
-    for name in file_name:
+    for name in file_name.items():
         await message.answer_photo(
             photo=await ya_disk.get_link_on_files(
                 f"/help/necessary_heroes_for_events/{name}"
@@ -105,15 +107,11 @@ async def instructions_aptechkam_kv(message: Message) -> None:
 )
 async def packs_and_counterattacks(message: Message) -> None:
     """Паки и контрпаки."""
-    for name in [
-        "pak_and_counterpak1",
-        "pak_and_counterpak2",
-        "pak_and_counterpak3",
-        "pak_and_counterpak4",
-        "pak_and_counterpak5",
-    ]:
+    for num_img in range(1, 4):
         await message.answer_photo(
-            photo=await ya_disk.get_link_on_files(f"/help/{name}.jpg")
+            photo=await ya_disk.get_link_on_files(
+                f"/help/pak_and_counterpak{num_img}.jpg"
+            )
         )
 
 

@@ -49,21 +49,24 @@ class GameNews:
     async def _get_content_news(self) -> list[dict[str, str | int | datetime]]:
         """Получение контента из новостей."""
         posts_list = []
-        data = await self._get_request_news()
-        last_post_id = await self._get_last_post_id()
-        for item in data:
-            if item["id"] <= last_post_id:
+        try:
+            news = await self._get_request_news()
+        except Exception as err:
+            logging.info(f"Ошибка при попытке получения новостей: {err}")
+            return posts_list
+        for post in news:
+            if post["id"] <= await self._get_last_post_id():
                 continue
-            date_pub = datetime.fromtimestamp(item["date"]).strftime(
+            date_pub = datetime.fromtimestamp(post["date"]).strftime(
                 "%Y-%m-%d %H:%M:%S"
             )
             urls_photo = []
-            for i in range(len(item["attachments"])):
-                if item["attachments"][i]["type"] == "photo":
+            for i in range(len(post["attachments"])):
+                if post["attachments"][i]["type"] == "photo":
                     max_h_val = 0
                     max_w_val = 0
                     url_photo = ""
-                    for dist in item["attachments"][i]["photo"]["sizes"]:
+                    for dist in post["attachments"][i]["photo"]["sizes"]:
                         if dist["height"] > max_h_val:
                             max_h_val = dist["height"]
                             max_w_val = dist["width"]
@@ -77,8 +80,8 @@ class GameNews:
                     urls_photo.append(url_photo)
                     posts_list.append(
                         {
-                            "id": item["id"],
-                            "text": item["text"],
+                            "id": post["id"],
+                            "text": post["text"],
                             "photos": urls_photo,
                             "date_pub": date_pub,
                         }
@@ -185,11 +188,8 @@ async def main() -> None:
         )
     )
     await run_connection_db()
-    try:
-        await game_news.check_news()
-        await send_news(game_news)
-    except Exception as err:
-        logging.info(f"Ошибка при попытке парсинга: {err}")
+    await game_news.check_news()
+    await send_news(game_news)
 
 
 if __name__ == "__main__":

@@ -5,12 +5,7 @@ from aiogram.enums import ParseMode
 from factories import HeroFactory, UserFactory
 
 from config import settings
-from main import (
-    add_rock,
-    first_sms,
-    get_hero_from_hero_id,
-    get_heroes_from_user_id,
-)
+from main import add_rock, first_sms, get_heroes_from_user_id
 from tables.heroes_of_users import HeroesOfUsers
 
 
@@ -21,7 +16,7 @@ async def test_get_hero() -> None:
     for check_hero in await get_heroes_from_user_id(user.user_id):
         assert hero.id == check_hero.id
         assert hero.name == check_hero.name
-    check_hero = await HeroesOfUsers.get(id=hero.id)
+    check_hero = await HeroesOfUsers.get(hero.id)
     assert hero.id == check_hero.id
     assert hero.name == check_hero.name
 

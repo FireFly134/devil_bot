@@ -1,3 +1,4 @@
+"""Меню настройки героя."""
 from aiogram import F
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
@@ -19,11 +20,12 @@ from tables.clans import Clans
 from tables.heroes_of_users import HeroesOfUsers
 
 
-### LEVEL 0
+# LEVEL 0
 @form_router.message(
     SettingProfile.is_active, F.text == setting_profile["setting_hero"]
 )
 async def setting_hero(message: Message, state: FSMContext) -> None:
+    """Переход в настройки героя."""
     await setting_hero_button(
         message,
         user_id=(await state.get_data())["user_id"],
@@ -32,11 +34,12 @@ async def setting_hero(message: Message, state: FSMContext) -> None:
     await state.update_data(level=1)
 
 
-### LEVEL 1
+# LEVEL 1
 @form_router.message(
     SettingProfile.is_active, F.text == setting_profile["add_hero"]
 )
 async def add_hero(message: Message, state: FSMContext) -> None:
+    """Добавляем героя."""
     await cancel_button(message, "Какой у тебя ник в игре?")
     await state.update_data(user_id=(await state.get_data())["user_id"])
     await state.set_state(Regisration.name)
@@ -47,10 +50,11 @@ async def add_hero(message: Message, state: FSMContext) -> None:
     SettingProfile.is_active, F.text == setting_profile["delete_hero"]
 )
 async def delete_hero(message: Message, state: FSMContext) -> None:
-    """Удаляем персонажа, смотрим сколько всего персов и смещаем их к тому который удаляем"""
-    if hero := await HeroesOfUsers.query.where(
+    """Удаляем персонажа, смотрим сколько всего персов и смещаем их к тому который удаляем."""
+    hero = await HeroesOfUsers.query.where(
         HeroesOfUsers.id == (await state.get_data())["hero_id"]
-    ).gino.first():
+    ).gino.first()
+    if hero:
         await new_button(message, f'Герой с ником "{hero.name}" удален!')
         await hero.delete().apply()
         return
@@ -63,17 +67,19 @@ async def delete_hero(message: Message, state: FSMContext) -> None:
     SettingProfile.is_active, F.text == setting_profile["rename_hero"]
 )
 async def rename_hero(message: Message, state: FSMContext) -> None:
+    """Начинаем редактирование имени героя."""
     await message.answer("На какое имя будем менять?")
     await state.set_state(SettingProfile.edit_name)
 
 
 @form_router.message(SettingProfile.edit_name)
 async def edit_name(message: Message, state: FSMContext) -> None:
-    data = await state.get_data()
+    """Редактируем имя героя."""
+    state_data = await state.get_data()
     hero = await HeroesOfUsers.query.where(
         and_(
-            HeroesOfUsers.id == data["hero_id"],
-            HeroesOfUsers.user_id == data["user_id"],
+            HeroesOfUsers.id == state_data["hero_id"],
+            HeroesOfUsers.user_id == state_data["user_id"],
         )
     ).gino.first()
     await hero.update(name=message.text).apply()
@@ -81,11 +87,12 @@ async def edit_name(message: Message, state: FSMContext) -> None:
     await state.set_state(SettingProfile.is_active)
 
 
-### LEVEL 0
+# LEVEL 0
 @form_router.message(
     SettingProfile.is_active, F.text == setting_profile["subscribe"]
 )
 async def subscribe(message: Message, state: FSMContext) -> None:
+    """Переходим в настройки подписок."""
     await subscription_button(
         message,
         "Смотри...",
@@ -94,10 +101,11 @@ async def subscribe(message: Message, state: FSMContext) -> None:
     await state.update_data(level=1)
 
 
-### LEVEL 1
+# LEVEL 1
 async def engine_subscription(
     message: Message, who_edit: str, text: str, state: FSMContext
 ) -> None:
+    """Подписка на оповещение по получению энергии."""
     await db.status(
         db.text(
             "UPDATE heroes_of_users SET {who_edit} WHERE user_id = {user_id} AND id = {hero_id};".format(
@@ -119,11 +127,9 @@ async def engine_subscription(
     SettingProfile.is_active, F.text == setting_profile["subscribe_replace_kz"]
 )
 async def subscribe_replace_kz(message: Message, state: FSMContext) -> None:
+    """Подписка на оповещение об обнулении камней."""
     who_edit = "subscription_rock = 'true'"
-    text = (
-        "Если у вас будет меньше %i камней, я вам напомню об этом за час до смены КЗ."
-        % (settings.MAX_COUNT_ROCKS)
-    )
+    text = f"Если у вас будет меньше {settings.MAX_COUNT_ROCKS} камней, я вам напомню об этом за час до смены КЗ."
     await engine_subscription(message, who_edit, text, state)
 
 
@@ -132,6 +138,7 @@ async def subscribe_replace_kz(message: Message, state: FSMContext) -> None:
     F.text == setting_profile["unsubscribe_replace_kz"],
 )
 async def unsubscribe_replace_kz(message: Message, state: FSMContext) -> None:
+    """Отписка от оповещения об обнулении камней."""
     who_edit = "subscription_rock = 'false'"
     text = "Хорошо, больше не буду вам напоминать про камни... Автоматически."
     await engine_subscription(message, who_edit, text, state)
@@ -141,6 +148,7 @@ async def unsubscribe_replace_kz(message: Message, state: FSMContext) -> None:
     SettingProfile.is_active, F.text == setting_profile["subscribe_energy"]
 )
 async def subscribe_energy(message: Message, state: FSMContext) -> None:
+    """Подписка на оповещение по получению энергии."""
     who_edit = "subscription_energy = 'true'"
     text = "Теперь я буду напоминать Вам про энергию."
     await engine_subscription(message, who_edit, text, state)
@@ -150,6 +158,7 @@ async def subscribe_energy(message: Message, state: FSMContext) -> None:
     SettingProfile.is_active, F.text == setting_profile["unsubscribe_energy"]
 )
 async def unsubscribe_energy(message: Message, state: FSMContext) -> None:
+    """Отписка от оповещения по получению энергии."""
     who_edit = "subscription_energy = 'false'"
     text = "Хорошо, больше не буду Вам напоминать про энергию..."
     await engine_subscription(message, who_edit, text, state)
@@ -162,6 +171,7 @@ async def unsubscribe_energy(message: Message, state: FSMContext) -> None:
 async def subscribe_description_kz(
     message: Message, state: FSMContext
 ) -> None:
+    """Подписка на описание кланового задания."""
     who_edit = "description_of_the_kz = 'true'"
     text = "Теперь я буду присылать Вам краткое описание кланового задания."
     await engine_subscription(message, who_edit, text, state)
@@ -174,23 +184,25 @@ async def subscribe_description_kz(
 async def unsubscribe_description_kz(
     message: Message, state: FSMContext
 ) -> None:
+    """Отписка от описания кланового задания."""
     who_edit = "description_of_the_kz = 'false'"
     text = "Хорошо, больше не буду присылать Вам краткое описание кланового задания."
     await engine_subscription(message, who_edit, text, state)
 
 
-### LEVEL 0
+# LEVEL 0
 @form_router.message(
     SettingProfile.is_active, F.text == setting_profile["update_time"]
 )
 async def update_time(message: Message, state: FSMContext) -> None:
+    """Переход в настройки обновления времени."""
     await edit_time_button(message, "Меняй...")
     await state.update_data(level=1)
 
 
 @form_router.message(SettingProfile.time_zone)
 async def time_zone(message: Message, state: FSMContext) -> None:
-    """Узнаем часовой во сколько происходит смена КЗ"""
+    """Узнаем часовой во сколько происходит смена КЗ."""
     msg = message.text
     if msg in settings.stop_word:
         sms = "Отмена"
@@ -217,12 +229,13 @@ async def time_zone(message: Message, state: FSMContext) -> None:
     await state.set_state(SettingProfile.is_active)
 
 
-### LEVEL 1
+# LEVEL 1
 @form_router.message(
     SettingProfile.is_active,
     F.text == setting_profile["update_time_replace_kz"],
 )
 async def update_time_replace_kz(message: Message, state: FSMContext) -> None:
+    """Узнаем часовой во сколько происходит смена КЗ."""
     await cancel_button(
         message,
         'Во сколько по москве смена КЗ? Вводи только час.\n Пример: "18"',
@@ -237,6 +250,7 @@ async def update_time_replace_kz(message: Message, state: FSMContext) -> None:
 async def update_update_time_energytime(
     message: Message, state: FSMContext
 ) -> None:
+    """Узнаем часовой во сколько происходит смена КЗ."""
     await cancel_button(
         message,
         'Во сколько по москве первый сбор энергии (синька и фиолетка)? Вводи только час.\n Пример: "12"',
@@ -245,38 +259,39 @@ async def update_update_time_energytime(
     await state.set_state(SettingProfile.time_zone)
 
 
-### LEVEL 0
+# LEVEL 0
 @form_router.message(
     SettingProfile.is_active, F.text == setting_profile["show_data_profile"]
 )
 async def show_data_profile(message: Message, state: FSMContext) -> None:
-    data = await state.get_data()
+    """Показывает данные профиля."""
+    state_data = await state.get_data()
     hero = (
-        await HeroesOfUsers.outerjoin(Clans, HeroesOfUsers.clan_id == Clans.id)
+        await HeroesOfUsers.outerjoin(Clans)
         .select()
         .where(
             and_(
-                HeroesOfUsers.user_id == data["user_id"],
-                HeroesOfUsers.id == data["hero_id"],
+                HeroesOfUsers.user_id == state_data["user_id"],
+                HeroesOfUsers.id == state_data["hero_id"],
             )
         )
         .with_only_columns((HeroesOfUsers, Clans.name_clan))
         .gino.first()
     )
     clan = f'Вы в клане "{hero.name_clan}"' if hero.name_clan else ""
-    smena_KZ = str(hero.time_change_kz)  # считываем смену кз
+    smena_kz = str(hero.time_change_kz)  # считываем смену кз
     sbor_energi = str(hero.time_collection_energy)  # считываем сбор энергии
 
     if hero.subscription_rock:
-        subscription_Rock_text = "✅ Вы подписаны на оповещение по камням."
+        subscription_rock_text = "✅ Вы подписаны на оповещение по камням."
     else:
-        subscription_Rock_text = "❗️ Вы не подписаны на оповещение по камням."
+        subscription_rock_text = "❗️ Вы не подписаны на оповещение по камням."
     if hero.subscription_energy:
-        subscription_Energi_text = (
+        subscription_energi_text = (
             "✅ Вы подписаны на оповещение по сбору энергии."
         )
     else:
-        subscription_Energi_text = (
+        subscription_energi_text = (
             "❗️ Вы не подписаны на оповещение по сбору энергии."
         )
     if hero.description_of_the_kz:
@@ -289,10 +304,10 @@ async def show_data_profile(message: Message, state: FSMContext) -> None:
         )
     await message.answer(
         f"Ваш ник в игре: {hero.name}\n"
-        f"{subscription_Rock_text}\n"
-        f"{subscription_Energi_text}\n"
+        f"{subscription_rock_text}\n"
+        f"{subscription_energi_text}\n"
         f"{description_of_the_kz_text}\n"
-        f"Время смены КЗ: {smena_KZ}:30 по мск \n"
+        f"Время смены КЗ: {smena_kz}:30 по мск \n"
         f"Время сбора первой энергии: {sbor_energi}:00 по мск\n"
         f"{clan}",
     )
@@ -300,6 +315,7 @@ async def show_data_profile(message: Message, state: FSMContext) -> None:
 
 @form_router.message(SettingProfile.is_active, F.text == go_back)
 async def go_back_setting_profile(message: Message, state: FSMContext) -> None:
+    """Назад в главное меню, настроек профиля."""
     if (await state.get_data())["level"] == 1:
         await setting_button(message, "Ок, вернулись.")
         await state.update_data(level=0)

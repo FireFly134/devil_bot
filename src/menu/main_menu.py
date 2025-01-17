@@ -116,6 +116,7 @@ async def setting_up_a_profile(message: Message, state: FSMContext) -> None:
 
 @form_router.message(F.text == main_menu["5"])
 async def donation_to_my_creator(message: Message) -> None:
+    """Функция для пожертвований создателю."""
     rand_num = randint(1, 15)
     if rand_num == 1:
         await message.answer(
@@ -177,11 +178,6 @@ async def donation_to_my_creator(message: Message) -> None:
         await message.answer_sticker(
             sticker="CAACAgQAAxkBAAEIdYlkLGQat8x1t7j2NPJ01vge-ixN7QACxQwAAplx6FAZ8I5wA_llpi8E",
         )
-    # keyboard = [[InlineKeyboardButton("Ссылка на пожертвование через сайт Тинькофф", url='https://www.tinkoff.ru/rm/tkachev.konstantin69/3j6lJ87953')]]
-    # with open(working_folder + "QR-code.jpg", "rb") as img:
-    # context.bot.send_photo(chat_id=update.effective_chat.id, photo=img, caption="QR\\-код на пожертвование через сайт Тинькофф", parse_mode='MarkdownV2', reply_markup=InlineKeyboardMarkup(keyboard))
-    # "[Создатель бота](https://t.me/Menace134) \\- Константин Т\\.", parse_mode='MarkdownV2'
-    # context.bot.send_message(chat_id=update.effective_chat.id, text='Отсканируйте QR-код или просто нажмите на ссылку, чтобы отблагодарить автора.')
     await message.answer(
         "СБП по номеру только(Сбер, Газпром, ВТБ, МТС), это временно... @menace134",
     )
@@ -189,12 +185,7 @@ async def donation_to_my_creator(message: Message) -> None:
 
 @form_router.message(F.text == go_back)
 async def go_back(message: Message) -> None:
-    # if user_triger[user_id]["setting_hero"]:
-    #     buttons.setting_button(
-    #         update, context, "Ок, вернулись."
-    #     )
-    #     user_triger[user_id]["setting_hero"] = False
-    # else:
+    """Вернуться назад в главное меню."""
     await new_button(
         message,
         "Погнали назад - в главное меню.",
