@@ -1,3 +1,4 @@
+"""Основные настройки проекта."""
 import logging
 import os
 import sys
@@ -8,12 +9,18 @@ from pydantic.v1 import BaseSettings, PostgresDsn, validator
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
-handler = logging.StreamHandler(stream=sys.stdout)
-logger.addHandler(handler)
+log_handler = logging.StreamHandler(stream=sys.stdout)
+logger.addHandler(log_handler)
 
 
 class Settings(BaseSettings):
-    BASE_DIR: str = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    """Основные константные значения проекта."""
+
+    BASE_DIR: str = os.path.dirname(
+        os.path.dirname(
+            os.path.abspath(__file__)
+        )
+    )
     TESTING: bool = False
 
     DB_USER: str = "postgres"
@@ -24,25 +31,25 @@ class Settings(BaseSettings):
     DB_URI: PostgresDsn = None
 
     @validator("DB_NAME", pre=True, allow_reuse=True)
-    def get_actual_db_name(cls, v: str | None, values: dict[str, Any]) -> str:
+    def get_actual_db_name(cls, db_name: str | None, env_values: dict[str, Any]) -> str:
         """Получение названия базы, для тестов генерит отдельное название."""
-        if values.get("TESTING") and not v.endswith("_test"):
-            v += "_test"
-        return v
+        if env_values.get("TESTING") and not db_name.endswith("_test"):
+            return f"{db_name}_test"
+        return db_name
 
     @validator("DB_URI", pre=True, allow_reuse=True)
     def assemble_db_connection(
-        cls, v: str | None, values: dict[str, Any]
+        cls, db_name: str | None, env_values: dict[str, Any]
     ) -> str:
         """
         Собираем коннект для подключения к БД.
 
-        :param v: value
-        :param values: Dict values
+        :param db_name: value
+        :param env_values: Dict values
         :return: PostgresDsn
         """
-        if isinstance(v, str):
-            conn = urlparse(v)
+        if isinstance(db_name, str):
+            conn = urlparse(db_name)
             return PostgresDsn.build(
                 scheme=conn.scheme,
                 user=conn.username,
@@ -54,11 +61,11 @@ class Settings(BaseSettings):
 
         return PostgresDsn.build(
             scheme="postgresql",
-            user=values["DB_USER"],
-            password=values["DB_PASSWD"],
-            host=values["DB_HOST"],
-            port=str(values["DB_PORT"]),
-            path=f"/{values['DB_NAME']}",
+            user=env_values["DB_USER"],
+            password=env_values["DB_PASSWD"],
+            host=env_values["DB_HOST"],
+            port=str(env_values["DB_PORT"]),
+            path=f"/{env_values['DB_NAME']}",
         )
 
     TOKEN: str = ""
