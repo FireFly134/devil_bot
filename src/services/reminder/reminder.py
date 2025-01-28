@@ -9,9 +9,6 @@ from services.reminder.reminder_energy import reminder_energy
 from services.reminder.reminder_kz import reminder_kz
 from services.reminder.reminder_zero import reminder_zero
 
-
-
-
 if __name__ == "__main__":
     time = datetime.now()  # текущее время
     ### Проверка на наличия энергии по времени для подписчиков ###
@@ -24,4 +21,3 @@ if __name__ == "__main__":
 
     if int(time.strftime("%M")) == 30:
         reminder_kz()
-

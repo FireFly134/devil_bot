@@ -3,7 +3,7 @@ from unittest.mock import patch
 
 import pytest
 
-from services.reminder.reminder_energy import reminder_energy
+from services.reminder.reminder_kz import reminder_kz
 from tables.heroes_of_users import HeroesOfUsers
 from tests.factories import HeroFactory, UserFactory
 

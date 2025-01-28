@@ -6,10 +6,13 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from pytz import timezone
 
 from src.request import main as get_news
-
-from src.services.reminder.reminder_and_cleaner_rock import reminder_zero, clear_rock
+from src.services.reminder.reminder_and_cleaner_rock import (
+    clear_rock,
+    reminder_zero,
+)
 from src.services.reminder.reminder_energy import reminder_energy
 from src.services.reminder.reminder_kz import reminder_kz
+
 # from src.services.reminder.reminder_events import main as reminder_events  # noqa: E800
 
 

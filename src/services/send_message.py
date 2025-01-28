@@ -7,6 +7,7 @@ from aiogram.enums import ParseMode
 
 from config import settings
 
+
 def wlog(func):
     async def wrapper(*args, **kwargs):
         bot = Bot(
@@ -21,6 +22,7 @@ def wlog(func):
             logging.info(f"Пользователь (или чат) с id = {kwargs['user_id']}")
         finally:
             await bot.session.close()
+
     return wrapper
 
 
@@ -33,4 +35,6 @@ async def send_msg(user_id: int | str, sms: str, bot: Bot) -> None:
 @wlog
 async def send_msg_mv2(user_id: int | str, sms: str, bot: Bot) -> None:
     """Отправить сообщение в формате MarkdownV2."""
-    await bot.send_message(chat_id=user_id, text=sms, parse_mode=ParseMode.MARKDOWN_V2)
+    await bot.send_message(
+        chat_id=user_id, text=sms, parse_mode=ParseMode.MARKDOWN_V2
+    )
