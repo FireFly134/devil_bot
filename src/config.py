@@ -66,7 +66,7 @@ class Settings(BaseSettings):
 
     TOKEN: str = ""
     stop_word: Tuple[str, str, str] = ("stop", "стоп", "отмена")
-    MY_TG_ID: str = ""
+    MY_TG_ID: int = ""
     # для VK.com
     VK_ACCESS_TOKEN: str = ""
     DOMAIN: str = ""

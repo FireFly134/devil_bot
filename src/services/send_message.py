@@ -7,7 +7,7 @@ from aiogram.enums import ParseMode
 
 from config import settings
 
-async def wlog(func):
+def wlog(func):
     async def wrapper(*args, **kwargs):
         bot = Bot(
             token=settings.TOKEN,

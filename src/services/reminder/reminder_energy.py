@@ -10,7 +10,7 @@ async def reminder_energy():
     time = datetime.now()
     time2_energy = time - timedelta(hours=6)
     time3_energy = time - timedelta(hours=9)
-    heroes = HeroesOfUsers.query.where(
+    heroes = await HeroesOfUsers.query.where(
         and_(
             or_(
                 HeroesOfUsers.time_collection_energy == int(time.strftime('%H')),
