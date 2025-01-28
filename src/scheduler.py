@@ -7,8 +7,10 @@ from pytz import timezone
 
 from src.request import main as get_news
 
-# from src.reminder import main as reminder  # noqa: E800
-# from src.reminder_events import main as reminder_events  # noqa: E800
+from src.services.reminder.reminder_and_cleaner_rock import reminder_zero, clear_rock
+from src.services.reminder.reminder_energy import reminder_energy
+from src.services.reminder.reminder_kz import reminder_kz
+# from src.services.reminder.reminder_events import main as reminder_events  # noqa: E800
 
 
 async def scheduler() -> None:
@@ -20,6 +22,40 @@ async def scheduler() -> None:
         "cron",
         id="get_news",
         minute="*/5",
+        timezone=timezone("Europe/Moscow"),
+        replace_existing=True,
+    )
+    io_scheduler.add_job(
+        reminder_zero,
+        "cron",
+        id="reminder_zero",
+        hour="14",
+        minute="0",
+        timezone=timezone("Europe/Moscow"),
+        replace_existing=True,
+    )
+    io_scheduler.add_job(
+        clear_rock,
+        "cron",
+        id="clear_rock",
+        hour="15",
+        minute="0",
+        timezone=timezone("Europe/Moscow"),
+        replace_existing=True,
+    )
+    io_scheduler.add_job(
+        reminder_energy,
+        "cron",
+        id="reminder_energy",
+        minute="0",
+        timezone=timezone("Europe/Moscow"),
+        replace_existing=True,
+    )
+    io_scheduler.add_job(
+        reminder_kz,
+        "cron",
+        id="reminder_kz",
+        minute="30",
         timezone=timezone("Europe/Moscow"),
         replace_existing=True,
     )
