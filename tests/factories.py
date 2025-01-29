@@ -1,5 +1,5 @@
 """Модуль с фабриками."""
-
+from datetime import datetime
 from typing import Coroutine
 
 import factory
@@ -8,6 +8,7 @@ from gino.declarative import ModelType
 from src.tables.clans import Clans
 from src.tables.heroes_of_users import HeroesOfUsers
 from src.tables.telegram_users import User
+from tables.events import Events
 
 
 class BaseFactory(factory.Factory):
@@ -67,3 +68,16 @@ class ClanFactory(BaseFactory):
 
     name_clan = factory.Sequence(lambda n: f"TestClan{n}")
     chat_id = factory.Sequence(lambda n: f"-{n}")
+
+
+class EventFactory(BaseFactory):
+    """Фабрика событий."""
+
+    class Meta:
+        """Метакласс с настройками."""
+
+        model = Events
+
+    name_event = factory.Sequence(lambda n: f"TestEvent{n}")
+    event_date = factory.Sequence(lambda n: datetime.now().date())
+    description = factory.Sequence(lambda n: f"Test_Description_{n}")
