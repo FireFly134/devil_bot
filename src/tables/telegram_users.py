@@ -31,3 +31,10 @@ class User(db.Model):
         nullable=False,
         server_default=sa.false(),
     )
+    subscription_event = sa.Column(
+        "subscription_event",
+        sa.Boolean(),
+        default=False,
+        nullable=False,
+        server_default=sa.false(),
+    )
