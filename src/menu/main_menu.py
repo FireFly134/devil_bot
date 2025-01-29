@@ -3,8 +3,14 @@ from random import randint
 
 from aiogram import F
 from aiogram.fsm.context import FSMContext
-from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
+from aiogram.types import (
+    CallbackQuery,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    Message,
+)
 
+import commands
 from config import settings
 from menu.buttons import (
     help_my_button,
@@ -49,32 +55,47 @@ async def helper(message: Message) -> None:
 
 
 @form_router.message(F.text == main_menu["2"])
-async def start_print_rock(message: Message) -> None:
+async def start_print_rock(message: Message, state: FSMContext) -> None:
     # TODO heroes = await get_heroes_from_user_id(message.from_user.id)
     heroes = (
-        await HeroesOfUsers.join(User, HeroesOfUsers.user_id == User.id)
+        await HeroesOfUsers.join(User)
         .select()
         .where(User.user_id == message.from_user.id)
         .with_only_columns(HeroesOfUsers)
         .gino.all()
     )
     keyboard = []
-    if len(heroes) == 1:
-        await print_rock(message, heroes[0])
-    else:
-        for hero in heroes:
-            keyboard.append(
-                [
-                    InlineKeyboardButton(
-                        text=str(hero.name),
-                        callback_data=f"print-{hero.id}",
-                    )
-                ]
+    if heroes:
+        if len(heroes) == 1:
+            await print_rock(message, heroes[0])
+        else:
+            for hero in heroes:
+                keyboard.append(
+                    [
+                        InlineKeyboardButton(
+                            text=str(hero.name),
+                            callback_data=f"print-{hero.id}",
+                        )
+                    ]
+                )
+            await message.answer(
+                "Кто тебя интересует?",
+                reply_markup=InlineKeyboardMarkup(inline_keyboard=keyboard),
             )
-        await message.answer(
-            "Кто тебя интересует?",
-            reply_markup=InlineKeyboardMarkup(inline_keyboard=keyboard),
-        )
+    else:
+        await commands.regisration(message, state)
+
+
+@form_router.callback_query(F.data.startswith("print-"))
+async def choice_hero_setting_profile(
+    call: CallbackQuery,
+) -> None:  # noqa: F811 WPS440
+    """Выбор героя для переходя в его настройки."""
+    await call.message.delete()
+    hero_id = int(call.data.split("-")[1])
+    hero = await HeroesOfUsers.get(hero_id)
+    if hero:
+        await print_rock(call.message, hero)
 
 
 @form_router.message(F.text == main_menu["useful_information"])
@@ -84,34 +105,59 @@ async def useful_information(message: Message) -> None:
 
 @form_router.message(F.text == main_menu["4"])
 async def setting_up_a_profile(message: Message, state: FSMContext) -> None:
-    user = await User.query.where(
-        User.user_id == message.from_user.id
-    ).gino.first()
-    info = await HeroesOfUsers.query.where(
-        HeroesOfUsers.user_id == user.id
-    ).gino.all()
-    if len(info) == 1:
-        await state.update_data(hero_id=info[0].id)
-        await state.update_data(user_id=info[0].user_id)
-        await state.update_data(lvel=0)
-        await state.set_state(SettingProfile.is_active)
+    heroes = (
+        await HeroesOfUsers.join(User)
+        .select()
+        .where(User.user_id == message.from_user.id)
+        .with_only_columns(HeroesOfUsers)
+        .gino.all()
+    )
+    if heroes:
+        if len(heroes) == 1:
+            await state.update_data(hero_id=heroes[0].id)
+            await state.update_data(hero_user_id=heroes[0].user_id)
+            await state.update_data(name=heroes[0].name)
+            await state.update_data(lvel=0)
+            await state.set_state(SettingProfile.is_active)
 
-        await setting_button(message, "Что будем изменять?")
-    else:
-        keyboard = []
-        for i in range(len(info)):
-            keyboard += [
-                [
-                    InlineKeyboardButton(
-                        text=str(info.name),
-                        callback_data=f"setting_profile-{info.id}",
-                    )
+            await setting_button(message, "Что будем изменять?")
+        else:
+            keyboard = []
+            for hero in heroes:
+                keyboard += [
+                    [
+                        InlineKeyboardButton(
+                            text=str(hero.name),
+                            callback_data=f"setting_profile-{hero.id}",
+                        )
+                    ]
                 ]
-            ]
-        await message.answer(
-            "Выберите, какого героя будем редактировать.",
-            reply_markup=InlineKeyboardMarkup(keyboard),
-        )
+            await state.set_state(SettingProfile.is_active)
+            await message.answer(
+                "Выберите, какого героя будем редактировать.",
+                reply_markup=InlineKeyboardMarkup(inline_keyboard=keyboard),
+            )
+    else:
+        await commands.regisration(message, state)
+
+
+@form_router.callback_query(
+    SettingProfile.is_active, F.data.startswith("setting_profile-")
+)
+async def choice_hero_setting_profile(
+    call: CallbackQuery, state: FSMContext
+) -> None:  # noqa: F811 WPS440
+    """Выбор героя для переходя в его настройки."""
+    await call.message.delete()
+    hero_id = int(call.data.split("-")[1])
+    hero = await HeroesOfUsers.get(hero_id)
+    if hero:
+        await state.update_data(hero_id=hero_id)
+        await state.update_data(hero_user_id=hero.user_id)
+        await state.update_data(name=hero.name)
+        await state.update_data(lvel=0)
+
+        await setting_button(call.message, "Что будем изменять?")
 
 
 @form_router.message(F.text == main_menu["5"])
@@ -183,9 +229,24 @@ async def donation_to_my_creator(message: Message) -> None:
     )
 
 
+@form_router.message(SettingProfile.is_active, F.text == go_back)
+async def go_back_setting_profile(message: Message, state: FSMContext) -> None:
+    """Назад в главное меню, настроек профиля."""
+    if (await state.get_data())["level"] == 1:
+        await setting_button(message, "Ок, вернулись.")
+        await state.update_data(level=0)
+    else:
+        await new_button(
+            message,
+            "Погнали, назад, в главное меню.",
+        )
+        await state.clear()
+
+
 @form_router.message(F.text == go_back)
-async def go_back(message: Message) -> None:
+async def go_back(message: Message, state: FSMContext) -> None:
     """Вернуться назад в главное меню."""
+    await state.clear()
     await new_button(
         message,
         "Погнали назад - в главное меню.",

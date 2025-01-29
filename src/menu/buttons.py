@@ -40,33 +40,48 @@ async def setting_button(message: Message, sms: str) -> None:
 
 
 async def setting_hero_button(
-    message: Message, user_id: int, sms: str
+    message: Message, user_id: int, sms: str, name: str
 ) -> None:
-    """Манапуляции с героем"""
+    """Манапуляции с героем."""
     reply_keyboard = []
     num = await db.func.count(HeroesOfUsers.user_id == user_id).gino.scalar()
-    #     pd.read_sql(
-    #     f"SELECT COUNT(*) FROM heroes_of_users WHERE user_id = '{update.effective_chat.id}';",
-    #     engine,
-    # ))
-    # num = int(info.loc[0, "count"])
     if num == 5:
         reply_keyboard += [
-            [KeyboardButton(text=setting_profile["delete_hero"])],
-            [KeyboardButton(text=setting_profile["rename_hero"])],
+            [
+                KeyboardButton(
+                    text=setting_profile["delete_hero"] + f" ({name})"
+                )
+            ],
+            [
+                KeyboardButton(
+                    text=setting_profile["rename_hero"] + f" ({name})"
+                )
+            ],
             [KeyboardButton(text=go_back)],
         ]
     elif num == 1:
         reply_keyboard += [
             [KeyboardButton(text=setting_profile["add_hero"])],
-            [KeyboardButton(text=setting_profile["rename_hero"])],
+            [
+                KeyboardButton(
+                    text=setting_profile["rename_hero"] + f" ({name})"
+                )
+            ],
             [KeyboardButton(text=go_back)],
         ]
     else:
         reply_keyboard += [
             [KeyboardButton(text=setting_profile["add_hero"])],
-            [KeyboardButton(text=setting_profile["delete_hero"])],
-            [KeyboardButton(text=setting_profile["rename_hero"])],
+            [
+                KeyboardButton(
+                    text=setting_profile["delete_hero"] + f" ({name})"
+                )
+            ],
+            [
+                KeyboardButton(
+                    text=setting_profile["rename_hero"] + f" ({name})"
+                )
+            ],
             [KeyboardButton(text=go_back)],
         ]
     await send_message(message, sms, reply_keyboard)
@@ -80,10 +95,7 @@ async def subscription_button(
     hero = await HeroesOfUsers.query.where(
         HeroesOfUsers.id == id_hero
     ).gino.first()
-    # subscription = pd.read_sql(
-    #     f"SELECT subscription_rock, subscription_energy, description_of_the_kz FROM heroes_of_users WHERE user_id = '{update.effective_chat.id}' AND id = '{id_hero}';",
-    #     engine,
-    # )
+
     reply_keyboard = []
     if hero.subscription_rock:
         reply_keyboard += [

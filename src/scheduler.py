@@ -11,9 +11,8 @@ from src.services.reminder.reminder_and_cleaner_rock import (
     reminder_zero,
 )
 from src.services.reminder.reminder_energy import reminder_energy
+from src.services.reminder.reminder_events import reminder_events
 from src.services.reminder.reminder_kz import reminder_kz
-
-# from src.services.reminder.reminder_events import main as reminder_events  # noqa: E800
 
 
 async def scheduler() -> None:
@@ -62,23 +61,15 @@ async def scheduler() -> None:
         timezone=timezone("Europe/Moscow"),
         replace_existing=True,
     )
-    # io_scheduler.add_job(  # noqa: E800
-    #     reminder,  # noqa: E800
-    #     "cron",  # noqa: E800
-    #     id="reminder",  # noqa: E800
-    #     minute=[0,30],  # noqa: E800
-    #     timezone=timezone("Europe/Moscow"),  # noqa: E800
-    #     replace_existing=True,  # noqa: E800
-    # )  # noqa: E800
-    # io_scheduler.add_job(  # noqa: E800
-    #     reminder_events,  # noqa: E800
-    #     "cron",  # noqa: E800
-    #     id="reminder_events",  # noqa: E800
-    #     hour="12",  # noqa: E800
-    #     minute="0",  # noqa: E800
-    #     timezone=timezone("Europe/Moscow"),  # noqa: E800
-    #     replace_existing=True,  # noqa: E800
-    # )  # noqa: E800
+    io_scheduler.add_job(
+        reminder_events,
+        "cron",
+        id="reminder_events",
+        hour="12",
+        minute="0",
+        timezone=timezone("Europe/Moscow"),
+        replace_existing=True,
+    )
     logging.info("added tasks to cron scheduler")
     io_scheduler.start()
     try:

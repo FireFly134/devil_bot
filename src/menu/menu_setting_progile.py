@@ -26,10 +26,12 @@ from tables.heroes_of_users import HeroesOfUsers
 )
 async def setting_hero(message: Message, state: FSMContext) -> None:
     """Переход в настройки героя."""
+    state_data = await state.get_data()
     await setting_hero_button(
         message,
-        user_id=(await state.get_data())["user_id"],
+        user_id=state_data["hero_user_id"],
         sms="Тут ты можешь добавить или удалить героя, ну и при необходимости переименовать его",
+        name=state_data["name"],
     )
     await state.update_data(level=1)
 
@@ -41,13 +43,13 @@ async def setting_hero(message: Message, state: FSMContext) -> None:
 async def add_hero(message: Message, state: FSMContext) -> None:
     """Добавляем героя."""
     await cancel_button(message, "Какой у тебя ник в игре?")
-    await state.update_data(user_id=(await state.get_data())["user_id"])
+    await state.update_data(user_id=(await state.get_data())["hero_user_id"])
     await state.set_state(Regisration.name)
     # TODO надо придумать систему возврата
 
 
 @form_router.message(
-    SettingProfile.is_active, F.text == setting_profile["delete_hero"]
+    SettingProfile.is_active, F.text.startswith(setting_profile["delete_hero"])
 )
 async def delete_hero(message: Message, state: FSMContext) -> None:
     """Удаляем персонажа, смотрим сколько всего персов и смещаем их к тому который удаляем."""
@@ -56,7 +58,7 @@ async def delete_hero(message: Message, state: FSMContext) -> None:
     ).gino.first()
     if hero:
         await new_button(message, f'Герой с ником "{hero.name}" удален!')
-        await hero.delete().apply()
+        await hero.delete()
         return
     await new_button(
         message, "Я не помню такого героя. Значит и проблем нет :)"
@@ -64,7 +66,7 @@ async def delete_hero(message: Message, state: FSMContext) -> None:
 
 
 @form_router.message(
-    SettingProfile.is_active, F.text == setting_profile["rename_hero"]
+    SettingProfile.is_active, F.text.startswith(setting_profile["rename_hero"])
 )
 async def rename_hero(message: Message, state: FSMContext) -> None:
     """Начинаем редактирование имени героя."""
@@ -77,14 +79,13 @@ async def edit_name(message: Message, state: FSMContext) -> None:
     """Редактируем имя героя."""
     state_data = await state.get_data()
     hero = await HeroesOfUsers.query.where(
-        and_(
-            HeroesOfUsers.id == state_data["hero_id"],
-            HeroesOfUsers.user_id == state_data["user_id"],
-        )
+        HeroesOfUsers.id == state_data["hero_id"]
     ).gino.first()
     await hero.update(name=message.text).apply()
     await message.answer(f'Теперь тебя зовут: "{message.text}"!')
+    await state.update_data(name=message.text)
     await state.set_state(SettingProfile.is_active)
+    await setting_hero(message, state)
 
 
 # LEVEL 0
@@ -108,9 +109,8 @@ async def engine_subscription(
     """Подписка на оповещение по получению энергии."""
     await db.status(
         db.text(
-            "UPDATE heroes_of_users SET {who_edit} WHERE user_id = {user_id} AND id = {hero_id};".format(
+            "UPDATE heroes_of_users SET {who_edit} WHERE id = {hero_id};".format(
                 who_edit=who_edit,
-                user_id=(await state.get_data())["user_id"],
                 hero_id=(await state.get_data())["hero_id"],
             )
         )
@@ -204,18 +204,17 @@ async def update_time(message: Message, state: FSMContext) -> None:
 async def time_zone(message: Message, state: FSMContext) -> None:
     """Узнаем часовой во сколько происходит смена КЗ."""
     msg = message.text
+    state_data = await state.get_data()
     if msg in settings.stop_word:
         sms = "Отмена"
         await setting_hero_button(
-            message, (await state.get_data())["user_id"], sms
+            message, state_data["hero_user_id"], sms, state_data["name"]
         )
         return
     if msg.isnumeric():
         msg = int(msg)
         if 1 <= msg <= 24:
-            hero = await HeroesOfUsers.get(
-                int((await state.get_data())["hero_id"])
-            )
+            hero = await HeroesOfUsers.get(int(state_data["hero_id"]))
             if (await state.get_data())["is_tz"]:
                 await hero.update(time_change_kz=msg).apply()
             else:
@@ -269,12 +268,7 @@ async def show_data_profile(message: Message, state: FSMContext) -> None:
     hero = (
         await HeroesOfUsers.outerjoin(Clans)
         .select()
-        .where(
-            and_(
-                HeroesOfUsers.user_id == state_data["user_id"],
-                HeroesOfUsers.id == state_data["hero_id"],
-            )
-        )
+        .where(HeroesOfUsers.id == state_data["hero_id"])
         .with_only_columns((HeroesOfUsers, Clans.name_clan))
         .gino.first()
     )
@@ -311,17 +305,3 @@ async def show_data_profile(message: Message, state: FSMContext) -> None:
         f"Время сбора первой энергии: {sbor_energi}:00 по мск\n"
         f"{clan}",
     )
-
-
-@form_router.message(SettingProfile.is_active, F.text == go_back)
-async def go_back_setting_profile(message: Message, state: FSMContext) -> None:
-    """Назад в главное меню, настроек профиля."""
-    if (await state.get_data())["level"] == 1:
-        await setting_button(message, "Ок, вернулись.")
-        await state.update_data(level=0)
-    else:
-        await new_button(
-            message,
-            "Погнали, назад, в главное меню.",
-        )
-        await state.clear()

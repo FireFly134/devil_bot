@@ -25,9 +25,9 @@ from menu import (  # noqa: F401
     menu_setting_progile,
     menu_useful_information,
 )
-from menu.buttons import setting_hero_button
+from menu.buttons import setting_button, setting_hero_button
 from migrations import db, run_connection_db
-from src import Regisration, form_router
+from src import Regisration, SettingProfile, form_router
 from tables.heroes_of_users import HeroesOfUsers
 from tables.telegram_users import User
 
@@ -36,11 +36,11 @@ async def first_sms(message: Message) -> None:
     """Отправка первого сообщения после регистрации."""
     sms = """Сейчас время смены кланового задания установлено __18:30__, а первый сбор бесплатной энергии установлен на __12:00__ \\(__*по МСК*__\\)\\.
 
-    *Если данное время неверно, то это можно с лёгкостью изменить в настройках\\!*
-    Для этого нажми *Настройка профиля* \\-\\-\\-\\> *Поменять время\\.\\.\\.*
+*Если данное время неверно, то это можно с лёгкостью изменить в настройках\\!*
+Для этого нажми *Настройка профиля* \\-\\-\\-\\> *Поменять время\\.\\.\\.*
 
-    *Так же можно __бесплатно__ подписаться на напоминалки\\!*
-    Чтобы это сделать проходим *Настройка профиля* \\-\\-\\-\\> *Подписки\\.\\.\\.*"""
+*Так же можно __бесплатно__ подписаться на напоминалки\\!*
+Чтобы это сделать проходим *Настройка профиля* \\-\\-\\-\\> *Подписки\\.\\.\\.*"""
     await message.answer(text=sms, parse_mode=ParseMode.MARKDOWN_V2)
 
 
@@ -48,18 +48,23 @@ async def first_sms(message: Message) -> None:
 async def missing_name(call: CallbackQuery, state: FSMContext) -> None:
     """Подтверждение и сохранение никнейма героя."""
     state_data = await state.get_data()
-    if "hero_id" in state_data:
+    if "hero_id" in state_data and state_data["hero_id"] is not None:
         hero = await HeroesOfUsers.get(int(state_data["hero_id"]))
         await hero.update(name=state_data["name"]).apply()
     else:
-        await HeroesOfUsers(
+        hero = await HeroesOfUsers(
             user_id=state_data["user_id"],
             name=state_data["name"],
         ).create()
-    await state.clear()
+        await state.update_data(hero_id=hero.id)
+    await state.update_data(lvel=1)
+    await state.set_state(SettingProfile.is_active)
     await call.message.delete()
     await setting_hero_button(
-        call.message, state_data["user_id"], "Отлично, будем знакомы)"
+        call.message,
+        state_data["user_id"],
+        "Отлично, будем знакомы)",
+        state_data["name"],
     )
     try:
         await first_sms(call.message)
@@ -81,6 +86,7 @@ async def missing_name(call: CallbackQuery) -> None:  # noqa: F811 WPS440
 async def reg_start(message: Message, state: FSMContext) -> None:
     """Начало регистрации героя пользователя."""
     await state.update_data(name=message.text)
+    await state.update_data(hero_id=None)
     await message.answer(
         f'Ты герой под ником "{message.text}"?',
         reply_markup=InlineKeyboardMarkup(
@@ -210,6 +216,19 @@ async def start_add_rock(message: Message, state: FSMContext) -> None:
             )
     else:
         await commands.regisration(message, state)
+
+
+@form_router.callback_query(F.data.startswith("add_rock-"))
+async def choice_hero_setting_profile(
+    call: CallbackQuery,
+) -> None:  # noqa: F811 WPS440
+    """Выбор героя для переходя в его настройки."""
+    await call.message.delete()
+    upg_rock = int(call.data.split("-")[1])
+    hero_id = int(call.data.split("-")[2])
+    hero = await HeroesOfUsers.get(hero_id)
+    if hero:
+        await add_rock(call.message, upg_rock, hero)
 
 
 @form_router.message()

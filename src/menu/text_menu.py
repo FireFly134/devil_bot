@@ -34,7 +34,7 @@ setting_profile = {
     "update_time": "Поменять время...",
     "show_data_profile": "Проверить данные профиля",
     "add_hero": "Добавить еще одного героя",
-    "delete_hero": "Удалить одного героя",
+    "delete_hero": "Удалить героя",
     "rename_hero": "Переименовать героя",
     "unsubscribe_replace_kz": "Отписаться от напоминалки о смене КЗ за час",
     "subscribe_replace_kz": "Подписаться на напоминалку о смене КЗ за час",

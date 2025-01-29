@@ -28,5 +28,6 @@ class SettingProfile(StatesGroup):
     time_zone = State()
     is_tz = State()
     level = State()
-    user_id = State()
+    hero_user_id = State()
     hero_id = State()
+    name = State()
