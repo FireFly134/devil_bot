@@ -1,13 +1,12 @@
 """Напоминалка по подпискам"""
-import logging
 from datetime import datetime
 
-from aiogram.enums import ParseMode
-
-from services.reminder.clear_rock import clear_rock
+from services.reminder.reminder_and_cleaner_rock import (
+    clear_rock,
+    reminder_zero,
+)
 from services.reminder.reminder_energy import reminder_energy
 from services.reminder.reminder_kz import reminder_kz
-from services.reminder.reminder_zero import reminder_zero
 
 if __name__ == "__main__":
     time = datetime.now()  # текущее время
@@ -18,6 +17,5 @@ if __name__ == "__main__":
             reminder_zero()
         if int(time.strftime("%H")) == 15:
             clear_rock()
-
     if int(time.strftime("%M")) == 30:
         reminder_kz()

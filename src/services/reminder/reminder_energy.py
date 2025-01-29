@@ -1,4 +1,4 @@
-"""Напоминалка по подпискам"""
+"""Напоминалка по подпискам о сборе энергии."""
 from datetime import datetime, timedelta
 
 from sqlalchemy import and_, or_

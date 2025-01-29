@@ -14,12 +14,12 @@ from tables.text_table import TextTable
 async def reminder_private_change_kz(time_kz: datetime) -> None:
     """Напоминание в личку про смену КЗ."""
     heroes = (
-        await HeroesOfUsers.select()
-        .join(User)
+        await HeroesOfUsers.join(User)
+        .select()
         .where(
             and_(
                 HeroesOfUsers.time_change_kz == int(time_kz.strftime("%H")),
-                HeroesOfUsers.subscription_rock == True,
+                HeroesOfUsers.subscription_rock,
             )
         )
         .with_only_columns(
@@ -41,10 +41,11 @@ async def reminder_private_change_kz(time_kz: datetime) -> None:
 async def description_new_kz(time: datetime) -> None:
     """Описание нового КЗ в личку."""
     heroes = (
-        await HeroesOfUsers.query.where(
+        await HeroesOfUsers.join(User)
+        .select()
+        .where(
             and_(
                 HeroesOfUsers.time_change_kz == int(time.strftime("%H")),
-                HeroesOfUsers.rock > 0,
                 HeroesOfUsers.description_of_the_kz,
             )
         )
@@ -57,29 +58,29 @@ async def description_new_kz(time: datetime) -> None:
     if heroes:
         logging.info(f"description_new_kz GO = {len(heroes)}")
         text_info = await TextTable.query.where(
-            TextTable.name_text == int(time.strftime("%w"))
+            TextTable.name_text == time.strftime("%w")
         ).gino.first()
         for hero in heroes:
             name = (
                 str(hero.name)
-                .replace("_", "\_")
-                .replace("*", "\*")
-                .replace("[", "\[")
-                .replace("]", "\]")
-                .replace("(", "\(")
-                .replace(")", "\)")
-                .replace("`", "\`")
-                .replace("~", "\~")
-                .replace(">", "\>")
-                .replace("#", "\#")
-                .replace("+", "\+")
-                .replace("=", "\=")
-                .replace("-", "\-")
-                .replace("|", "\|")
-                .replace("{", "\{")
-                .replace("}", "\}")
-                .replace(".", "\.")
-                .replace("!", "\!")
+                .replace("_", "\\_")
+                .replace("*", "\\*")
+                .replace("[", "\\[")
+                .replace("]", "\\]")
+                .replace("(", "\\(")
+                .replace(")", "\\)")
+                .replace("`", "\\`")
+                .replace("~", "\\~")
+                .replace(">", "\\>")
+                .replace("#", "\\#")
+                .replace("+", "\\+")
+                .replace("=", "\\=")
+                .replace("-", "\\-")
+                .replace("|", "\\|")
+                .replace("{", "\\{")
+                .replace("}", "\\}")
+                .replace(".", "\\.")
+                .replace("!", "\\!")
             )
             await send_msg_mv2(
                 user_id=hero.user_id, text=f"{name}\!\n{text_info.text}"
@@ -121,9 +122,9 @@ async def description_new_kz_in_chat_clans(time: datetime) -> None:
     if clans:
         logging.info(f"description_new_kz_in_chat_clans GO = {len(clans)}")
         text_info = await TextTable.query.where(
-            TextTable.name_text == int(time.strftime("%w"))
+            TextTable.name_text == time.strftime("%w")
         ).gino.first()
-        for clan in clans.iterrows():
+        for clan in clans:
             await send_msg_mv2(user_id=clan.chat_id, text=text_info.text)
             logging.info(
                 f"description_new_kz_in_chat_clans clan.id = {clan.id}"

@@ -13,10 +13,10 @@ from tests.factories import HeroFactory, UserFactory
     ([0, 1, 1], [4, 5, 2], [3, 0, 2], [10, 5, 1], [0, 0, 1]),
 )
 @pytest.mark.asyncio()
-async def test_reminder_zero(
-    count_remind, count_not_remind, count_not_subscription
+async def test_reminder_energy(
+    count_remind: int, count_not_remind: int, count_not_subscription: int
 ) -> None:
-    """Тестирование функции отображение количества камней (print_rock)."""
+    """Тестирование функции напоминания о сборе энергии."""
     time = datetime.now()
     user = await UserFactory()
     for _ in range(count_remind):
@@ -41,8 +41,6 @@ async def test_reminder_zero(
     assert (
         len(heroes) == count_remind + count_not_remind + count_not_subscription
     )
-    # По дефолту start=True, remain_zero_rock=True,
-    # поэтому должно быть 2 вызова на отправку сообщений из 5.
     with patch(
         "services.reminder.reminder_energy.send_msg_mv2",
     ) as mock_send_msg:
