@@ -45,6 +45,8 @@ tests:
     - docker
   needs:
     - build image
+  except:
+    - master
   script:
     - cp ${TEST_ENV} ./.env
     - docker-compose -f docker-compose.tests.yaml up --exit-code-from app-tests
@@ -56,8 +58,9 @@ deploy:production:
   tags:
     - docker
   stage: production
+  when: manual
   only:
-    - master
+    - tags
   environment: production
   script:
     - cp ${PROD_ENV} ./.env

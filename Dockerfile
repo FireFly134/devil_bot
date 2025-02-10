@@ -6,7 +6,8 @@ ENV PIP_NO_CACHE_DIR=1 \
     POETRY_VIRTUALENVS_CREATE=false \
     POETRY_CACHE_DIR='/var/cache/pypoetry' \
     POETRY_HOME='/usr/local' \
-    PYTHONPATH="$PYTHONPATH:/app/:/app/src/"
+    PYTHONPATH="$PYTHONPATH:/app/:/app/src/" \
+    DOCKER_BUILDKIT=1
 
 RUN apt-get update && apt-get upgrade -y \
     && apt-get install --no-install-recommends -y \
