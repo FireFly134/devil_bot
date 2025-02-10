@@ -554,4 +554,4 @@ async def test_request(
     game_news = GameNews(AsyncMock())
     assert await game_news._get_content_news() == content_news
     assert GameNews._get_request_news.call_count == 1
-    assert GameNews._get_last_post_id.call_count == 1
+    assert GameNews._get_last_post_id.call_count == len(response)
