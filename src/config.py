@@ -76,4 +76,4 @@ class Settings(BaseSettings):
     YANDEX_ROOT_DIR: str = "disk:/files_for_bot"
 
 
-settings = Settings(_env_file="../.env")
+settings = Settings(_env_file="/app/.env")

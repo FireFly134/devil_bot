@@ -22,6 +22,7 @@ services:
       - postgres
     env_file:
       - .env
+    command: /bin/bash /start.sh
 
   scheduler:
     build:

@@ -1,0 +1,18 @@
+version: '3.3'
+services:
+  postgres-test:
+    image: postgres:16.6-alpine
+    container_name: postgres-test
+    environment:
+      POSTGRES_PASSWORD: test
+      POSTGRES_DB: devil_bot
+
+  app-tests:
+    image: $DOCKER_IMAGE_NAME
+    depends_on:
+      - postgres-test
+    links:
+      - postgres-test
+    env_file:
+      - .env
+    command: sh -c "make tests"
