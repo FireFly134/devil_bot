@@ -1,14 +1,5 @@
 version: '3.3'
 services:
-  postgres:
-    image: postgres:16.6-alpine
-    container_name: postgres
-    environment:
-      POSTGRES_PASSWORD: test
-      POSTGRES_DB: devil_bot
-    ports:
-      - "15432:5432"
-
   devil-bot:
     build:
       context: .
@@ -16,10 +7,6 @@ services:
     volumes:
       - ./:/app
       - ./alembic.ini:/etc/app/alembic.ini
-    depends_on:
-      - postgres
-    links:
-      - postgres
     env_file:
       - .env
     command: /bin/bash start.sh
@@ -33,7 +20,3 @@ services:
       - .env
     volumes:
       - ./:/app
-    links:
-      - postgres
-    depends_on:
-      - postgres
