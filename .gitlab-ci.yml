@@ -32,6 +32,19 @@ build image:
       fi
 
 
+codestyle:
+  stage: tests
+  tags:
+    - docker
+  needs:
+    - build image
+  only:
+    - merge_requests
+  script:
+    - docker run $DOCKER_IMAGE_NAME sh -c "make check_lite"
+
+
+
 tests:
   stage: tests
   tags:
