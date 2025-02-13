@@ -6,6 +6,12 @@ format:
 
 tests: tests_python
 
+check_lite:
+	isort src --check
+	isort tests --check
+	black src --check
+	black tests --check
+
 check:
 	isort src --check
 	isort tests --check

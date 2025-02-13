@@ -61,7 +61,7 @@ async def necessary_heroes_for_events(message: Message) -> None:
         "ivent_AOM.jpg": "Структурированный гайд от Pulcho.",
         "Infographic_Events-1.png": "Гайд по событиям.",
     }
-    for name in file_name.items():
+    for name in file_name.keys():
         await message.answer_photo(
             photo=await ya_disk.get_link_on_files(
                 f"/help/necessary_heroes_for_events/{name}"
