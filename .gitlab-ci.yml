@@ -59,5 +59,6 @@ deploy:production:
     - tags
   environment: production
   script:
+    - cp ${PROD_ENV} .env
     - docker-compose -f docker-compose.prod.yaml down || true
     - docker-compose -f docker-compose.prod.yaml up -d
