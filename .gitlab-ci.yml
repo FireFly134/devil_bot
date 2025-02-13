@@ -17,6 +17,7 @@ build image:
     - docker
   only:
     - merge_requests
+    - tags
   services:
     - docker:dind
   before_script:
@@ -52,11 +53,11 @@ deploy:production:
     - docker
   stage: production
   when: manual
+  needs:
+    - build image
   only:
     - tags
   environment: production
   script:
-    - cp ${PROD_ENV} ./.env
     - docker-compose -f docker-compose.prod.yaml down || true
-    - docker-compose f docker-compose.prod.yaml pull
-    - docker-compose f docker-compose.prod.yaml up --build -d
+    - docker-compose -f docker-compose.prod.yaml up -d
