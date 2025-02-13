@@ -1,22 +1,13 @@
 version: '3.3'
 services:
   devil-bot:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    volumes:
-      - ./:/app
-      - ./alembic.ini:/etc/app/alembic.ini
+    image: $DOCKER_IMAGE_NAME
     env_file:
       - .env
     command: /bin/bash start.sh
 
   scheduler:
-    build:
-      dockerfile: Dockerfile
-      context: .
+    image: $DOCKER_IMAGE_NAME
     command: python3 src/scheduler.py
     env_file:
       - .env
-    volumes:
-      - ./:/app
