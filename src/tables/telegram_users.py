@@ -16,7 +16,7 @@ class User(db.Model):
     )
     user_id = sa.Column(
         "user_id",
-        sa.Integer,
+        sa.BigInteger,
         unique=True,
         nullable=False,
     )
