@@ -5,6 +5,7 @@ import asyncio
 from sqlalchemy import create_engine, text
 
 from migrations import run_connection_db
+from tables.clans import Clans
 from tables.heroes_of_users import HeroesOfUsers
 from tables.telegram_users import User
 
@@ -47,15 +48,33 @@ async def export_to_import_heroes(
         ).create()
 
 
+async def export_to_import_clans(engine) -> None:
+    clans = engine.execute(text(f"SELECT * FROM clans;"))
+    for clan in clans:
+        await Clans(
+            name_clan=clan.name_clan,
+            time_kz=clan.time_kz,
+            chat_id=clan.chat_id,
+            news=clan.news,
+            start=clan.start,
+            description_of_the_kz=clan.description_of_the_kz,
+            subscription_rock=clan.subscription_rock,
+            remain_zero_rock=clan.remain_zero_rock,
+        ).create()
+
+
 async def main() -> None:
     """
     Переносу подлежит 2 таблицы:
      - users в старой БД это telegram_users_id
      - heroes_of_users
     """
-    engine = create_engine("postgresql://login:password@host:port/name_db")
+    engine = create_engine(olddb)
     await run_connection_db()
-    await export_to_import_user(engine)
+    print("Переписываем пользователей и их героев в новую БД")
+    # await export_to_import_user(engine)
+    print("Переписываем кланы в новую БД")
+    await export_to_import_clans(engine)
 
 
 if __name__ == "__main__":
