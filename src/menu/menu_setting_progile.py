@@ -121,6 +121,24 @@ async def engine_subscription(
         text,
         (await state.get_data())["hero_id"],
     )
+async def engine_subscription_event(
+    message: Message, who_edit: str, text: str, state: FSMContext
+) -> None:
+    """Подписка на оповещение по получению энергии."""
+    await db.status(
+        db.text(
+            "UPDATE users SET {who_edit} WHERE user_id = {user_id};".format(
+                who_edit=who_edit,
+                user_id=message.from_user.id,
+            )
+        )
+    )
+
+    await subscription_button(
+        message,
+        text,
+        (await state.get_data())["hero_id"],
+    )
 
 
 @form_router.message(
@@ -188,6 +206,26 @@ async def unsubscribe_description_kz(
     who_edit = "description_of_the_kz = 'false'"
     text = "Хорошо, больше не буду присылать Вам краткое описание кланового задания."
     await engine_subscription(message, who_edit, text, state)
+
+
+@form_router.message(
+    SettingProfile.is_active, F.text == setting_profile["subscribe_event"]
+)
+async def subscribe_energy(message: Message, state: FSMContext) -> None:
+    """Подписка на оповещение по получению энергии."""
+    who_edit = "subscription_event = 'true'"
+    text = "Теперь я буду оповещать Вас о событиях."
+    await engine_subscription_event(message, who_edit, text, state)
+
+
+@form_router.message(
+    SettingProfile.is_active, F.text == setting_profile["unsubscribe_event"]
+)
+async def unsubscribe_energy(message: Message, state: FSMContext) -> None:
+    """Отписка от оповещения по получению энергии."""
+    who_edit = "subscription_event = 'false'"
+    text = "Хорошо, больше не буду оповещать Вас о событиях..."
+    await engine_subscription_event(message, who_edit, text, state)
 
 
 # LEVEL 0

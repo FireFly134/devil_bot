@@ -15,7 +15,7 @@ class HeroesOfUsers(db.Model):
         "id", sa.Integer, primary_key=True, index=True, autoincrement=True
     )
     user_id = sa.Column(
-        "user_id", sa.Integer, sa.ForeignKey("user.id"), nullable=False
+        "user_id", sa.Integer, sa.ForeignKey("users.id"), nullable=False
     )
     name = sa.Column("name", sa.String, nullable=False)
     rock = sa.Column(

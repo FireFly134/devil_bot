@@ -50,7 +50,7 @@ async def export_to_import_heroes(
 async def main() -> None:
     """
     Переносу подлежит 2 таблицы:
-     - user в старой БД это telegram_users_id
+     - users в старой БД это telegram_users_id
      - heroes_of_users
     """
     engine = create_engine("postgresql://login:password@host:port/name_db")
