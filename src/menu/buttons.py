@@ -96,7 +96,9 @@ async def subscription_button(
     hero = await HeroesOfUsers.query.where(
         HeroesOfUsers.id == id_hero
     ).gino.first()
-    user = await User.query.where(User.user_id == message.from_user.id).gino.first()
+    user = await User.query.where(
+        User.user_id == message.from_user.id
+    ).gino.first()
 
     reply_keyboard = []
     if hero.subscription_rock:

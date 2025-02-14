@@ -121,6 +121,8 @@ async def engine_subscription(
         text,
         (await state.get_data())["hero_id"],
     )
+
+
 async def engine_subscription_event(
     message: Message, who_edit: str, text: str, state: FSMContext
 ) -> None:
