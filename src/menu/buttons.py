@@ -45,7 +45,11 @@ async def setting_hero_button(
 ) -> None:
     """Манапуляции с героем."""
     reply_keyboard = []
-    num = await db.func.count(HeroesOfUsers.user_id == user_id).gino.scalar()
+    num = len(
+        await HeroesOfUsers.query.where(
+            HeroesOfUsers.user_id == user_id
+        ).gino.all()
+    )
     if num == 5:
         reply_keyboard += [
             [
