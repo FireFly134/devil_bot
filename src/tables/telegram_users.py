@@ -8,7 +8,7 @@ from migrations import db
 class User(db.Model):
     """Модель пользователя."""
 
-    __tablename__ = "user"
+    __tablename__ = "users"
     __table_args__ = {"extend_existing": True}
 
     id = sa.Column(  # noqa: A003
@@ -16,7 +16,7 @@ class User(db.Model):
     )
     user_id = sa.Column(
         "user_id",
-        sa.Integer,
+        sa.BigInteger,
         unique=True,
         nullable=False,
     )

@@ -10,6 +10,7 @@ from menu.text_menu import (
 )
 from migrations import db
 from tables.heroes_of_users import HeroesOfUsers
+from tables.telegram_users import User
 
 
 async def send_message(
@@ -95,6 +96,9 @@ async def subscription_button(
     hero = await HeroesOfUsers.query.where(
         HeroesOfUsers.id == id_hero
     ).gino.first()
+    user = await User.query.where(
+        User.user_id == message.from_user.id
+    ).gino.first()
 
     reply_keyboard = []
     if hero.subscription_rock:
@@ -124,6 +128,14 @@ async def subscription_button(
     else:
         reply_keyboard += [
             [KeyboardButton(text=setting_profile["subscribe_description_kz"])]
+        ]
+    if user.subscription_event:
+        reply_keyboard += [
+            [KeyboardButton(text=setting_profile["unsubscribe_event"])]
+        ]
+    else:
+        reply_keyboard += [
+            [KeyboardButton(text=setting_profile["subscribe_event"])]
         ]
     reply_keyboard += [[KeyboardButton(text=go_back)]]
     await send_message(message, sms, reply_keyboard)

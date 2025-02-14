@@ -40,6 +40,8 @@ setting_profile = {
     "subscribe_replace_kz": "Подписаться на напоминалку о смене КЗ за час",
     "unsubscribe_energy": "Отписаться от напоминалки по сбору энергии",
     "subscribe_energy": "Подписаться на напоминалку по сбору энергии",
+    "unsubscribe_event": "Отписаться от оповещения по событиям",
+    "subscribe_event": "Подписаться на оповещения по событиям",
     "unsubscribe_description_kz": "Отписаться от ежедневного описания КЗ",
     "subscribe_description_kz": "Подписаться на ежедневное описание КЗ",
     "update_time_replace_kz": "Поменять время смены КЗ",

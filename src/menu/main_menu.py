@@ -117,7 +117,7 @@ async def setting_up_a_profile(message: Message, state: FSMContext) -> None:
             await state.update_data(hero_id=heroes[0].id)
             await state.update_data(hero_user_id=heroes[0].user_id)
             await state.update_data(name=heroes[0].name)
-            await state.update_data(lvel=0)
+            await state.update_data(level=0)
             await state.set_state(SettingProfile.is_active)
 
             await setting_button(message, "Что будем изменять?")
@@ -155,7 +155,7 @@ async def choice_hero_setting_profile(
         await state.update_data(hero_id=hero_id)
         await state.update_data(hero_user_id=hero.user_id)
         await state.update_data(name=hero.name)
-        await state.update_data(lvel=0)
+        await state.update_data(level=0)
 
         await setting_button(call.message, "Что будем изменять?")
 

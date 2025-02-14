@@ -57,7 +57,7 @@ async def missing_name(call: CallbackQuery, state: FSMContext) -> None:
             name=state_data["name"],
         ).create()
         await state.update_data(hero_id=hero.id)
-    await state.update_data(lvel=1)
+    await state.update_data(level=1)
     await state.set_state(SettingProfile.is_active)
     await call.message.delete()
     await setting_hero_button(
