@@ -8,7 +8,6 @@ from menu.text_menu import (
     menu_useful_information,
     setting_profile,
 )
-from migrations import db
 from tables.heroes_of_users import HeroesOfUsers
 from tables.telegram_users import User
 
@@ -145,11 +144,22 @@ async def subscription_button(
     await send_message(message, sms, reply_keyboard)
 
 
-async def edit_time_button(message: Message, sms: str) -> None:
+async def edit_time_button(message: Message, hero_id: int, sms: str) -> None:
     """Поменять время..."""
+    hero = await HeroesOfUsers.get(hero_id)
     reply_keyboard = [
-        [KeyboardButton(text=setting_profile["update_time_replace_kz"])],
-        [KeyboardButton(text=setting_profile["update_time_energy"])],
+        [
+            KeyboardButton(
+                text=setting_profile["update_time_replace_kz"]
+                + f" ({hero.time_change_kz}:30)"
+            )
+        ],
+        [
+            KeyboardButton(
+                text=setting_profile["update_time_energy"]
+                + f" ({hero.time_collection_energy}:00)"
+            )
+        ],
         [KeyboardButton(text=go_back)],
     ]
     await send_message(message, sms, reply_keyboard)

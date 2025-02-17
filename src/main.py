@@ -27,6 +27,8 @@ from menu import (  # noqa: F401
     menu_useful_information,
 )
 from menu.buttons import setting_button, setting_hero_button
+from menu.menu_setting_progile import setting_hero
+from menu.text_menu import cancel
 from migrations import db, run_connection_db
 from src import Regisration, SettingProfile, form_router
 from tables.heroes_of_users import HeroesOfUsers
@@ -86,6 +88,10 @@ async def missing_name(call: CallbackQuery) -> None:  # noqa: F811 WPS440
 @form_router.message(Regisration.name)
 async def reg_start(message: Message, state: FSMContext) -> None:
     """Начало регистрации героя пользователя."""
+    if message.text in settings.stop_word or message.text in cancel:
+        await state.set_state(SettingProfile.is_active)
+        await setting_hero(message, state)
+        return
     await state.update_data(name=message.text)
     await state.update_data(hero_id=None)
     await message.answer(
