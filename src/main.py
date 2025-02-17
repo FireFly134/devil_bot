@@ -8,6 +8,7 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.client.session.aiohttp import AiohttpSession
 from aiogram.enums import ParseMode
 from aiogram.fsm.context import FSMContext
+from aiogram.loggers import event as logger_event
 from aiogram.types import (
     BotCommand,
     CallbackQuery,
@@ -69,8 +70,8 @@ async def missing_name(call: CallbackQuery, state: FSMContext) -> None:
     try:
         await first_sms(call.message)
     except Exception as err:
-        logging.error(err)
-        logging.info(f"Пользователь с id = {call.from_user.id}")
+        logger_event.error(err)
+        logger_event.info(f"Пользователь с id = {call.from_user.id}")
 
 
 @form_router.callback_query(Regisration.name, F.data == "no")
@@ -243,8 +244,16 @@ async def handle_text(message: Message, state: FSMContext) -> None:
             )
 
 
+class IgnoreUpdateHandler(logging.Filter):
+    def filter(self, record) -> bool:
+        return (
+            "Update id=%s is %s. Duration %d ms by bot id=%d" not in record.msg
+        )
+
+
 async def main() -> None:
     """Initialize Bot instance with a default parse mode which will be passed to all API calls."""
+    logger_event.addFilter(IgnoreUpdateHandler())
     bot = Bot(
         token=settings.TOKEN,
         session=AiohttpSession(),
@@ -254,7 +263,6 @@ async def main() -> None:
     await set_default_commands(bot)
     dp = Dispatcher()
     dp.include_router(form_router)
-    # And the run events dispatching
     await dp.start_polling(bot)
 
 
