@@ -19,7 +19,7 @@ from menu.buttons import (
     useful_info_button,
 )
 from src import SettingProfile, form_router
-from src.menu.text_menu import go_back, main_menu
+from src.menu.text_menu import cancel, go_back, main_menu
 from tables.heroes_of_users import HeroesOfUsers
 from tables.telegram_users import User
 
@@ -251,3 +251,10 @@ async def go_back(message: Message, state: FSMContext) -> None:
         message,
         "Погнали назад - в главное меню.",
     )
+
+
+@form_router.message(SettingProfile.is_active, F.text == cancel)
+async def cancel(message: Message, state: FSMContext) -> None:
+    """Вернуться назад в главное меню."""
+    await setting_button(message, "Ок, вернулись.")
+    await state.update_data(level=0)

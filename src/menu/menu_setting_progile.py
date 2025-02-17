@@ -2,20 +2,18 @@
 from aiogram import F
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
-from sqlalchemy import and_
 
 from menu.buttons import (
     cancel_button,
     edit_time_button,
     new_button,
-    setting_button,
     setting_hero_button,
     subscription_button,
 )
 from migrations import db
 from src import Regisration, SettingProfile, form_router
 from src.config import settings
-from src.menu.text_menu import go_back, setting_profile
+from src.menu.text_menu import cancel, setting_profile
 from tables.clans import Clans
 from tables.heroes_of_users import HeroesOfUsers
 
@@ -70,13 +68,17 @@ async def delete_hero(message: Message, state: FSMContext) -> None:
 )
 async def rename_hero(message: Message, state: FSMContext) -> None:
     """Начинаем редактирование имени героя."""
-    await message.answer("На какое имя будем менять?")
+    await cancel_button(message, "На какое имя будем менять?")
     await state.set_state(SettingProfile.edit_name)
 
 
 @form_router.message(SettingProfile.edit_name)
 async def edit_name(message: Message, state: FSMContext) -> None:
     """Редактируем имя героя."""
+    if message.text in settings.stop_word or message.text in cancel:
+        await state.set_state(SettingProfile.is_active)
+        await setting_hero(message, state)
+        return
     state_data = await state.get_data()
     hero = await HeroesOfUsers.query.where(
         HeroesOfUsers.id == state_data["hero_id"]
@@ -236,7 +238,9 @@ async def unsubscribe_energy(message: Message, state: FSMContext) -> None:
 )
 async def update_time(message: Message, state: FSMContext) -> None:
     """Переход в настройки обновления времени."""
-    await edit_time_button(message, "Меняй...")
+    await edit_time_button(
+        message, int((await state.get_data())["hero_id"]), "Меняй..."
+    )
     await state.update_data(level=1)
 
 
@@ -245,11 +249,10 @@ async def time_zone(message: Message, state: FSMContext) -> None:
     """Узнаем часовой во сколько происходит смена КЗ."""
     msg = message.text
     state_data = await state.get_data()
-    if msg in settings.stop_word:
-        sms = "Отмена"
-        await setting_hero_button(
-            message, state_data["hero_user_id"], sms, state_data["name"]
-        )
+    if msg in settings.stop_word or msg in cancel:
+        sms = "Ок... Галя, у нас отмена!"
+        await state.set_state(SettingProfile.is_active)
+        await edit_time_button(message, int(state_data["hero_id"]), sms)
         return
     if msg.isnumeric():
         msg = int(msg)
@@ -260,31 +263,34 @@ async def time_zone(message: Message, state: FSMContext) -> None:
             else:
                 await hero.update(time_collection_energy=msg).apply()
             sms = "Время умпешно установлено!\n Если Вы ошиблись или время поменяется, всегда можно изменить и тут.\n\n Для этого нажми ⚙️Настройка профиля⚙️ ---> Поменять время..."
-            await edit_time_button(message, sms)
+            await edit_time_button(message, int(state_data["hero_id"]), sms)
+            await state.set_state(SettingProfile.is_active)
         else:
-            await message.answer("Введи время по москве!")
+            await message.answer(
+                "Какое странное время 😑 ... давай в пределах 24 часов. Введи ещё раз."
+            )
     else:
         await message.answer("Вводи цифрами")
-    await state.set_state(SettingProfile.is_active)
 
 
 # LEVEL 1
 @form_router.message(
     SettingProfile.is_active,
-    F.text == setting_profile["update_time_replace_kz"],
+    F.text.startswith(setting_profile["update_time_replace_kz"]),
 )
 async def update_time_replace_kz(message: Message, state: FSMContext) -> None:
     """Узнаем часовой во сколько происходит смена КЗ."""
     await cancel_button(
         message,
-        'Во сколько по москве смена КЗ? Вводи только час.\n Пример: "18"',
+        'Во сколько по москве смена КЗ? Вводи только час.\nПример: "18"',
     )
     await state.update_data(is_tz=True)
     await state.set_state(SettingProfile.time_zone)
 
 
 @form_router.message(
-    SettingProfile.is_active, F.text == setting_profile["update_time_energy"]
+    SettingProfile.is_active,
+    F.text.startswith(setting_profile["update_time_energy"]),
 )
 async def update_update_time_energytime(
     message: Message, state: FSMContext
