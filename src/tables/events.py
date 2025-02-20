@@ -1,7 +1,5 @@
 """Events model."""
 
-import sqlalchemy as sa
-
 from migrations import db
 
 
@@ -11,8 +9,8 @@ class Events(db.Model):
     __tablename__ = "events"
     __table_args__ = {"extend_existing": True}
 
-    name_event = sa.Column(
-        "name_event", sa.String, nullable=False, unique=True
+    name_event = db.Column(
+        "name_event", db.String, nullable=False, unique=True
     )
-    event_date = sa.Column("event_date", sa.Date, nullable=False)
-    description = sa.Column("description", sa.String)
+    event_date = db.Column("event_date", db.Date, nullable=False)
+    description = db.Column("description", db.String)

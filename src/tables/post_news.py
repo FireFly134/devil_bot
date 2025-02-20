@@ -1,7 +1,5 @@
 """Users model."""
 
-import sqlalchemy as sa
-
 from migrations import db
 
 
@@ -11,31 +9,27 @@ class PostNews(db.Model):
     __tablename__ = "news"
     __table_args__ = {"extend_existing": True}
 
-    id = sa.Column(  # noqa: A003
+    id = db.Column(  # noqa: A003
         "id",
-        sa.Integer,
+        db.Integer,
         primary_key=True,
         index=True,
         unique=True,
     )
-    text = sa.Column(
+    text = db.Column(
         "text",
-        sa.String,
+        db.String,
         nullable=True,
     )
-    photos = sa.Column(
+    photos = db.Column(
         "photos",
-        sa.ARRAY(sa.String),
+        db.ARRAY(db.String),
         nullable=True,
     )
-    date_pub = sa.Column(
-        "date_pub",
-        sa.DateTime,
-        nullable=True,
-    )
-    is_send = sa.Column("is_send", sa.Boolean, server_default=sa.false())
-    created_at = sa.Column(
+    date_pub = db.Column("date_pub", db.DateTime, server_default=db.func.now())
+    is_send = db.Column("is_send", db.Boolean, server_default=db.false())
+    created_at = db.Column(
         "created_at",
-        sa.DateTime,
-        server_default=sa.func.now(),
+        db.DateTime,
+        server_default=db.func.now(),
     )
