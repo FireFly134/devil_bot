@@ -8,7 +8,7 @@ logging.basicConfig()
 logging.getLogger('gino.engine._SAEngine').setLevel(logging.ERROR)
 
 db = Gino()
-METADATA = db
+metadata = db
 
 async def run_connection_db():
     await db.set_bind(settings.DB_URI)

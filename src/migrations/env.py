@@ -9,7 +9,7 @@ from alembic import context
 from sqlalchemy import engine_from_config, pool
 from sqlalchemy.engine import Engine
 
-from src import migrations
+from migrations import db
 from src.config import settings
 from src.tables import pg_tables  # pyling: disable=unused-import
 
@@ -22,8 +22,7 @@ CONFIG = context.config
 fileConfig(CONFIG.config_file_name)
 LOGGER = logging.getLogger("alembic.env")
 
-TARGET_METADATA = {"write": migrations.METADATA}
-
+target_metadata = db
 
 def run_migrations_offline():
     """Run migrations in 'offline' mode.
@@ -51,7 +50,7 @@ def run_migrations_offline():
             context.configure(
                 url=rec["url"],
                 output_buffer=buffer,
-                target_metadata=TARGET_METADATA.get(name),
+                target_metadata=target_metadata,
                 literal_binds=True,
                 dialect_opts={"paramstyle": "named"},
             )
@@ -106,7 +105,7 @@ def run_migrations_online():
                 connection=rec["connection"],
                 upgrade_token="%s_upgrades" % name,
                 downgrade_token="%s_downgrades" % name,
-                target_metadata=TARGET_METADATA.get(name),
+                target_metadata=target_metadata,
             )
             context.run_migrations(engine_name=name)
 

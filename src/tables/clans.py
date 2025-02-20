@@ -1,7 +1,5 @@
 """Clans model."""
 
-import sqlalchemy as sa
-
 from migrations import db
 
 
@@ -11,50 +9,50 @@ class Clans(db.Model):
     __tablename__ = "clans"
     __table_args__ = {"extend_existing": True}
 
-    id = sa.Column(  # noqa: A003
-        "id", sa.Integer, primary_key=True, index=True, autoincrement=True
+    id = db.Column(  # noqa: A003
+        "id", db.Integer, primary_key=True, index=True, autoincrement=True
     )
-    name_clan = sa.Column("name_clan", sa.String, nullable=False)
-    time_kz = sa.Column(
+    name_clan = db.Column("name_clan", db.String, nullable=False)
+    time_kz = db.Column(
         "time_kz",
-        sa.Integer,
+        db.Integer,
         default=18,  # noqa: WPS432
-        server_default=sa.text("18"),
+        server_default=db.text("18"),
         nullable=False,
     )
-    chat_id = sa.Column("chat_id", sa.String, nullable=False)
-    news = sa.Column(
+    chat_id = db.Column("chat_id", db.String, nullable=False)
+    news = db.Column(
         "news",
-        sa.Boolean(),
+        db.Boolean(),
         default=True,
         nullable=False,
-        server_default=sa.true(),
+        server_default=db.true(),
     )
-    start = sa.Column(
+    start = db.Column(
         "start",
-        sa.Boolean(),
+        db.Boolean(),
         default=True,
         nullable=False,
-        server_default=sa.true(),
+        server_default=db.true(),
     )
-    description_of_the_kz = sa.Column(
+    description_of_the_kz = db.Column(
         "description_of_the_kz",
-        sa.Boolean(),
+        db.Boolean(),
         default=True,
         nullable=False,
-        server_default=sa.true(),
+        server_default=db.true(),
     )
-    subscription_rock = sa.Column(
+    subscription_rock = db.Column(
         "subscription_rock",
-        sa.Boolean(),
+        db.Boolean(),
         default=True,
         nullable=False,
-        server_default=sa.true(),
+        server_default=db.true(),
     )
-    remain_zero_rock = sa.Column(
+    remain_zero_rock = db.Column(
         "remain_zero_rock",
-        sa.Boolean(),
+        db.Boolean(),
         default=True,
         nullable=False,
-        server_default=sa.true(),
+        server_default=db.true(),
     )
