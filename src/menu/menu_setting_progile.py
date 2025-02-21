@@ -11,6 +11,7 @@ from menu.buttons import (
     subscription_button,
 )
 from migrations import db
+from services.statistics import statistics
 from src import Regisration, SettingProfile, form_router
 from src.config import settings
 from src.menu.text_menu import cancel, setting_profile
@@ -38,6 +39,7 @@ async def setting_hero(message: Message, state: FSMContext) -> None:
 @form_router.message(
     SettingProfile.is_active, F.text == setting_profile["add_hero"]
 )
+@statistics(text=setting_profile["add_hero"], is_state=True)
 async def add_hero(message: Message, state: FSMContext) -> None:
     """Добавляем героя."""
     await cancel_button(message, "Какой у тебя ник в игре?")
@@ -49,6 +51,7 @@ async def add_hero(message: Message, state: FSMContext) -> None:
 @form_router.message(
     SettingProfile.is_active, F.text.startswith(setting_profile["delete_hero"])
 )
+@statistics(text=setting_profile["delete_hero"], is_state=True)
 async def delete_hero(message: Message, state: FSMContext) -> None:
     """Удаляем персонажа, смотрим сколько всего персов и смещаем их к тому который удаляем."""
     hero = await HeroesOfUsers.query.where(
@@ -66,6 +69,7 @@ async def delete_hero(message: Message, state: FSMContext) -> None:
 @form_router.message(
     SettingProfile.is_active, F.text.startswith(setting_profile["rename_hero"])
 )
+@statistics(text=setting_profile["rename_hero"], is_state=True)
 async def rename_hero(message: Message, state: FSMContext) -> None:
     """Начинаем редактирование имени героя."""
     await cancel_button(message, "На какое имя будем менять?")
@@ -111,7 +115,7 @@ async def engine_subscription(
     """Подписка на оповещение по получению энергии."""
     await db.status(
         db.text(
-            "UPDATE heroes_of_users SET {who_edit} WHERE id = {hero_id};".format(
+            "UPDATE heroes_of_users SET {who_edit}, updated_at = now() WHERE id = {hero_id};".format(
                 who_edit=who_edit,
                 hero_id=(await state.get_data())["hero_id"],
             )
@@ -131,7 +135,7 @@ async def engine_subscription_event(
     """Подписка на оповещение по получению энергии."""
     await db.status(
         db.text(
-            "UPDATE users SET {who_edit} WHERE user_id = {user_id};".format(
+            "UPDATE users SET {who_edit}, updated_at = now() WHERE user_id = {user_id};".format(
                 who_edit=who_edit,
                 user_id=message.from_user.id,
             )
@@ -148,6 +152,7 @@ async def engine_subscription_event(
 @form_router.message(
     SettingProfile.is_active, F.text == setting_profile["subscribe_replace_kz"]
 )
+@statistics(text=setting_profile["subscribe_replace_kz"], is_state=True)
 async def subscribe_replace_kz(message: Message, state: FSMContext) -> None:
     """Подписка на оповещение об обнулении камней."""
     who_edit = "subscription_rock = 'true'"
@@ -159,6 +164,7 @@ async def subscribe_replace_kz(message: Message, state: FSMContext) -> None:
     SettingProfile.is_active,
     F.text == setting_profile["unsubscribe_replace_kz"],
 )
+@statistics(text=setting_profile["unsubscribe_replace_kz"], is_state=True)
 async def unsubscribe_replace_kz(message: Message, state: FSMContext) -> None:
     """Отписка от оповещения об обнулении камней."""
     who_edit = "subscription_rock = 'false'"
@@ -169,6 +175,7 @@ async def unsubscribe_replace_kz(message: Message, state: FSMContext) -> None:
 @form_router.message(
     SettingProfile.is_active, F.text == setting_profile["subscribe_energy"]
 )
+@statistics(text=setting_profile["subscribe_energy"], is_state=True)
 async def subscribe_energy(message: Message, state: FSMContext) -> None:
     """Подписка на оповещение по получению энергии."""
     who_edit = "subscription_energy = 'true'"
@@ -179,6 +186,7 @@ async def subscribe_energy(message: Message, state: FSMContext) -> None:
 @form_router.message(
     SettingProfile.is_active, F.text == setting_profile["unsubscribe_energy"]
 )
+@statistics(text=setting_profile["unsubscribe_energy"], is_state=True)
 async def unsubscribe_energy(message: Message, state: FSMContext) -> None:
     """Отписка от оповещения по получению энергии."""
     who_edit = "subscription_energy = 'false'"
@@ -190,6 +198,7 @@ async def unsubscribe_energy(message: Message, state: FSMContext) -> None:
     SettingProfile.is_active,
     F.text == setting_profile["subscribe_description_kz"],
 )
+@statistics(text=setting_profile["subscribe_description_kz"], is_state=True)
 async def subscribe_description_kz(
     message: Message, state: FSMContext
 ) -> None:
@@ -203,6 +212,7 @@ async def subscribe_description_kz(
     SettingProfile.is_active,
     F.text == setting_profile["unsubscribe_description_kz"],
 )
+@statistics(text=setting_profile["unsubscribe_description_kz"], is_state=True)
 async def unsubscribe_description_kz(
     message: Message, state: FSMContext
 ) -> None:
@@ -215,6 +225,7 @@ async def unsubscribe_description_kz(
 @form_router.message(
     SettingProfile.is_active, F.text == setting_profile["subscribe_event"]
 )
+@statistics(text=setting_profile["subscribe_event"], is_state=True)
 async def subscribe_energy(message: Message, state: FSMContext) -> None:
     """Подписка на оповещение по получению энергии."""
     who_edit = "subscription_event = 'true'"
@@ -225,6 +236,7 @@ async def subscribe_energy(message: Message, state: FSMContext) -> None:
 @form_router.message(
     SettingProfile.is_active, F.text == setting_profile["unsubscribe_event"]
 )
+@statistics(text=setting_profile["unsubscribe_event"], is_state=True)
 async def unsubscribe_energy(message: Message, state: FSMContext) -> None:
     """Отписка от оповещения по получению энергии."""
     who_edit = "subscription_event = 'false'"
@@ -236,6 +248,7 @@ async def unsubscribe_energy(message: Message, state: FSMContext) -> None:
 @form_router.message(
     SettingProfile.is_active, F.text == setting_profile["update_time"]
 )
+@statistics(text=setting_profile["update_time"], is_state=True)
 async def update_time(message: Message, state: FSMContext) -> None:
     """Переход в настройки обновления времени."""
     await edit_time_button(
@@ -278,6 +291,7 @@ async def time_zone(message: Message, state: FSMContext) -> None:
     SettingProfile.is_active,
     F.text.startswith(setting_profile["update_time_replace_kz"]),
 )
+@statistics(text=setting_profile["update_time_replace_kz"], is_state=True)
 async def update_time_replace_kz(message: Message, state: FSMContext) -> None:
     """Узнаем часовой во сколько происходит смена КЗ."""
     await cancel_button(
@@ -292,6 +306,7 @@ async def update_time_replace_kz(message: Message, state: FSMContext) -> None:
     SettingProfile.is_active,
     F.text.startswith(setting_profile["update_time_energy"]),
 )
+@statistics(text=setting_profile["update_time_energy"], is_state=True)
 async def update_update_time_energytime(
     message: Message, state: FSMContext
 ) -> None:
@@ -308,6 +323,7 @@ async def update_update_time_energytime(
 @form_router.message(
     SettingProfile.is_active, F.text == setting_profile["show_data_profile"]
 )
+@statistics(text=setting_profile["show_data_profile"], is_state=True)
 async def show_data_profile(message: Message, state: FSMContext) -> None:
     """Показывает данные профиля."""
     state_data = await state.get_data()

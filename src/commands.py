@@ -6,6 +6,7 @@ from aiogram.types import Message
 
 from chat_commands import chat_start
 from menu.buttons import new_button
+from services.statistics import statistics
 from src import Regisration, form_router
 from tables.heroes_of_users import HeroesOfUsers
 from tables.telegram_users import User
@@ -28,6 +29,7 @@ async def regisration(message: Message, state: FSMContext) -> None:
 
 
 @form_router.message(CommandStart())
+@statistics(text="/start", is_state=True)
 async def start(message: Message, state: FSMContext) -> None:
     """Команда для начала работы с ботом."""
     if message.chat.type == "private":
@@ -48,6 +50,7 @@ async def start(message: Message, state: FSMContext) -> None:
 
 
 @form_router.message(Command("help"))
+@statistics(text="/help", is_state=True)
 async def helper(message: Message, state: FSMContext) -> None:
     """Команда для вывода вспомогательной инструкции."""
     if message.chat.type == "private":

@@ -5,6 +5,7 @@ from aiogram.enums import ParseMode
 from aiogram.types import Message, URLInputFile
 
 from menu.menu_help import get_text
+from services.statistics import statistics
 from services.ya_disk import YaDisk
 from src import form_router
 from src.menu.text_menu import menu_useful_information
@@ -13,6 +14,7 @@ ya_disk = YaDisk()
 
 
 @form_router.message(F.text == menu_useful_information["for_new_gamers"])
+@statistics(text=menu_useful_information["for_new_gamers"])
 async def for_new_gamers(message: Message) -> None:
     """Для новых игроков."""
     await message.answer_document(
@@ -27,6 +29,7 @@ async def for_new_gamers(message: Message) -> None:
 @form_router.message(
     F.text == menu_useful_information["how_to_log_in_to_the_game"]
 )
+@statistics(text=menu_useful_information["how_to_log_in_to_the_game"])
 async def how_to_log_in_to_the_game(message: Message) -> None:
     """Как зайти в игру, если по каким-то причинам не получается зайти."""
     await message.answer(
@@ -37,6 +40,7 @@ async def how_to_log_in_to_the_game(message: Message) -> None:
 @form_router.message(
     F.text == menu_useful_information["who_to_download_at_the_beginning"]
 )
+@statistics(text=menu_useful_information["who_to_download_at_the_beginning"])
 async def who_to_download_at_the_beginning(message: Message) -> None:
     """Кого качать в начале."""
     await message.answer(
@@ -48,6 +52,7 @@ async def who_to_download_at_the_beginning(message: Message) -> None:
 @form_router.message(
     F.text == menu_useful_information["necessary_heroes_for_events"]
 )
+@statistics(text=menu_useful_information["necessary_heroes_for_events"])
 async def necessary_heroes_for_events(message: Message) -> None:
     """Необходимые герои для ивентов."""
     file_name = {
@@ -71,6 +76,7 @@ async def necessary_heroes_for_events(message: Message) -> None:
 
 
 @form_router.message(F.text == menu_useful_information["useful_links"])
+@statistics(text=menu_useful_information["useful_links"])
 async def useful_links(message: Message) -> None:
     """Полезные ссылки."""
     text = await get_text("useful_links")
@@ -78,6 +84,7 @@ async def useful_links(message: Message) -> None:
 
 
 @form_router.message(F.text == menu_useful_information["instructions_for_kv"])
+@statistics(text=menu_useful_information["instructions_for_kv"])
 async def instructions_for_kv(message: Message) -> None:
     """Инструкция по КВ."""
     text1 = await get_text("kv1")
@@ -92,6 +99,7 @@ async def instructions_for_kv(message: Message) -> None:
 @form_router.message(
     F.text == menu_useful_information["instructions_aptechkam_kv"]
 )
+@statistics(text=menu_useful_information["instructions_aptechkam_kv"])
 async def instructions_aptechkam_kv(message: Message) -> None:
     """Гайд по аптечкам в КВ."""
     await message.answer_document(
@@ -105,6 +113,7 @@ async def instructions_aptechkam_kv(message: Message) -> None:
 @form_router.message(
     F.text == menu_useful_information["packs_and_counterattacks"]
 )
+@statistics(text=menu_useful_information["packs_and_counterattacks"])
 async def packs_and_counterattacks(message: Message) -> None:
     """Паки и контрпаки."""
     for num_img in range(1, 4):
@@ -116,6 +125,7 @@ async def packs_and_counterattacks(message: Message) -> None:
 
 
 @form_router.message(F.text == menu_useful_information["three_star_trials"])
+@statistics(text=menu_useful_information["three_star_trials"])
 async def three_star_trials(message: Message) -> None:
     """Испытания на 3*."""
     await message.answer_document(
@@ -127,6 +137,7 @@ async def three_star_trials(message: Message) -> None:
 
 
 @form_router.message(F.text == menu_useful_information["schemes_of_all_raids"])
+@statistics(text=menu_useful_information["schemes_of_all_raids"])
 async def schemes_of_all_raids(message: Message) -> None:
     """Схемы всех рейдов."""
     await message.answer(
@@ -138,6 +149,7 @@ async def schemes_of_all_raids(message: Message) -> None:
 @form_router.message(
     F.text == menu_useful_information["schedule_of_clan_tasks"]
 )
+@statistics(text=menu_useful_information["schedule_of_clan_tasks"])
 async def schedule_of_clan_tasks(message: Message) -> None:
     """Расписание клановых заданий."""
     await message.answer(await get_text("schedule_of_clan_tasks"))

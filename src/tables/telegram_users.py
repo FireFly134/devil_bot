@@ -1,6 +1,7 @@
 """Users model."""
 
 from migrations import db
+from tables.handler_db import CREATED_AT_COLUMN, UPDATED_AT_COLUMN
 
 
 class User(db.Model):
@@ -36,13 +37,5 @@ class User(db.Model):
         nullable=False,
         server_default=db.false(),
     )
-    update_at = db.Column(
-        "update_at",
-        db.DateTime,
-        server_default=db.func.now(),
-    )
-    created_at = db.Column(
-        "created_at",
-        db.DateTime,
-        server_default=db.func.now(),
-    )
+    update_at = UPDATED_AT_COLUMN()
+    created_at = CREATED_AT_COLUMN()

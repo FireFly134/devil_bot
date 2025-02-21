@@ -1,6 +1,7 @@
 """Clans model."""
 
 from migrations import db
+from tables.handler_db import CREATED_AT_COLUMN, UPDATED_AT_COLUMN
 
 
 class Clans(db.Model):
@@ -56,3 +57,5 @@ class Clans(db.Model):
         nullable=False,
         server_default=db.true(),
     )
+    update_at = UPDATED_AT_COLUMN()
+    created_at = CREATED_AT_COLUMN()

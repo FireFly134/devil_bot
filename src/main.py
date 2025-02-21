@@ -26,7 +26,7 @@ from menu import (  # noqa: F401
     menu_setting_progile,
     menu_useful_information,
 )
-from menu.buttons import setting_button, setting_hero_button
+from menu.buttons import setting_hero_button
 from menu.menu_setting_progile import setting_hero
 from menu.text_menu import cancel
 from migrations import db, run_connection_db

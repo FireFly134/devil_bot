@@ -18,6 +18,7 @@ from menu.buttons import (
     setting_button,
     useful_info_button,
 )
+from services.statistics import statistics
 from src import SettingProfile, form_router
 from src.menu.text_menu import cancel, go_back, main_menu
 from tables.heroes_of_users import HeroesOfUsers
@@ -50,13 +51,16 @@ async def print_rock(message: Message, hero: HeroesOfUsers) -> None:
 
 
 @form_router.message(F.text == main_menu["help"])
+@statistics(text=main_menu["help"])
 async def helper(message: Message) -> None:
+    """Выбор в меню 'Помощь'"""
     await help_my_button(message, "Вот, листай список, выбирай!")
 
 
 @form_router.message(F.text == main_menu["2"])
+@statistics(text=main_menu["2"], is_state=True)
 async def start_print_rock(message: Message, state: FSMContext) -> None:
-    # TODO heroes = await get_heroes_from_user_id(message.from_user.id)
+    """Выбор меню 'Сколько у меня камней?'"""
     heroes = (
         await HeroesOfUsers.join(User)
         .select()
@@ -99,12 +103,16 @@ async def choice_hero_setting_profile(
 
 
 @form_router.message(F.text == main_menu["useful_information"])
+@statistics(text=main_menu["useful_information"])
 async def useful_information(message: Message) -> None:
+    """Выбор в меню 'Полезная информация'"""
     await useful_info_button(message, "Вот, листай список, выбирай!")
 
 
 @form_router.message(F.text == main_menu["4"])
+@statistics(text=main_menu["4"], is_state=True)
 async def setting_up_a_profile(message: Message, state: FSMContext) -> None:
+    """Выбор в меню '⚙️Настройка профиля⚙️'"""
     heroes = (
         await HeroesOfUsers.join(User)
         .select()
@@ -230,6 +238,7 @@ async def donation_to_my_creator(message: Message) -> None:
 
 
 @form_router.message(SettingProfile.is_active, F.text == go_back)
+@statistics(is_state=True)
 async def go_back_setting_profile(message: Message, state: FSMContext) -> None:
     """Назад в главное меню, настроек профиля."""
     if (await state.get_data())["level"] == 1:
@@ -244,6 +253,7 @@ async def go_back_setting_profile(message: Message, state: FSMContext) -> None:
 
 
 @form_router.message(F.text == go_back)
+@statistics(is_state=True)
 async def go_back(message: Message, state: FSMContext) -> None:
     """Вернуться назад в главное меню."""
     await state.clear()
@@ -254,6 +264,7 @@ async def go_back(message: Message, state: FSMContext) -> None:
 
 
 @form_router.message(SettingProfile.is_active, F.text == cancel)
+@statistics(is_state=True)
 async def cancel(message: Message, state: FSMContext) -> None:
     """Вернуться назад в главное меню."""
     await setting_button(message, "Ок, вернулись.")
