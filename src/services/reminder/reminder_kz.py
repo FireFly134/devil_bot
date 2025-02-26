@@ -31,7 +31,7 @@ async def reminder_private_change_kz(time_kz: datetime) -> None:
         for hero in heroes:
             await send_msg(
                 user_id=hero.user_id,
-                text=f"До смены кланового задания остался 1 час! ({hero.name})",
+                sms=f"До смены кланового задания остался 1 час! ({hero.name})",
             )
 
 
@@ -79,7 +79,7 @@ async def description_new_kz(time: datetime) -> None:
                 .replace("!", "\\!")
             )
             await send_msg_mv2(
-                user_id=hero.user_id, text=f"{name}\!\n{text_info.text}"
+                user_id=hero.user_id, sms=f"{name}\!\n{text_info.text}"
             )
 
 
@@ -97,7 +97,7 @@ async def reminder_change_kz_in_chat_clans(time_kz: datetime) -> None:
         for clan in clans:
             await send_msg(
                 user_id=clan.chat_id,
-                text="До смены кланового задания остался 1 час!",
+                sms="До смены кланового задания остался 1 час!",
             )
 
 
@@ -115,7 +115,7 @@ async def description_new_kz_in_chat_clans(time: datetime) -> None:
             TextTable.name_text == time.strftime("%w")
         ).gino.first()
         for clan in clans:
-            await send_msg_mv2(user_id=clan.chat_id, text=text_info.text)
+            await send_msg_mv2(user_id=clan.chat_id, sms=text_info.text)
 
 
 async def reminder_kz():

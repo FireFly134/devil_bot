@@ -48,5 +48,5 @@ async def reminder_events():
             )
             for user in info_user:
                 await send_msg_mv2(
-                    user_id=user.user_id, text=f"*Через два дня {text}*"
+                    user_id=user.user_id, sms=f"*Через два дня {text}*"
                 )

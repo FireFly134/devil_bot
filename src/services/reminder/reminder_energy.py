@@ -48,5 +48,5 @@ async def reminder_energy():
         )
         await send_msg_mv2(
             user_id=hero.user_id,
-            text=f"*Зайди в игру и забери халявную энергию*\. \({name}\)",
+            sms=f"*Зайди в игру и забери халявную энергию*\. \({name}\)",
         )
