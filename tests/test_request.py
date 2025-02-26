@@ -1,4 +1,5 @@
 """Тест парсинга новостей из ВК"""
+from datetime import datetime
 from typing import Any
 from unittest.mock import AsyncMock
 
@@ -463,7 +464,9 @@ response = [
                     "photos": [
                         "https://sun9-62.userapi.com/s/v1/ig2/DIR_THon0_2NTexNFPyhTBCO5Y7ORAhoealGAxEUXZt27QJyNbdsO7WMX_NvyKVzejJjd9lmzSXV0CLw0Id_-nO4.jpg?quality=95&as=32x13,48x19,72x29,108x43,160x64,240x96,360x144,480x192,540x216,640x256,720x288,800x320&from=bu&cs=800x320"
                     ],
-                    "date_pub": "2024-04-03 13:42:16",
+                    "date_pub": datetime.strptime(
+                        "2024-04-03 13:42:16", "%Y-%m-%d %H:%M:%S"
+                    ),
                 },
                 {
                     "id": 160090,
@@ -471,7 +474,9 @@ response = [
                     "photos": [
                         "https://sun1-20.userapi.com/s/v1/ig2/QQJWacKg1t34BkjdT60Oftm3BAQVTgYdbfvSrEj4_3tnf0-GfJALHZOWiPaOiF-28E__UDFFEj3PGyx-nmOfM3KW.jpg?quality=95&as=32x22,48x33,72x49,108x74,160x109,240x163,360x245,480x327,540x368,640x436,720x490,1080x736,1280x872,1440x981,2208x1504&from=bu&cs=2208x1504"
                     ],
-                    "date_pub": "2024-12-10 14:57:42",
+                    "date_pub": datetime.strptime(
+                        "2024-12-10 14:57:42", "%Y-%m-%d %H:%M:%S"
+                    ),
                 },
                 {
                     "id": 160089,
@@ -479,7 +484,9 @@ response = [
                     "photos": [
                         "https://sun1-56.userapi.com/s/v1/ig2/L4su6A5A2GX-IhQmJar9nLlCcTwP6vH3BwO3yyyOdg07N_PsOfSUrOlwEYYmnR6rO2HLiW4eM6Ev0MtjSUBxSlMD.jpg?quality=95&as=32x38,48x57,72x86,108x129,160x191,240x287,360x430,480x573,540x645,576x688&from=bu&cs=576x688"
                     ],
-                    "date_pub": "2024-12-10 11:09:12",
+                    "date_pub": datetime.strptime(
+                        "2024-12-10 11:09:12", "%Y-%m-%d %H:%M:%S"
+                    ),
                 },
                 {
                     "id": 160087,
@@ -487,7 +494,9 @@ response = [
                     "photos": [
                         "https://sun1-18.userapi.com/s/v1/ig2/s9BYQbiqYx6gsEKKmoLoSTccXqDJTUkXAVcglguK3WTjdrfR_R_7ICfqPbYDHFfaFSGrcQVZysV-QVLlRkEdC4rI.jpg?quality=95&as=32x38,48x57,72x86,108x129,160x191,240x287,360x430,480x573,540x645,576x688&from=bu&cs=576x688"
                     ],
-                    "date_pub": "2024-12-06 15:10:25",
+                    "date_pub": datetime.strptime(
+                        "2024-12-06 15:10:25", "%Y-%m-%d %H:%M:%S"
+                    ),
                 },
             ],
         ),
@@ -500,7 +509,9 @@ response = [
                     "photos": [
                         "https://sun1-20.userapi.com/s/v1/ig2/QQJWacKg1t34BkjdT60Oftm3BAQVTgYdbfvSrEj4_3tnf0-GfJALHZOWiPaOiF-28E__UDFFEj3PGyx-nmOfM3KW.jpg?quality=95&as=32x22,48x33,72x49,108x74,160x109,240x163,360x245,480x327,540x368,640x436,720x490,1080x736,1280x872,1440x981,2208x1504&from=bu&cs=2208x1504"
                     ],
-                    "date_pub": "2024-12-10 14:57:42",
+                    "date_pub": datetime.strptime(
+                        "2024-12-10 14:57:42", "%Y-%m-%d %H:%M:%S"
+                    ),
                 },
                 {
                     "id": 160089,
@@ -508,7 +519,9 @@ response = [
                     "photos": [
                         "https://sun1-56.userapi.com/s/v1/ig2/L4su6A5A2GX-IhQmJar9nLlCcTwP6vH3BwO3yyyOdg07N_PsOfSUrOlwEYYmnR6rO2HLiW4eM6Ev0MtjSUBxSlMD.jpg?quality=95&as=32x38,48x57,72x86,108x129,160x191,240x287,360x430,480x573,540x645,576x688&from=bu&cs=576x688"
                     ],
-                    "date_pub": "2024-12-10 11:09:12",
+                    "date_pub": datetime.strptime(
+                        "2024-12-10 11:09:12", "%Y-%m-%d %H:%M:%S"
+                    ),
                 },
                 {
                     "id": 160087,
@@ -516,7 +529,9 @@ response = [
                     "photos": [
                         "https://sun1-18.userapi.com/s/v1/ig2/s9BYQbiqYx6gsEKKmoLoSTccXqDJTUkXAVcglguK3WTjdrfR_R_7ICfqPbYDHFfaFSGrcQVZysV-QVLlRkEdC4rI.jpg?quality=95&as=32x38,48x57,72x86,108x129,160x191,240x287,360x430,480x573,540x645,576x688&from=bu&cs=576x688"
                     ],
-                    "date_pub": "2024-12-06 15:10:25",
+                    "date_pub": datetime.strptime(
+                        "2024-12-06 15:10:25", "%Y-%m-%d %H:%M:%S"
+                    ),
                 },
             ],
         ),
@@ -529,7 +544,9 @@ response = [
                     "photos": [
                         "https://sun1-20.userapi.com/s/v1/ig2/QQJWacKg1t34BkjdT60Oftm3BAQVTgYdbfvSrEj4_3tnf0-GfJALHZOWiPaOiF-28E__UDFFEj3PGyx-nmOfM3KW.jpg?quality=95&as=32x22,48x33,72x49,108x74,160x109,240x163,360x245,480x327,540x368,640x436,720x490,1080x736,1280x872,1440x981,2208x1504&from=bu&cs=2208x1504"
                     ],
-                    "date_pub": "2024-12-10 14:57:42",
+                    "date_pub": datetime.strptime(
+                        "2024-12-10 14:57:42", "%Y-%m-%d %H:%M:%S"
+                    ),
                 },
                 {
                     "id": 160089,
@@ -537,7 +554,9 @@ response = [
                     "photos": [
                         "https://sun1-56.userapi.com/s/v1/ig2/L4su6A5A2GX-IhQmJar9nLlCcTwP6vH3BwO3yyyOdg07N_PsOfSUrOlwEYYmnR6rO2HLiW4eM6Ev0MtjSUBxSlMD.jpg?quality=95&as=32x38,48x57,72x86,108x129,160x191,240x287,360x430,480x573,540x645,576x688&from=bu&cs=576x688"
                     ],
-                    "date_pub": "2024-12-10 11:09:12",
+                    "date_pub": datetime.strptime(
+                        "2024-12-10 11:09:12", "%Y-%m-%d %H:%M:%S"
+                    ),
                 },
             ],
         ),

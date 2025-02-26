@@ -57,9 +57,6 @@ class GameNews:
         for post in news:
             if post["id"] <= await self._get_last_post_id():
                 continue
-            date_pub = datetime.fromtimestamp(post["date"]).strftime(
-                "%Y-%m-%d %H:%M:%S"
-            )
             urls_photo = []
             for i in range(len(post["attachments"])):
                 if post["attachments"][i]["type"] == "photo":
@@ -83,7 +80,7 @@ class GameNews:
                             "id": post["id"],
                             "text": post["text"],
                             "photos": urls_photo,
-                            "date_pub": date_pub,
+                            "date_pub": datetime.fromtimestamp(post["date"]),
                         }
                     )
         return posts_list
@@ -175,7 +172,8 @@ async def send_news(game_news: GameNews) -> None:
         .order_by(PostNews.id.asc())
         .gino.first()
     )
-    await game_news.build_and_send_news_message(post)
+    if post:
+        await game_news.build_and_send_news_message(post)
 
 
 async def main() -> None:
