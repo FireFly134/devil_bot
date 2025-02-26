@@ -1,5 +1,4 @@
 """Напоминалка по подпискам"""
-import logging
 from datetime import datetime, timedelta
 
 from sqlalchemy import and_
@@ -29,13 +28,11 @@ async def reminder_private_change_kz(time_kz: datetime) -> None:
     )
 
     if heroes:
-        logging.info(f"reminder_private_change_kz GO = {len(heroes)}")
         for hero in heroes:
             await send_msg(
                 user_id=hero.user_id,
                 text=f"До смены кланового задания остался 1 час! ({hero.name})",
             )
-            logging.info(f"reminder_private_change_kz hero.id = {hero.id}")
 
 
 async def description_new_kz(time: datetime) -> None:
@@ -56,7 +53,6 @@ async def description_new_kz(time: datetime) -> None:
     )
 
     if heroes:
-        logging.info(f"description_new_kz GO = {len(heroes)}")
         text_info = await TextTable.query.where(
             TextTable.name_text == time.strftime("%w")
         ).gino.first()
@@ -85,7 +81,6 @@ async def description_new_kz(time: datetime) -> None:
             await send_msg_mv2(
                 user_id=hero.user_id, text=f"{name}\!\n{text_info.text}"
             )
-            logging.info(f"description_new_kz hero.id = {hero.id}")
 
 
 async def reminder_change_kz_in_chat_clans(time_kz: datetime) -> None:
@@ -99,14 +94,10 @@ async def reminder_change_kz_in_chat_clans(time_kz: datetime) -> None:
     ).gino.all()
 
     if clans:
-        logging.info(f"reminder_change_kz_in_chat_clans GO = {len(clans)}")
         for clan in clans:
             await send_msg(
                 user_id=clan.chat_id,
                 text="До смены кланового задания остался 1 час!",
-            )
-            logging.info(
-                f"reminder_change_kz_in_chat_clans clan.id = {clan.id}"
             )
 
 
@@ -120,15 +111,11 @@ async def description_new_kz_in_chat_clans(time: datetime) -> None:
         )
     ).gino.all()
     if clans:
-        logging.info(f"description_new_kz_in_chat_clans GO = {len(clans)}")
         text_info = await TextTable.query.where(
             TextTable.name_text == time.strftime("%w")
         ).gino.first()
         for clan in clans:
             await send_msg_mv2(user_id=clan.chat_id, text=text_info.text)
-            logging.info(
-                f"description_new_kz_in_chat_clans clan.id = {clan.id}"
-            )
 
 
 async def reminder_kz():
