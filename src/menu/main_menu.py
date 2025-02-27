@@ -9,6 +9,7 @@ from aiogram.types import (
     InlineKeyboardMarkup,
     Message,
 )
+from pytz import timezone
 
 import commands
 from config import settings
@@ -24,11 +25,13 @@ from src.menu.text_menu import cancel, go_back, main_menu
 from tables.heroes_of_users import HeroesOfUsers
 from tables.telegram_users import User
 
+tz = timezone("Europe/Moscow")
+
 
 async def print_rock(message: Message, hero: HeroesOfUsers) -> None:
     """Вывод камней"""
     hours = hero.time_change_kz
-    now = datetime.now()
+    now = datetime.now(tz=tz)
     time1 = timedelta(
         days=now.day, hours=now.hour, minutes=now.minute, seconds=now.second
     )

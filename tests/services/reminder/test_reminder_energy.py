@@ -2,10 +2,13 @@ from datetime import datetime
 from unittest.mock import patch
 
 import pytest
+from pytz import timezone
 
 from services.reminder.reminder_energy import reminder_energy
 from tables.heroes_of_users import HeroesOfUsers
 from tests.factories import HeroFactory, UserFactory
+
+tz = timezone("Europe/Moscow")
 
 
 @pytest.mark.parametrize(
@@ -17,7 +20,7 @@ async def test_reminder_energy(
     count_remind: int, count_not_remind: int, count_not_subscription: int
 ) -> None:
     """Тестирование функции напоминания о сборе энергии."""
-    time = datetime.now()
+    time = datetime.now(tz=tz)
     user = await UserFactory()
     for _ in range(count_remind):
         await HeroFactory(

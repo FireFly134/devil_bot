@@ -2,15 +2,18 @@ from datetime import datetime, timedelta
 from unittest.mock import patch
 
 import pytest
+from pytz import timezone
 
 from services.reminder.reminder_events import reminder_events
 from tests.factories import EventFactory, UserFactory
+
+tz = timezone("Europe/Moscow")
 
 
 @pytest.mark.asyncio()
 async def test_reminder_events() -> None:
     """Тестирование функции напоминания о сборе энергии."""
-    time = datetime.now()
+    time = datetime.now(tz=tz)
     await UserFactory(subscription_event=True)
     await EventFactory(event_date=(time + timedelta(days=2)).date())
 

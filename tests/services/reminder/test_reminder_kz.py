@@ -2,6 +2,7 @@ from datetime import datetime
 from unittest.mock import patch
 
 import pytest
+from pytz import timezone
 
 from services.reminder.reminder_kz import (
     description_new_kz,
@@ -12,6 +13,8 @@ from services.reminder.reminder_kz import (
 from tables.clans import Clans
 from tables.heroes_of_users import HeroesOfUsers
 from tests.factories import ClanFactory, HeroFactory, UserFactory
+
+tz = timezone("Europe/Moscow")
 
 
 @pytest.mark.parametrize(
@@ -24,7 +27,7 @@ async def test_reminder_private(
 ) -> None:
     """Тестирование функции напоминалки в личку о смене КЗ."""
     user = await UserFactory()
-    time = datetime.now()
+    time = datetime.now(tz=tz)
 
     for _ in range(count_remind):
         await HeroFactory(
@@ -77,7 +80,7 @@ async def test_reminder_groups(
     clan_stop: int,
 ) -> None:
     """Тестирование функции напоминалки в личку о смене КЗ."""
-    time = datetime.now()
+    time = datetime.now(tz=tz)
     for _ in range(count_remind):
         await ClanFactory(
             start=True,

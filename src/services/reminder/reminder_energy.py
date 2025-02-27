@@ -1,15 +1,18 @@
 """Напоминалка по подпискам о сборе энергии."""
 from datetime import datetime, timedelta
 
+from pytz import timezone
 from sqlalchemy import and_, or_
 
 from services.send_message import send_msg_mv2
 from tables.heroes_of_users import HeroesOfUsers
 from tables.telegram_users import User
 
+tz = timezone("Europe/Moscow")
+
 
 async def reminder_energy():
-    time = datetime.now()
+    time = datetime.now(tz=tz)
     time2_energy = time - timedelta(hours=6)
     time3_energy = time - timedelta(hours=9)
     heroes = (

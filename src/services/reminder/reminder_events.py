@@ -1,13 +1,17 @@
 from datetime import datetime, timedelta
 
+from pytz import timezone
+
 from migrations import db
 from services.send_message import send_msg_mv2
 from tables.events import Events
 from tables.telegram_users import User
 
+tz = timezone("Europe/Moscow")
+
 
 async def reminder_events():
-    time = datetime.now()  # текущее время
+    time = datetime.now(tz=tz)  # текущее время
     time_add_two_days = (time + timedelta(days=2)).date()
     time_add_two_week = (
         time + timedelta(days=16)

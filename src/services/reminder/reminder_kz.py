@@ -1,6 +1,7 @@
 """Напоминалка по подпискам"""
 from datetime import datetime, timedelta
 
+from pytz import timezone
 from sqlalchemy import and_
 
 from services.send_message import send_msg, send_msg_mv2
@@ -8,6 +9,8 @@ from tables.clans import Clans
 from tables.heroes_of_users import HeroesOfUsers
 from tables.telegram_users import User
 from tables.text_table import TextTable
+
+tz = timezone("Europe/Moscow")
 
 
 async def reminder_private_change_kz(time_kz: datetime) -> None:
@@ -119,7 +122,7 @@ async def description_new_kz_in_chat_clans(time: datetime) -> None:
 
 
 async def reminder_kz():
-    time = datetime.now()
+    time = datetime.now(tz=tz)
     time_kz = time + timedelta(hours=1)
     await reminder_private_change_kz(time_kz)
     await description_new_kz(time)
