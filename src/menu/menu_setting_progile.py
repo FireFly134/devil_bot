@@ -275,7 +275,7 @@ async def time_zone(message: Message, state: FSMContext) -> None:
                 await hero.update(time_change_kz=msg).apply()
             else:
                 await hero.update(time_collection_energy=msg).apply()
-            sms = "Время умпешно установлено!\n Если Вы ошиблись или время поменяется, всегда можно изменить и тут.\n\n Для этого нажми ⚙️Настройка профиля⚙️ ---> Поменять время..."
+            sms = "Время успешно установлено!\n Если Вы ошиблись или время поменяется, всегда можно изменить и тут.\n\n Для этого нажми ⚙️Настройка профиля⚙️ ---> Поменять время..."
             await edit_time_button(message, int(state_data["hero_id"]), sms)
             await state.set_state(SettingProfile.is_active)
         else:

@@ -66,7 +66,7 @@ async def add_hour_for_change_clan_task(
                     time_kz=msg,
                     start=False,
                 ).create()
-            await message.answer("Время умпешно установлено!")
+            await message.answer("Время успешно установлено!")
             await state.clear()
         else:
             await message.answer("Введи время по москве!")
