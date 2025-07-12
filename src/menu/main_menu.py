@@ -1,3 +1,4 @@
+"""Главное меню бота."""
 from datetime import datetime, timedelta
 from random import randint
 

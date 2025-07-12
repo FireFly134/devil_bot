@@ -26,11 +26,15 @@ from tables.heroes_of_users import HeroesOfUsers
 async def setting_hero(message: Message, state: FSMContext) -> None:
     """Переход в настройки героя."""
     state_data = await state.get_data()
+    
+    # Безопасно получаем hero_user_id, если его нет - используем user_id из сообщения
+    hero_user_id = state_data.get("hero_user_id", message.from_user.id)
+    
     await setting_hero_button(
         message,
-        user_id=state_data["hero_user_id"],
+        user_id=hero_user_id,
         sms="Тут ты можешь добавить или удалить героя, ну и при необходимости переименовать его",
-        name=state_data["name"],
+        name=state_data.get("name", "Неизвестно"),
     )
     await state.update_data(level=1)
 
@@ -43,7 +47,9 @@ async def setting_hero(message: Message, state: FSMContext) -> None:
 async def add_hero(message: Message, state: FSMContext) -> None:
     """Добавляем героя."""
     await cancel_button(message, "Какой у тебя ник в игре?")
-    await state.update_data(user_id=(await state.get_data())["hero_user_id"])
+    state_data = await state.get_data()
+    user_id = state_data.get("hero_user_id", message.from_user.id)
+    await state.update_data(user_id=user_id)
     await state.set_state(Regisration.name)
     # TODO надо придумать систему возврата
 
