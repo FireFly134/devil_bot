@@ -43,7 +43,7 @@ async def stop(message: Message) -> None:
         await message.answer("А что я? Я молчу!☹️")
 
 
-@form_router.callback_query(UpdateTimeChangeClanTask.hour)
+@form_router.message(UpdateTimeChangeClanTask.hour)
 async def add_hour_for_change_clan_task(
     message: Message, state: FSMContext
 ) -> None:
@@ -51,19 +51,19 @@ async def add_hour_for_change_clan_task(
     if (await state.get_data())["user_id"] != message.from_user.id:
         return
     chat_id: str = str(message.chat.id)
-    msg: str = message.text
-    if msg.isnumeric():
-        if 1 <= int(msg) <= 24:
+    if message.text and message.text.isnumeric():
+        hour = int(message.text)
+        if 1 <= hour <= 24:
             clan = await Clans.query.where(
                 Clans.chat_id == chat_id
             ).gino.first()
             if clan:
-                await clan.update(time_kz=msg).apply()
+                await clan.update(time_kz=hour).apply()
             else:
                 await Clans(
                     chat_id=chat_id,
                     name_clan=message.chat.title,
-                    time_kz=msg,
+                    time_kz=hour,
                     start=False,
                 ).create()
             await message.answer("Время успешно установлено!")
