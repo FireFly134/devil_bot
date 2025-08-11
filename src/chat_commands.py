@@ -3,15 +3,30 @@ from aiogram.exceptions import TelegramBadRequest
 from aiogram.filters.command import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
+from sqlalchemy import and_
 
 from src import UpdateTimeChangeClanTask, form_router
 from tables.clans import Clans
 
+async def get_clan(message: Message) -> Clans:
+    """Получение клана."""
+    chat_id = str(message.chat.id)
+    thread_id = message.message_thread_id
+    if message.chat.is_forum and thread_id:
+        clan = await Clans.query.where(
+            and_(
+                Clans.chat_id == chat_id,
+                Clans.thread_id == thread_id
+            )
+        ).gino.first()
+    else:
+        clan = await Clans.query.where(Clans.chat_id == chat_id).gino.first()
+    return clan
+
 
 async def chat_start(message: Message) -> None:
     """Запуск активности в чате."""
-    chat_id = str(message.chat.id)
-    clan = await Clans.query.where(Clans.chat_id == chat_id).gino.first()
+    clan = await get_clan(message)
     if clan:
         if clan.start:
             await message.answer(
@@ -23,9 +38,11 @@ async def chat_start(message: Message) -> None:
                 f"Привет, {clan.name_clan}!\nЯ снова с вами!😈",
             )
     else:
+        thread_id = message.message_thread_id
         await Clans(
-            chat_id=chat_id,
+            chat_id=str(message.chat.id),
             name_clan=message.chat.title,
+            thread_id=thread_id if message.chat.is_forum and thread_id else 0
         ).create()
         await message.answer("Привет, меня зовут Люцик!")
 
@@ -34,8 +51,8 @@ async def chat_start(message: Message) -> None:
 async def stop(message: Message) -> None:
     """Остановка активности в чате."""
     if message.chat.type != "private":
-        chat_id: str = str(message.chat.id)
-        clan = await Clans.query.where(Clans.chat_id == chat_id).gino.first()
+        clan = await get_clan(message)
+
         if clan and clan.start:
             await clan.update(start=False).apply()
             await message.answer("Ок, я все понял!☹️\nЯ пошел...")
@@ -50,19 +67,17 @@ async def add_hour_for_change_clan_task(
     """Изменения времени смены КЗ в чате."""
     if (await state.get_data())["user_id"] != message.from_user.id:
         return
-    chat_id: str = str(message.chat.id)
     if message.text and message.text.isnumeric():
         hour = int(message.text)
         if 1 <= hour <= 24:
-            clan = await Clans.query.where(
-                Clans.chat_id == chat_id
-            ).gino.first()
+            clan = await get_clan(message)
             if clan:
                 await clan.update(time_kz=hour).apply()
             else:
                 await Clans(
-                    chat_id=chat_id,
+                    chat_id=str(message.chat.id),
                     name_clan=message.chat.title,
+                    thread_id=message.message_thread_id,
                     time_kz=hour,
                     start=False,
                 ).create()
@@ -90,9 +105,7 @@ async def update_time_change_clan_task(
 
 async def remind(message: Message, remain_zero_rock: bool) -> None:
     """Активация/деактивация напоминания об обнуление камней."""
-    clan = await Clans.query.where(
-        Clans.chat_id == str(message.chat.id)
-    ).gino.first()
+    clan = await get_clan(message)
     if clan and message.chat.type != "private":
         await clan.update(remain_zero_rock=remain_zero_rock).apply()
         await delete_message(message)

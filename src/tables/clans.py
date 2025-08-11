@@ -22,6 +22,13 @@ class Clans(db.Model):
         nullable=False,
     )
     chat_id = db.Column("chat_id", db.String, nullable=False)
+    thread_id=db.Column(
+        "thread_id",
+        db.Integer,
+        default=0,  # noqa: WPS432
+        server_default=db.text("0"),
+        nullable=False
+    )
     news = db.Column(
         "news",
         db.Boolean(),

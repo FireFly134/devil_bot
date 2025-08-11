@@ -18,7 +18,7 @@ async def reminder_zero(text="До обнуления камушков оста�
         )
     ).gino.all()
     for clan in info_clans:
-        await send_msg(user_id=clan.chat_id, sms=text)
+        await send_msg(user_id=clan.chat_id, sms=text, message_thread_id=clan.thread_id)
 
 
 async def clear_rock() -> None:
