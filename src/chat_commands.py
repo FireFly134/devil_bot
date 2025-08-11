@@ -8,25 +8,22 @@ from sqlalchemy import and_
 from src import UpdateTimeChangeClanTask, form_router
 from tables.clans import Clans
 
-async def get_clan(message: Message) -> Clans:
+async def get_clan(message: Message) -> tuple[str, int, Clans]:
     """Получение клана."""
     chat_id = str(message.chat.id)
-    thread_id = message.message_thread_id
-    if message.chat.is_forum and thread_id:
-        clan = await Clans.query.where(
-            and_(
-                Clans.chat_id == chat_id,
-                Clans.thread_id == thread_id
-            )
-        ).gino.first()
-    else:
-        clan = await Clans.query.where(Clans.chat_id == chat_id).gino.first()
-    return clan
+    thread_id = message.message_thread_id if message.chat.is_forum and message.message_thread_id is not None else 0
+    clan = await Clans.query.where(
+        and_(
+            Clans.chat_id == chat_id,
+            Clans.thread_id == thread_id
+        )
+    ).gino.first()
+    return chat_id, thread_id, clan
 
 
 async def chat_start(message: Message) -> None:
     """Запуск активности в чате."""
-    clan = await get_clan(message)
+    chat_id, thread_id, clan = await get_clan(message)
     if clan:
         if clan.start:
             await message.answer(
@@ -38,11 +35,10 @@ async def chat_start(message: Message) -> None:
                 f"Привет, {clan.name_clan}!\nЯ снова с вами!😈",
             )
     else:
-        thread_id = message.message_thread_id
         await Clans(
-            chat_id=str(message.chat.id),
+            chat_id=chat_id,
             name_clan=message.chat.title,
-            thread_id=thread_id if message.chat.is_forum and thread_id else 0
+            thread_id=thread_id
         ).create()
         await message.answer("Привет, меня зовут Люцик!")
 
@@ -51,7 +47,7 @@ async def chat_start(message: Message) -> None:
 async def stop(message: Message) -> None:
     """Остановка активности в чате."""
     if message.chat.type != "private":
-        clan = await get_clan(message)
+        _, _, clan = await get_clan(message)
 
         if clan and clan.start:
             await clan.update(start=False).apply()
@@ -70,14 +66,14 @@ async def add_hour_for_change_clan_task(
     if message.text and message.text.isnumeric():
         hour = int(message.text)
         if 1 <= hour <= 24:
-            clan = await get_clan(message)
+            chat_id, thread_id, clan = await get_clan(message)
             if clan:
                 await clan.update(time_kz=hour).apply()
             else:
                 await Clans(
-                    chat_id=str(message.chat.id),
+                    chat_id=chat_id,
                     name_clan=message.chat.title,
-                    thread_id=message.message_thread_id,
+                    thread_id=thread_id,
                     time_kz=hour,
                     start=False,
                 ).create()
@@ -105,7 +101,7 @@ async def update_time_change_clan_task(
 
 async def remind(message: Message, remain_zero_rock: bool) -> None:
     """Активация/деактивация напоминания об обнуление камней."""
-    clan = await get_clan(message)
+    _, _, clan = await get_clan(message)
     if clan and message.chat.type != "private":
         await clan.update(remain_zero_rock=remain_zero_rock).apply()
         await delete_message(message)
