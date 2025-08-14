@@ -141,16 +141,22 @@ class GameNews:
         """Отправка новостей в чат."""
         try:
             await self.bot.send_media_group(
-                chat_id=clan.chat_id, media=media_group, message_thread_id=clan.thread_id
+                chat_id=clan.chat_id,
+                media=media_group,
+                message_thread_id=clan.thread_id,
             )
         except TelegramBadRequest as err:
             if "message caption is too long" in str(err):
                 media_group[0] = InputMediaPhoto(media=post.photos[0])
                 await self.bot.send_media_group(
-                    chat_id=clan.chat_id, media=media_group, message_thread_id=clan.thread_id
+                    chat_id=clan.chat_id,
+                    media=media_group,
+                    message_thread_id=clan.thread_id,
                 )
                 await self.bot.send_message(
-                    chat_id=clan.chat_id, text=post.text, message_thread_id=clan.thread_id
+                    chat_id=clan.chat_id,
+                    text=post.text,
+                    message_thread_id=clan.thread_id,
                 )
             elif "chat not found" in str(err):
                 logging.info(

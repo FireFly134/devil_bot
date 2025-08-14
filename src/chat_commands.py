@@ -8,15 +8,17 @@ from sqlalchemy import and_
 from src import UpdateTimeChangeClanTask, form_router
 from tables.clans import Clans
 
+
 async def get_clan(message: Message) -> tuple[str, int, Clans]:
     """Получение клана."""
     chat_id = str(message.chat.id)
-    thread_id = message.message_thread_id if message.chat.is_forum and message.message_thread_id is not None else 0
+    thread_id = (
+        message.message_thread_id
+        if message.chat.is_forum and message.message_thread_id is not None
+        else 0
+    )
     clan = await Clans.query.where(
-        and_(
-            Clans.chat_id == chat_id,
-            Clans.thread_id == thread_id
-        )
+        and_(Clans.chat_id == chat_id, Clans.thread_id == thread_id)
     ).gino.first()
     return chat_id, thread_id, clan
 
@@ -36,9 +38,7 @@ async def chat_start(message: Message) -> None:
             )
     else:
         await Clans(
-            chat_id=chat_id,
-            name_clan=message.chat.title,
-            thread_id=thread_id
+            chat_id=chat_id, name_clan=message.chat.title, thread_id=thread_id
         ).create()
         await message.answer("Привет, меня зовут Люцик!")
 

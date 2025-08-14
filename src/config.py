@@ -75,5 +75,11 @@ class Settings(BaseSettings):
     YANDEX_TOKEN: str = ""
     YANDEX_ROOT_DIR: str = "disk:/files_for_bot"
 
+    # User bot
+    API_ID: int = 0
+    API_HASH: str = ""
+    CHANNEL_USERNAME: str = ""
+    TELETHON_SESSION: str = ""
+
 
 settings = Settings(_env_file="../.env")

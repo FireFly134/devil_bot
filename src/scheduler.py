@@ -5,7 +5,7 @@ from asyncio import Future, run
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from pytz import timezone
 
-from src.request import main as get_news
+# from src.request import main as get_news
 from src.services.reminder.reminder_and_cleaner_rock import (
     clear_rock,
     reminder_zero,
@@ -19,14 +19,14 @@ async def scheduler() -> None:
     """Запуск планировщика."""
     logging.info("Scheduler starting...")
     io_scheduler = AsyncIOScheduler()
-    io_scheduler.add_job(
-        get_news,
-        "cron",
-        id="get_news",
-        minute="*/5",
-        timezone=timezone("Europe/Moscow"),
-        replace_existing=True,
-    )
+    # io_scheduler.add_job(
+    #     get_news,
+    #     "cron",
+    #     id="get_news",
+    #     minute="*/5",
+    #     timezone=timezone("Europe/Moscow"),
+    #     replace_existing=True,
+    # )
     io_scheduler.add_job(
         reminder_zero,
         "cron",

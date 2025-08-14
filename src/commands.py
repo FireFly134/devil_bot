@@ -14,11 +14,13 @@ from tables.telegram_users import User
 
 async def ensure_user_exists(message: Message, state: FSMContext) -> User:
     """Обеспечивает существование пользователя в базе данных."""
-    existing_user = await User.query.where(User.user_id == message.from_user.id).gino.first()
-    
+    existing_user = await User.query.where(
+        User.user_id == message.from_user.id
+    ).gino.first()
+
     if existing_user:
         return existing_user
-    
+
     # Создаем нового пользователя
     user = await User(
         user_id=message.from_user.id,
@@ -27,7 +29,7 @@ async def ensure_user_exists(message: Message, state: FSMContext) -> User:
         username=message.from_user.username,
         language_code=message.from_user.language_code,
     ).create()
-    
+
     return user
 
 
@@ -35,7 +37,7 @@ async def regisration(message: Message, state: FSMContext) -> None:
     """Регистрация пользователя."""
     try:
         user = await ensure_user_exists(message, state)
-        
+
         await message.answer(
             "Я тебя не помню. Давай знакомиться! Какой у тебя ник в игре?"
         )
@@ -43,8 +45,12 @@ async def regisration(message: Message, state: FSMContext) -> None:
         await state.set_state(Regisration.name)
     except Exception as e:
         # Логируем ошибку и отправляем сообщение пользователю
-        print(f"Ошибка при регистрации пользователя {message.from_user.id}: {e}")
-        await message.answer("Произошла ошибка при регистрации. Попробуйте еще раз.")
+        print(
+            f"Ошибка при регистрации пользователя {message.from_user.id}: {e}"
+        )
+        await message.answer(
+            "Произошла ошибка при регистрации. Попробуйте еще раз."
+        )
 
 
 @form_router.message(CommandStart())
@@ -74,7 +80,9 @@ async def helper(message: Message, state: FSMContext) -> None:
     """Команда для вывода вспомогательной инструкции."""
     if message.chat.type == "private":
         user_id: int = message.from_user.id
-        user_exists = await User.query.where(User.user_id == user_id).gino.first()
+        user_exists = await User.query.where(
+            User.user_id == user_id
+        ).gino.first()
         if user_exists:
             await new_button(
                 message,

@@ -11,3 +11,9 @@ services:
     command: python3 src/scheduler.py
     env_file:
       - .env
+
+  parser-news:
+    image: $DOCKER_IMAGE_NAME
+    command: python3 src/channel_parser.py
+    env_file:
+      - .env

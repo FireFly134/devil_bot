@@ -101,7 +101,7 @@ async def reminder_change_kz_in_chat_clans(time_kz: datetime) -> None:
             await send_msg(
                 user_id=clan.chat_id,
                 sms="До смены кланового задания остался 1 час!",
-                message_thread_id=clan.thread_id
+                message_thread_id=clan.thread_id,
             )
 
 
@@ -119,7 +119,11 @@ async def description_new_kz_in_chat_clans(time: datetime) -> None:
             TextTable.name_text == time.strftime("%w")
         ).gino.first()
         for clan in clans:
-            await send_msg_mv2(user_id=clan.chat_id, sms=text_info.text, message_thread_id=clan.thread_id)
+            await send_msg_mv2(
+                user_id=clan.chat_id,
+                sms=text_info.text,
+                message_thread_id=clan.thread_id,
+            )
 
 
 async def reminder_kz():

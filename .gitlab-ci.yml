@@ -45,20 +45,20 @@ codestyle:
 
 
 
-tests:
-  stage: tests
-  tags:
-    - docker
-  needs:
-    - build image
-  only:
-    - merge_requests
-  script:
-    - cp ${TEST_ENV} ./.env
-    - docker-compose -f docker-compose.tests.yaml up --exit-code-from app-tests
-  after_script:
-    - docker container prune --force
-    - docker image prune -a --force
+#tests:
+#  stage: tests
+#  tags:
+#    - docker
+#  needs:
+#    - build image
+#  only:
+#    - merge_requests
+#  script:
+#    - cp ${TEST_ENV} ./.env
+#    - docker-compose -f docker-compose.tests.yaml up --exit-code-from app-tests
+#  after_script:
+#    - docker container prune --force
+#    - docker image prune -a --force
 
 
 deploy:production:

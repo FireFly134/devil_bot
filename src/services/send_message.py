@@ -27,14 +27,29 @@ def wlog(func):
 
 
 @wlog
-async def send_msg(user_id: int | str, sms: str, bot: Bot, message_thread_id: int | None = None) -> None:
+async def send_msg(
+    user_id: int | str,
+    sms: str,
+    bot: Bot,
+    message_thread_id: int | None = None,
+) -> None:
     """Отправить обычное сообщение."""
-    await bot.send_message(chat_id=user_id, text=sms, message_thread_id=message_thread_id)
+    await bot.send_message(
+        chat_id=user_id, text=sms, message_thread_id=message_thread_id
+    )
 
 
 @wlog
-async def send_msg_mv2(user_id: int | str, sms: str, bot: Bot, message_thread_id: int | None = None) -> None:
+async def send_msg_mv2(
+    user_id: int | str,
+    sms: str,
+    bot: Bot,
+    message_thread_id: int | None = None,
+) -> None:
     """Отправить сообщение в формате MarkdownV2."""
     await bot.send_message(
-        chat_id=user_id, text=sms, parse_mode=ParseMode.MARKDOWN_V2, message_thread_id=message_thread_id
+        chat_id=user_id,
+        text=sms,
+        parse_mode=ParseMode.MARKDOWN_V2,
+        message_thread_id=message_thread_id,
     )

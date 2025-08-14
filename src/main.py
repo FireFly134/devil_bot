@@ -241,7 +241,11 @@ async def choice_hero_setting_profile(
 @form_router.message()
 async def handle_text(message: Message, state: FSMContext) -> None:
     """Обработка текста, сюда приходит все что не отсеялось ранее."""
-    if message.chat.type == "private" and message.text and message.text.isnumeric():
+    if (
+        message.chat.type == "private"
+        and message.text
+        and message.text.isnumeric()
+    ):
         if 0 <= int(message.text) <= settings.MAX_COUNT_ROCKS:
             await start_add_rock(message, state)
         else:

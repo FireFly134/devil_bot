@@ -26,10 +26,10 @@ from tables.heroes_of_users import HeroesOfUsers
 async def setting_hero(message: Message, state: FSMContext) -> None:
     """Переход в настройки героя."""
     state_data = await state.get_data()
-    
+
     # Безопасно получаем hero_user_id, если его нет - используем user_id из сообщения
     hero_user_id = state_data.get("hero_user_id", message.from_user.id)
-    
+
     await setting_hero_button(
         message,
         user_id=hero_user_id,

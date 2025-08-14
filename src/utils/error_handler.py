@@ -18,15 +18,22 @@ async def safe_execute(func: Callable, *args, **kwargs) -> Any:
 
 def handle_message_errors(func: Callable) -> Callable:
     """Декоратор для обработки ошибок в обработчиках сообщений."""
+
     async def wrapper(message: Message, *args, **kwargs):
         try:
             return await func(message, *args, **kwargs)
         except Exception as e:
-            logger.error(f"Ошибка в обработчике {func.__name__} для пользователя {message.from_user.id}: {e}")
+            logger.error(
+                f"Ошибка в обработчике {func.__name__} для пользователя {message.from_user.id}: {e}"
+            )
             try:
-                await message.answer("Произошла ошибка. Попробуйте еще раз или обратитесь к администратору.")
+                await message.answer(
+                    "Произошла ошибка. Попробуйте еще раз или обратитесь к администратору."
+                )
             except Exception:
                 # Если не удается отправить сообщение, просто логируем
-                logger.error("Не удалось отправить сообщение об ошибке пользователю")
-    
-    return wrapper 
+                logger.error(
+                    "Не удалось отправить сообщение об ошибке пользователю"
+                )
+
+    return wrapper

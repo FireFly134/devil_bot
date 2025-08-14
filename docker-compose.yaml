@@ -36,3 +36,17 @@ services:
       - postgres
     depends_on:
       - postgres
+
+  parser-news:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    command: python3 src/channel_parser.py
+    env_file:
+      - .env
+    volumes:
+      - ./:/app
+    links:
+      - postgres
+    depends_on:
+      - postgres
